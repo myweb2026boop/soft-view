@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Fan</title>
+<title>fan</title>
 <style>
     :root {
         --bg-color: #f5f5f7;
@@ -29,8 +29,10 @@
         display: flex;
         justify-content: center;
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
+    /* 主页容器 */
     .app-container {
         width: 100%;
         max-width: 400px;
@@ -38,7 +40,7 @@
         flex-direction: column;
     }
 
-    /* 顶部三个小方块区 - 改用Grid布局确保绝对等大 */
+    /* --- 顶部三个小方块区 --- */
     .widget-row {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -62,12 +64,10 @@
         background-size: cover;
         background-position: center;
         transition: opacity 0.2s;
-        flex-shrink: 0; /* 防止被挤压变形 */
+        flex-shrink: 0;
     }
     
-    .widget-box:active {
-        opacity: 0.7;
-    }
+    .widget-box:active { opacity: 0.7; }
 
     .widget-label {
         margin-top: 8px;
@@ -77,7 +77,7 @@
         min-height: 18px;
     }
 
-    /* 中间大白框 (帖子区) */
+    /* --- 中间大白框 (帖子区) --- */
     .post-card {
         background-color: var(--card-bg);
         border-radius: 20px;
@@ -104,41 +104,13 @@
         flex-shrink: 0;
     }
 
-    .user-info {
-        flex-grow: 1;
-    }
+    .user-info { flex-grow: 1; }
+    .username { font-size: 15px; font-weight: 600; display: flex; align-items: center; }
+    .post-time { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .more-icon { color: var(--text-secondary); font-weight: bold; letter-spacing: 2px; }
 
-    .username {
-        font-size: 15px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-    }
-
-    .post-time {
-        font-size: 13px;
-        color: var(--text-secondary);
-        margin-top: 2px;
-    }
-
-    .more-icon {
-        color: var(--text-secondary);
-        font-weight: bold;
-        letter-spacing: 2px;
-        cursor: pointer;
-    }
-
-    .post-content {
-        font-size: 14px;
-        line-height: 1.5;
-        margin-bottom: 16px;
-    }
-
-    .post-content .translation {
-        color: var(--blue);
-        margin-top: 8px;
-        font-size: 14px;
-    }
+    .post-content { font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+    .post-content .translation { color: var(--blue); margin-top: 8px; font-size: 14px; }
 
     .post-actions {
         display: flex;
@@ -150,13 +122,9 @@
         padding-top: 12px;
     }
 
-    .action-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+    .action-btn { display: flex; align-items: center; gap: 6px; }
 
-    /* 应用图标区 */
+    /* --- App 图标区 --- */
     .app-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -177,15 +145,21 @@
         background-color: var(--placeholder-bg);
         border-radius: 14px;
         margin-bottom: 8px;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        transition: transform 0.1s;
     }
+    .app-icon:active { transform: scale(0.95); }
 
     .app-name {
         font-size: 13px;
         color: var(--text-main);
         text-align: center;
+        min-width: 40px;
     }
 
-    /* 搜索栏容器：利用margin-top:auto推到底部 */
+    /* --- 搜索栏 & 胶囊 --- */
     .search-container {
         display: flex;
         justify-content: center;
@@ -193,7 +167,6 @@
         margin-bottom: 25px;
     }
 
-    /* 搜索栏：小巧椭圆 */
     .search-bar {
         background-color: #e5e5ea;
         color: #8e8e93;
@@ -205,13 +178,8 @@
         gap: 4px;
     }
 
-    .svg-icon-search {
-        width: 16px;
-        height: 16px;
-        fill: #8e8e93;
-    }
+    .svg-icon-search { width: 16px; height: 16px; fill: #8e8e93; }
 
-    /* 底部胶囊 */
     .dock {
         background-color: #d1d1d6;
         border-radius: 32px;
@@ -227,28 +195,96 @@
         height: 64px;
         border-radius: 16px;
         background-color: #ffffff;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
     }
 
-    /* 双击可编辑状态样式 */
+    /* ==================================================== */
+    /* --- 全屏管理界面样式 --- */
+    /* ==================================================== */
+    #manager-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg-color);
+        z-index: 1000;
+        display: none;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    #manager-screen.active { display: flex; }
+
+    .manager-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 0 10px;
+    }
+
+    .back-btn {
+        background: none;
+        border: none;
+        font-size: 16px;
+        color: var(--blue);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0;
+    }
+
+    .manager-title {
+        flex-grow: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 17px;
+        margin-right: 50px;
+    }
+
+    .manager-tips {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+
+    .manager-section-title {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin: 20px 10px 10px;
+        font-weight: 500;
+    }
+
+    .manager-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px 10px;
+        padding: 0 10px;
+    }
+    
+    .manager-grid.dock-grid {
+        display: flex;
+        justify-content: flex-start;
+        gap: 30px;
+    }
+
     [contenteditable="true"] {
         outline: none;
         background-color: rgba(0, 122, 255, 0.1);
         border-radius: 4px;
-        user-select: text;
-        -webkit-user-select: text;
         cursor: text;
     }
 
-    /* 隐藏上传输入框 */
-    #file-upload {
-        display: none;
-    }
+    #file-upload { display: none; }
 </style>
 </head>
 <body>
 
 <div class="app-container">
-    <!-- 顶部三个小方块 -->
     <div class="widget-row">
         <div class="widget-item">
             <div class="widget-box" id="widget-img-1"></div>
@@ -263,7 +299,6 @@
         </div>
     </div>
 
-    <!-- 中间大白框 -->
     <div class="post-card">
         <div class="post-header">
             <div class="avatar" id="avatar-img"></div>
@@ -293,27 +328,25 @@
         </div>
     </div>
 
-    <!-- 应用图标区 -->
     <div class="app-grid">
         <div class="app-item">
-            <div class="app-icon"></div>
-            <div class="app-name">讯言</div>
+            <div class="app-icon" id="home-icon-1"></div>
+            <div class="app-name" id="home-name-1">讯言</div>
         </div>
         <div class="app-item">
-            <div class="app-icon"></div>
-            <div class="app-name">见面</div>
+            <div class="app-icon" id="home-icon-2"></div>
+            <div class="app-name" id="home-name-2">见面</div>
         </div>
         <div class="app-item">
-            <div class="app-icon"></div>
-            <div class="app-name">通讯录</div>
+            <div class="app-icon" id="home-icon-3"></div>
+            <div class="app-name" id="home-name-3">通讯录</div>
         </div>
-        <div class="app-item">
-            <div class="app-icon"></div>
-            <div class="app-name">桌面</div>
+        <div class="app-item" onclick="openManager()">
+            <div class="app-icon" id="home-icon-4"></div>
+            <div class="app-name" id="home-name-4">桌面</div>
         </div>
     </div>
 
-    <!-- 搜索栏 -->
     <div class="search-container">
         <div class="search-bar">
             <svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -321,18 +354,110 @@
         </div>
     </div>
 
-    <!-- 底部胶囊 -->
     <div class="dock">
-        <div class="dock-icon"></div>
-        <div class="dock-icon"></div>
+        <div class="dock-icon" id="home-dock-1"></div>
+        <div class="dock-icon" id="home-dock-2"></div>
     </div>
 </div>
 
-<!-- 隐藏的文件上传输入框 -->
+<div id="manager-screen">
+    <div class="manager-header">
+        <button class="back-btn" onclick="closeManager()">
+            <svg style="width:20px;height:20px;fill:#007aff;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            返回桌面
+        </button>
+        <div class="manager-title">桌面管理</div>
+    </div>
+    
+    <div class="manager-tips">双击文字修改名称，点击图标上传高清图片（无容量限制）</div>
+
+    <div class="manager-section-title">桌面 App</div>
+    <div class="manager-grid">
+        <div class="app-item">
+            <div class="app-icon manager-upload-btn" id="mg-icon-1" data-target="1"></div>
+            <div class="app-name manager-editable" id="mg-name-1" data-target="1">讯言</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon manager-upload-btn" id="mg-icon-2" data-target="2"></div>
+            <div class="app-name manager-editable" id="mg-name-2" data-target="2">见面</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon manager-upload-btn" id="mg-icon-3" data-target="3"></div>
+            <div class="app-name manager-editable" id="mg-name-3" data-target="3">通讯录</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon manager-upload-btn" id="mg-icon-4" data-target="4"></div>
+            <div class="app-name manager-editable" id="mg-name-4" data-target="4">桌面</div>
+        </div>
+    </div>
+
+    <div class="manager-section-title">底部胶囊</div>
+    <div class="manager-grid dock-grid">
+        <div class="app-item">
+            <div class="dock-icon manager-upload-btn" id="mg-dock-1" data-target="d1"></div>
+        </div>
+        <div class="app-item">
+            <div class="dock-icon manager-upload-btn" id="mg-dock-2" data-target="d2"></div>
+        </div>
+    </div>
+</div>
+
 <input type="file" id="file-upload" accept="image/*">
 
 <script>
-    // === 1. 系统时间实时更新 ===
+    // ==========================================
+    // 1. IndexedDB 大容量数据库封装 (核心！)
+    // ==========================================
+    const DB_NAME = 'AppImageDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'images';
+
+    function initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME); // 纯键值对存储
+                }
+            };
+            request.onsuccess = (e) => resolve(e.target.result);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    async function saveImageToDB(key, base64Data) {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const req = store.put(base64Data, key);
+            req.onsuccess = () => resolve();
+            req.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    async function getImageFromDB(key) {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readonly');
+            const store = tx.objectStore(STORE_NAME);
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    // 清除旧版 localStorage 中存过的图片，防止占用那 5MB 宝贵的空间
+    function clearOldLocalImages() {
+        const keysToRemove = ['img-widget-1', 'img-widget-2', 'img-widget-3', 'img-avatar', 'app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+    }
+    clearOldLocalImages();
+
+    // ==========================================
+    // 2. 系统时间实时更新
+    // ==========================================
     function updateLiveTime() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
@@ -342,21 +467,88 @@
     setInterval(updateLiveTime, 1000);
     updateLiveTime();
 
-    // === 2. 双击文字编辑与本地存储加载 ===
+    // ==========================================
+    // 3. 管理界面开关
+    // ==========================================
+    const managerScreen = document.getElementById('manager-screen');
+    function openManager() { managerScreen.classList.add('active'); }
+    function closeManager() { managerScreen.classList.remove('active'); }
+
+    // ==========================================
+    // 4. App 数据配置与异步渲染 (读取 IndexedDB)
+    // ==========================================
+    const defaultApps = [
+        { id: '1', name: '讯言', isDock: false },
+        { id: '2', name: '见面', isDock: false },
+        { id: '3', name: '通讯录', isDock: false },
+        { id: '4', name: '桌面', isDock: false },
+        { id: 'd1', name: '', isDock: true },
+        { id: 'd2', name: '', isDock: true }
+    ];
+
+    async function renderApps() {
+        for (const app of defaultApps) {
+            // 名字用 localStorage 读取
+            const savedName = localStorage.getItem(`app_name_${app.id}`);
+            const finalName = savedName !== null ? savedName : app.name;
+
+            // 图片用 IndexedDB 读取
+            const savedImg = await getImageFromDB(`app_img_${app.id}`);
+
+            if (!app.isDock) {
+                const homeNameEl = document.getElementById(`home-name-${app.id}`);
+                const homeIconEl = document.getElementById(`home-icon-${app.id}`);
+                if (homeNameEl) homeNameEl.innerText = finalName;
+                if (homeIconEl && savedImg) homeIconEl.style.backgroundImage = `url(${savedImg})`;
+                
+                const mgNameEl = document.getElementById(`mg-name-${app.id}`);
+                const mgIconEl = document.getElementById(`mg-icon-${app.id}`);
+                if (mgNameEl) mgNameEl.innerText = finalName;
+                if (mgIconEl && savedImg) mgIconEl.style.backgroundImage = `url(${savedImg})`;
+            } else {
+                const homeDockEl = document.getElementById(`home-dock-${app.id === 'd1' ? '1' : '2'}`);
+                const mgDockEl = document.getElementById(`mg-dock-${app.id === 'd1' ? '1' : '2'}`);
+                if (homeDockEl && savedImg) homeDockEl.style.backgroundImage = `url(${savedImg})`;
+                if (mgDockEl && savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`;
+            }
+        }
+    }
+
+    // ==========================================
+    // 5. 文字双击编辑与保存
+    // ==========================================
+    document.querySelectorAll('.manager-editable').forEach(el => {
+        el.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            this.contentEditable = "true";
+            this.focus();
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(this);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        });
+
+        el.addEventListener('blur', function() {
+            this.contentEditable = "false";
+            const appId = this.dataset.target;
+            const newName = this.innerText.trim();
+            localStorage.setItem(`app_name_${appId}`, newName);
+            document.getElementById(`home-name-${appId}`).innerText = newName;
+        });
+    });
+
     const editableElements = document.querySelectorAll('.editable');
-    
     editableElements.forEach(el => {
         const key = el.dataset.key;
         const savedText = localStorage.getItem(key);
-        if (savedText) {
-            el.innerHTML = savedText;
-        }
+        if (savedText) el.innerHTML = savedText;
 
         el.addEventListener('dblclick', function(e) {
             e.stopPropagation();
             this.contentEditable = "true";
             this.focus();
-            
             const range = document.createRange();
             const sel = window.getSelection();
             range.selectNodeContents(this);
@@ -371,51 +563,90 @@
         });
     });
 
-    // === 3. 图片上传与本地存储加载 ===
+    // ==========================================
+    // 6. 图片上传逻辑 (统一使用 IndexedDB)
+    // ==========================================
     const fileInput = document.getElementById('file-upload');
     let currentUploadTarget = null;
 
-    function setupImageUpload(elementId, storageKey) {
-        const el = document.getElementById(elementId);
-        const savedImg = localStorage.getItem(storageKey);
-        if (savedImg) {
-            el.style.backgroundImage = `url(${savedImg})`;
-        }
+    // 绑定管理界面图标点击
+    document.querySelectorAll('.manager-upload-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentUploadTarget = { type: 'app', id: this.dataset.target };
+            fileInput.click();
+        });
+    });
 
+    // 绑定主页组件和头像点击
+    function setupHomeImageUpload(elementId) {
+        const el = document.getElementById(elementId);
         el.addEventListener('click', () => {
-            currentUploadTarget = { element: el, key: storageKey };
+            currentUploadTarget = { type: 'other', id: elementId };
             fileInput.click();
         });
     }
+    
+    setupHomeImageUpload('widget-img-1');
+    setupHomeImageUpload('widget-img-2');
+    setupHomeImageUpload('widget-img-3');
+    setupHomeImageUpload('avatar-img');
 
+    // 文件选择后读取与存储
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentUploadTarget) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = async function(event) {
                 const base64Data = event.target.result;
-                currentUploadTarget.element.style.backgroundImage = `url(${base64Data})`;
+                let dbKey = '';
 
-                try {
-                    localStorage.setItem(currentUploadTarget.key, base64Data);
-                } catch (error) {
-                    alert("图片太大，本地存储空间不足！请换小一点的图片。");
+                if (currentUploadTarget.type === 'app') {
+                    dbKey = `app_img_${currentUploadTarget.id}`;
+                } else {
+                    dbKey = `other_img_${currentUploadTarget.id}`;
+                }
+
+                // 存入超大容量数据库 IndexedDB
+                await saveImageToDB(dbKey, base64Data);
+
+                // 更新视图
+                if (currentUploadTarget.type === 'app') {
+                    await renderApps(); 
+                } else {
+                    const el = document.getElementById(currentUploadTarget.id);
+                    if (el) el.style.backgroundImage = `url(${base64Data})`;
                 }
                 
-                fileInput.value = ''; 
+                fileInput.value = ''; // 允许重复选择同一张图
             };
             reader.readAsDataURL(file);
         }
     });
 
-    setupImageUpload('widget-img-1', 'img-widget-1');
-    setupImageUpload('widget-img-2', 'img-widget-2');
-    setupImageUpload('widget-img-3', 'img-widget-3');
-    setupImageUpload('avatar-img', 'img-avatar');
+    // ==========================================
+    // 7. 初始化加载 (从 DB 恢复所有图片)
+    // ==========================================
+    async function initApp() {
+        await renderApps();
+        
+        // 恢复头像
+        const avatarImg = await getImageFromDB('other_img_avatar-img');
+        if (avatarImg) document.getElementById('avatar-img').style.backgroundImage = `url(${avatarImg})`;
 
-    // 蓝色认证小勾 SVG
-    const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
-    document.getElementById('verify-badge').innerHTML = badgeSvg;
+        // 恢复顶部组件
+        for (let i = 1; i <= 3; i++) {
+            const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`);
+            if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`;
+        }
+
+        // 注入认证小勾
+        const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+        document.getElementById('verify-badge').innerHTML = badgeSvg;
+    }
+
+    // 启动加载
+    initApp();
+
 </script>
 </body>
 </html>
