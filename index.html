@@ -38,10 +38,11 @@
         flex-direction: column;
     }
 
-    /* 顶部三个小方块区 */
+    /* 顶部三个小方块区 - 改用Grid布局确保绝对等大 */
     .widget-row {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-items: center;
         margin-bottom: 20px;
         padding: 0 10px;
     }
@@ -50,7 +51,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 30%;
     }
 
     .widget-box {
@@ -62,7 +62,9 @@
         background-size: cover;
         background-position: center;
         transition: opacity 0.2s;
+        flex-shrink: 0; /* 防止被挤压变形 */
     }
+    
     .widget-box:active {
         opacity: 0.7;
     }
@@ -183,15 +185,15 @@
         text-align: center;
     }
 
-    /* 搜索栏容器：自动推到底部 */
+    /* 搜索栏容器：利用margin-top:auto推到底部 */
     .search-container {
         display: flex;
         justify-content: center;
-        margin-top: auto; /* 将搜索框及胶囊推到底部 */
+        margin-top: auto; 
         margin-bottom: 25px;
     }
 
-    /* 搜索栏：小椭圆 */
+    /* 搜索栏：小巧椭圆 */
     .search-bar {
         background-color: #e5e5ea;
         color: #8e8e93;
@@ -311,7 +313,7 @@
         </div>
     </div>
 
-    <!-- 搜索栏 (自动居中，小巧椭圆) -->
+    <!-- 搜索栏 -->
     <div class="search-container">
         <div class="search-bar">
             <svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -345,19 +347,16 @@
     
     editableElements.forEach(el => {
         const key = el.dataset.key;
-        // 加载已保存的文字（如果有）
         const savedText = localStorage.getItem(key);
         if (savedText) {
             el.innerHTML = savedText;
         }
 
-        // 双击启用编辑
         el.addEventListener('dblclick', function(e) {
             e.stopPropagation();
             this.contentEditable = "true";
             this.focus();
             
-            // 将光标移至末尾
             const range = document.createRange();
             const sel = window.getSelection();
             range.selectNodeContents(this);
@@ -366,7 +365,6 @@
             sel.addRange(range);
         });
 
-        // 失去焦点时自动保存到本地
         el.addEventListener('blur', function() {
             this.contentEditable = "false";
             localStorage.setItem(key, this.innerHTML);
@@ -379,55 +377,45 @@
 
     function setupImageUpload(elementId, storageKey) {
         const el = document.getElementById(elementId);
-        
-        // 加载已保存的图片
         const savedImg = localStorage.getItem(storageKey);
         if (savedImg) {
             el.style.backgroundImage = `url(${savedImg})`;
         }
 
-        // 点击事件触发文件选择
         el.addEventListener('click', () => {
             currentUploadTarget = { element: el, key: storageKey };
             fileInput.click();
         });
     }
 
-    // 处理文件选择后的逻辑
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentUploadTarget) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 const base64Data = event.target.result;
-                
-                // 更新视图
                 currentUploadTarget.element.style.backgroundImage = `url(${base64Data})`;
 
-                // 保存到本地
                 try {
                     localStorage.setItem(currentUploadTarget.key, base64Data);
                 } catch (error) {
                     alert("图片太大，本地存储空间不足！请换小一点的图片。");
                 }
                 
-                // 重置，允许重复上传同一张图
                 fileInput.value = ''; 
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // 初始化绑定图片上传功能
     setupImageUpload('widget-img-1', 'img-widget-1');
     setupImageUpload('widget-img-2', 'img-widget-2');
     setupImageUpload('widget-img-3', 'img-widget-3');
     setupImageUpload('avatar-img', 'img-avatar');
 
-    // 原图中的蓝色认证小勾，使用 SVG 绘制
+    // 蓝色认证小勾 SVG
     const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
     document.getElementById('verify-badge').innerHTML = badgeSvg;
-
 </script>
 </body>
 </html>
