@@ -349,6 +349,59 @@
     /* 搜索栏区域 */
     #chat-search-bar { display: none; padding: 10px 20px; background: #fff; border-bottom: 1px solid #eaeaea; }
     #chat-search-input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #e5e5ea; outline: none; background: #f5f5f7; font-size: 14px; }
+
+    /* ==================================================== */
+    /* 🌟 图二：Contact 线下界面样式 */
+    /* ==================================================== */
+    #contact-offline-screen {
+        background-color: #f5f5f7; /* 浅灰背景，无黑边 */
+        z-index: 4500;
+        padding: 0;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+    }
+    .dashboard-top-nav {
+        margin: 15px 20px; /* 悬浮于顶部 */
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        flex-shrink: 0;
+    }
+    .dashboard-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1c1c1e;
+    }
+    .dashboard-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+    .dashboard-icon-btn {
+        background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center;
+    }
+    .dashboard-icon-btn svg {
+        width: 22px; height: 22px; stroke: #333; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .bell-badge-container {
+        position: relative; display: flex; align-items: center;
+    }
+    .bell-badge {
+        position: absolute; top: -6px; right: -8px;
+        background-color: #333; color: #fff; font-size: 10px; font-weight: bold;
+        width: 16px; height: 16px; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .dashboard-content-area {
+        flex-grow: 1; padding: 0 20px 20px; overflow-y: auto;
+    }
 </style>
 </head>
 <body>
@@ -434,7 +487,7 @@
         <div class="xy-action-btn" onclick="openBout()"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Bout</span></div>
         <div class="xy-action-btn" onclick="openGlobalPromptModal()"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Portfolio</span></div>
         <div class="xy-action-btn" onclick="openBlog()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg><span>Blog</span></div>
-        <div class="xy-action-btn"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>Contact</span></div>
+        <div class="xy-action-btn" onclick="openContactOffline()"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>Contact</span></div>
     </div>
     <div class="xy-messages-section">
         <div class="xy-msg-header"><h2>Messages</h2><span>See all</span></div>
@@ -472,6 +525,35 @@
                 <div class="blog-stat-label">Following</div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- 🌟 新增：Contact 线下界面 (图二复刻) -->
+<div class="fullscreen-screen" id="contact-offline-screen">
+    <div class="dashboard-top-nav">
+        <div class="dashboard-nav-left">
+            <button class="dashboard-icon-btn">
+                <svg viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></svg>
+            </button>
+            My Dashboard
+        </div>
+        <div class="dashboard-nav-right">
+            <button class="dashboard-icon-btn">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <div class="bell-badge-container">
+                <button class="dashboard-icon-btn">
+                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                </button>
+                <div class="bell-badge">3</div>
+            </div>
+            <button class="dashboard-icon-btn" onclick="closeScreen('contact-offline-screen')">
+                <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+            </button>
+        </div>
+    </div>
+    <div class="dashboard-content-area">
+        <!-- 这里留给你后续自定义线下界面的内容 -->
     </div>
 </div>
 
@@ -895,6 +977,13 @@
         localStorage.setItem('global_system_prompt', prompt);
         closeGlobalPromptModal();
         alert("全局提示词保存成功！它将深刻影响所有角色的回复逻辑。");
+    }
+
+    // ==========================================
+    // 🌟 2.6. Contact 线下界面逻辑
+    // ==========================================
+    function openContactOffline() {
+        openScreen('contact-offline-screen');
     }
 
     // ==========================================
