@@ -220,7 +220,7 @@
 
     .modal-input-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
     .modal-input-group input, .modal-input-group textarea { width: 100%; padding: 12px; border: 1px solid #e5e5ea; border-radius: 10px; font-size: 15px; outline: none; font-family: inherit; }
-    .modal-input-group textarea { resize: none; height: 80px; }
+    .modal-input-group textarea { resize: none; height: 180px; }
     .modal-actions { display: flex; gap: 12px; }
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
     .modal-btn.cancel { background-color: #f2f2f7; color: #1c1c1e; }
@@ -295,7 +295,7 @@
 
 <!-- 讯言 App 首页 -->
 <div class="fullscreen-screen" id="xunyan-screen">
-    <div class="xy-header"><svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+    <div class="xy-header"><svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg><svg onclick="openGlobalPromptModal()" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
     <div class="xy-profile-section">
         <div class="xy-avatar" id="xy-avatar"></div>
         <div class="xy-info">
@@ -303,15 +303,15 @@
             <div class="xy-role xy-editable" data-key="xy_role">暂无文本输入</div>
             <div class="xy-divider"></div>
             <div class="xy-stats">
-                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_posts">128</div><div class="xy-stat-label">Posts</div></div>
-                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_followers">2.4K</div><div class="xy-stat-label">Followers</div></div>
-                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_following">512</div><div class="xy-stat-label">Following</div></div>
+                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_posts">0</div><div class="xy-stat-label">Posts</div></div>
+                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_followers">0</div><div class="xy-stat-label">Followers</div></div>
+                <div class="xy-stat-item"><div class="xy-stat-num xy-editable" data-key="xy_following">0</div><div class="xy-stat-label">Following</div></div>
             </div>
         </div>
     </div>
     <div class="xy-actions-row">
         <div class="xy-action-btn" onclick="openBout()"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Bout</span></div>
-        <div class="xy-action-btn"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Portfolio</span></div>
+        <div class="xy-action-btn" onclick="openGlobalPromptModal()"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Portfolio</span></div>
         <div class="xy-action-btn" onclick="openBlog()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg><span>Blog</span></div>
         <div class="xy-action-btn"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>Contact</span></div>
     </div>
@@ -339,15 +339,15 @@
         
         <div class="blog-stats-row">
             <div class="blog-stat-item">
-                <div class="blog-stat-num xy-editable" data-key="blog_posts">128</div>
+                <div class="blog-stat-num xy-editable" data-key="blog_posts">0</div>
                 <div class="blog-stat-label">Posts</div>
             </div>
             <div class="blog-stat-item">
-                <div class="blog-stat-num xy-editable" data-key="blog_followers">2.4K</div>
+                <div class="blog-stat-num xy-editable" data-key="blog_followers">0</div>
                 <div class="blog-stat-label">Followers</div>
             </div>
             <div class="blog-stat-item">
-                <div class="blog-stat-num xy-editable" data-key="blog_following">512</div>
+                <div class="blog-stat-num xy-editable" data-key="blog_following">0</div>
                 <div class="blog-stat-label">Following</div>
             </div>
         </div>
@@ -392,7 +392,7 @@
         </div>
         <div class="ce-card">
             <div class="ce-input-row"><input type="text" class="ce-input" id="ce-remark" placeholder="添加备注"></div>
-            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-name" placeholder="名字 (必填)"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-name" placeholder="名字"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="ce-identity" placeholder="身份"></div>
         </div>
         <div class="ce-action-btn" onclick="document.getElementById('ce-docx-upload').click()">
@@ -403,7 +403,7 @@
         </div>
         <div id="relation-display"></div>
         <div class="ce-card" style="margin-top: 20px;">
-            <textarea class="ce-textarea" id="ce-bio" placeholder="生平 (必填)"></textarea>
+            <textarea class="ce-textarea" id="ce-bio" placeholder="生平"></textarea>
         </div>
         <div class="ce-delete-btn" id="ce-delete-btn" onclick="deleteContact()" style="display: none;">删除联系人</div>
     </div>
@@ -462,6 +462,20 @@
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closeBoutModal()">取消</button>
             <button class="modal-btn confirm" onclick="confirmBout()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🌟 弹窗：全局提示词 (Portfolio) -->
+<div class="modal-overlay" id="global-prompt-modal">
+    <div class="modal-content">
+        <div class="modal-title">全局提示词 (内置)</div>
+        <div class="modal-input-group">
+            <textarea id="global-prompt-input" placeholder="在此输入全局提示词...&#10;此提示词将深刻影响所有 Char 的回复逻辑与性格。"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeGlobalPromptModal()">取消</button>
+            <button class="modal-btn confirm" onclick="saveGlobalPrompt()">保存</button>
         </div>
     </div>
 </div>
@@ -650,6 +664,24 @@
     });
 
     // ==========================================
+    // 🌟 2.5. 全局提示词逻辑 (Portfolio)
+    // ==========================================
+    function openGlobalPromptModal() {
+        const savedPrompt = localStorage.getItem('global_system_prompt') || '';
+        document.getElementById('global-prompt-input').value = savedPrompt;
+        document.getElementById('global-prompt-modal').classList.add('active');
+    }
+    function closeGlobalPromptModal() {
+        document.getElementById('global-prompt-modal').classList.remove('active');
+    }
+    function saveGlobalPrompt() {
+        const prompt = document.getElementById('global-prompt-input').value.trim();
+        localStorage.setItem('global_system_prompt', prompt);
+        closeGlobalPromptModal();
+        alert("全局提示词保存成功！它将深刻影响所有角色的回复逻辑。");
+    }
+
+    // ==========================================
     // 3. 用户人设 (User Persona) 核心逻辑
     // ==========================================
     let userPersonas = safeParseJSON(localStorage.getItem('user_personas'), []);
@@ -659,7 +691,7 @@
     if (!Array.isArray(userPersonas) || userPersonas.length === 0) {
         const defaultId = 'u_' + Date.now();
         userPersonas = [{
-            id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '128', followers: '2.4K', following: '512', relations: []
+            id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '0', followers: '0', following: '0', relations: []
         }];
         localStorage.setItem('user_personas', JSON.stringify(userPersonas));
         activeUserPersonaId = defaultId;
