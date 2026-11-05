@@ -325,7 +325,6 @@
     .chat-input-field::placeholder { color: #aaa; }
 
     /* --- 🌟 聊天详情弹窗样式 --- */
-    /* 提升聊天详情弹窗的层级，确保它在聊天界面之上 */
     #chat-detail-modal { z-index: 5000; } 
     #chat-detail-modal .modal-content { max-height: 90vh; }
     .chat-detail-item {
@@ -587,7 +586,8 @@
 
     <!-- 底部输入框 -->
     <div class="chat-input-bar">
-        <button class="chat-input-icon-btn">
+        <!-- 🌟 麦克风按钮，绑定了 triggerCharReply -->
+        <button class="chat-input-icon-btn" onclick="triggerCharReply()">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
         </button>
         <input type="text" class="chat-input-field" id="chat-input-field" placeholder="输入消息...">
@@ -620,6 +620,10 @@
         </div>
 
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
+            <!-- 🌟 新增：编辑备注 -->
+            <div class="chat-detail-item" onclick="editChatRemark()">
+                <span>编辑备注</span>
+            </div>
             <div class="chat-detail-item" onclick="togglePinChat()">
                 <span>置顶聊天</span>
                 <div class="chat-detail-switch" id="pin-switch"></div>
@@ -630,9 +634,8 @@
             <div class="chat-detail-item" onclick="document.getElementById('chat-bg-upload').click()">
                 <span>更换聊天背景</span>
             </div>
-            <!-- 🌟 新增：清除背景图 -->
             <div class="chat-detail-item" onclick="clearChatBackground()">
-                <span>清空聊天背景 (恢复纯白)</span>
+                <span>清空聊天背景</span>
             </div>
             <div class="chat-detail-item" onclick="clearChatHistory()">
                 <span>清空聊天记录</span>
@@ -1551,6 +1554,13 @@
         }
     });
 
+    // 🌟 麦克风触发 Char 回复的接口
+    function triggerCharReply() {
+        if (!currentChatCharId) return;
+        // 这里留作后续接入 API 的接口
+        alert("API 尚未接入！\n\n请稍后在此函数中填入 fetch 请求，\n将全局提示词、聊天记录及角色生平发送至大模型，\n并将返回结果通过 renderChatMessage 渲染出来即可。");
+    }
+
     // ==========================================
     // 🌟 8. 聊天详情页逻辑
     // ==========================================
@@ -1591,6 +1601,29 @@
         const finalImg = chatUserImg || globalUserImg;
         if (finalImg) { userAvatarEl.style.backgroundImage = `url(${finalImg})`; userAvatarEl.innerText = ''; }
         else { userAvatarEl.style.backgroundImage = 'none'; userAvatarEl.innerText = activeP ? (activeP.remark||activeP.name||'我').charAt(0) : '我'; }
+    }
+
+    // 🌟 新增：编辑备注
+    function editChatRemark() {
+        if (!currentChatCharId) return;
+        const char = contacts.find(c => c.id === currentChatCharId);
+        if (!char) return;
+
+        const currentRemark = char.remark || char.name || '';
+        const newRemark = prompt("请输入对该角色的备注：", currentRemark);
+        if (newRemark !== null && newRemark.trim() !== '') {
+            char.remark = newRemark.trim();
+            localStorage.setItem('contacts_data', JSON.stringify(contacts));
+            
+            // 更新聊天界面标题
+            document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
+            
+            // 同步更新首页讯言列表
+            renderXunyanMessages();
+            // 同步更新通讯录列表
+            renderContactList();
+            alert("备注修改成功！");
+        }
     }
 
     // 1. 置顶开关
