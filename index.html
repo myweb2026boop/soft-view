@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>西西梨</title>
+<title>西西莉亚</title>
 <style>
     :root {
         --bg-color: #f5f5f7;
@@ -23,11 +23,11 @@
     body {
         margin: 0;
         padding: 20px 12px;
-        background-color: var(--bg-color); /* 默认背景色 */
+        background-color: var(--bg-color);
         background-image: none;
         background-size: cover;
         background-position: center;
-        background-attachment: fixed; /* 固定壁纸 */
+        background-attachment: fixed;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         color: var(--text-main);
         display: flex;
@@ -37,7 +37,7 @@
         transition: background-image 0.3s ease;
     }
 
-    /* 主页容器，设置半透明让壁纸透出或者直接保持原样 */
+    /* 主页容器 */
     .app-container {
         width: 100%;
         max-width: 400px;
@@ -186,7 +186,7 @@
     .svg-icon-search { width: 16px; height: 16px; fill: #8e8e93; }
 
     .dock {
-        background-color: rgba(209, 209, 214, 0.8); /* 胶囊加一点透明度适配壁纸 */
+        background-color: rgba(209, 209, 214, 0.8);
         backdrop-filter: blur(10px);
         border-radius: 32px;
         padding: 12px;
@@ -220,7 +220,7 @@
         display: none;
         flex-direction: column;
         padding: 20px;
-        overflow-y: auto; /* 允许滚动 */
+        overflow-y: auto;
     }
 
     #manager-screen.active { display: flex; }
@@ -272,7 +272,6 @@
         gap: 30px;
     }
 
-    /* 管理界面的底部图标覆盖为灰色 */
     .manager-grid.dock-grid .dock-icon {
         background-color: var(--placeholder-bg);
     }
@@ -284,13 +283,14 @@
         cursor: text;
     }
 
-    /* 新增：设置按钮区 */
+    /* 设置按钮区 */
     .settings-group {
-        margin-top: 40px;
+        margin-top: 20px;
         padding: 0 10px;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        margin-bottom: 40px;
     }
 
     .setting-btn {
@@ -310,7 +310,14 @@
     }
     .setting-btn:active { background-color: #f0f0f0; }
 
-    .setting-btn.danger { color: #ff3b30; }
+    /* 恢复类按钮使用警告色 */
+    .setting-btn.danger {
+        color: #ff3b30;
+        border-color: #ffd6d6;
+    }
+    .setting-btn.danger:active {
+        background-color: #fff0f0;
+    }
 
     #file-upload { display: none; }
     #import-file { display: none; }
@@ -433,31 +440,41 @@
         </div>
     </div>
 
-    <!-- 新增：壁纸与数据备份区 -->
     <div class="manager-section-title">美化与设置</div>
     <div class="settings-group">
         <button class="setting-btn" id="btn-change-wallpaper">
             <svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
             更换桌面壁纸
         </button>
+        
         <button class="setting-btn" id="btn-export">
             <svg style="width:18px;height:18px;fill:#34c759;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             导出桌面美化
         </button>
+        
         <button class="setting-btn" id="btn-import">
             <svg style="width:18px;height:18px;fill:#ff9500;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
             导入桌面美化
         </button>
+
+        <button class="setting-btn danger" id="btn-reset-wallpaper">
+            <svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            恢复默认桌面壁纸
+        </button>
+
+        <button class="setting-btn danger" id="btn-reset-apps">
+            <svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            恢复默认图标与名称
+        </button>
     </div>
 </div>
 
-<!-- 隐藏的文件输入框 -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
 
 <script>
     // ==========================================
-    // 1. IndexedDB 大容量数据库封装
+    // 1. IndexedDB 大容量数据库封装 (未做任何重命名，确保兼容旧数据)
     // ==========================================
     const DB_NAME = 'AppImageDB';
     const DB_VERSION = 1;
@@ -499,7 +516,18 @@
         });
     }
 
-    // 获取所有图片数据
+    // 新增：从DB中删除特定记录
+    async function deleteImageFromDB(key) {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const req = store.delete(key);
+            req.onsuccess = () => resolve();
+            req.onerror = (e) => reject(e.target.error);
+        });
+    }
+
     async function getAllImagesFromDB() {
         const db = await initDB();
         return new Promise((resolve, reject) => {
@@ -519,7 +547,6 @@
         });
     }
 
-    // 清空图片数据库
     async function clearImageDB() {
         const db = await initDB();
         return new Promise((resolve, reject) => {
@@ -531,15 +558,8 @@
         });
     }
 
-    // 清理旧版本地存储
-    function clearOldLocalImages() {
-        const keysToRemove = ['img-widget-1', 'img-widget-2', 'img-widget-3', 'img-avatar', 'app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2', 'wallpaper'];
-        keysToRemove.forEach(k => localStorage.removeItem(k));
-    }
-    clearOldLocalImages();
-
     // ==========================================
-    // 2. 系统时间实时更新
+    // 2. 系统时间
     // ==========================================
     function updateLiveTime() {
         const now = new Date();
@@ -558,7 +578,7 @@
     function closeManager() { managerScreen.classList.remove('active'); }
 
     // ==========================================
-    // 4. App 数据配置与异步渲染
+    // 4. App 数据配置与渲染
     // ==========================================
     const defaultApps = [
         { id: '1', name: '讯言', isDock: false },
@@ -580,23 +600,44 @@
                 const homeNameEl = document.getElementById(`home-name-${app.id}`);
                 const homeIconEl = document.getElementById(`home-icon-${app.id}`);
                 if (homeNameEl) homeNameEl.innerText = finalName;
-                if (homeIconEl && savedImg) homeIconEl.style.backgroundImage = `url(${savedImg})`;
+                
+                if (homeIconEl) {
+                    if (savedImg) {
+                        homeIconEl.style.backgroundImage = `url(${savedImg})`;
+                    } else {
+                        homeIconEl.style.backgroundImage = 'none'; // 恢复默认
+                    }
+                }
                 
                 const mgNameEl = document.getElementById(`mg-name-${app.id}`);
                 const mgIconEl = document.getElementById(`mg-icon-${app.id}`);
                 if (mgNameEl) mgNameEl.innerText = finalName;
-                if (mgIconEl && savedImg) mgIconEl.style.backgroundImage = `url(${savedImg})`;
+                
+                if (mgIconEl) {
+                    if (savedImg) {
+                        mgIconEl.style.backgroundImage = `url(${savedImg})`;
+                    } else {
+                        mgIconEl.style.backgroundImage = 'none';
+                    }
+                }
             } else {
                 const homeDockEl = document.getElementById(`home-dock-${app.id === 'd1' ? '1' : '2'}`);
                 const mgDockEl = document.getElementById(`mg-dock-${app.id === 'd1' ? '1' : '2'}`);
-                if (homeDockEl && savedImg) homeDockEl.style.backgroundImage = `url(${savedImg})`;
-                if (mgDockEl && savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`;
+                
+                if (homeDockEl) {
+                    if (savedImg) homeDockEl.style.backgroundImage = `url(${savedImg})`;
+                    else homeDockEl.style.backgroundImage = 'none';
+                }
+                if (mgDockEl) {
+                    if (savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`;
+                    else mgDockEl.style.backgroundImage = 'none';
+                }
             }
         }
     }
 
     // ==========================================
-    // 5. 文字双击编辑与保存
+    // 5. 文字双击编辑
     // ==========================================
     document.querySelectorAll('.manager-editable').forEach(el => {
         el.addEventListener('dblclick', function(e) {
@@ -645,7 +686,7 @@
     });
 
     // ==========================================
-    // 6. 图片上传与壁纸逻辑 (使用 IndexedDB)
+    // 6. 图片上传与壁纸逻辑
     // ==========================================
     const fileInput = document.getElementById('file-upload');
     let currentUploadTarget = null;
@@ -670,13 +711,11 @@
     setupHomeImageUpload('widget-img-3');
     setupHomeImageUpload('avatar-img');
 
-    // 更换壁纸按钮点击事件
     document.getElementById('btn-change-wallpaper').addEventListener('click', () => {
         currentUploadTarget = { type: 'wallpaper', id: 'wallpaper' };
         fileInput.click();
     });
 
-    // 处理图片选择读取
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentUploadTarget) {
@@ -711,19 +750,16 @@
     });
 
     // ==========================================
-    // 7. 导出/导入桌面美化数据
+    // 7. 导出/导入 & 恢复默认数据
     // ==========================================
-    // 导出功能
+    // 导出
     document.getElementById('btn-export').addEventListener('click', async () => {
         try {
-            // 收集本地存储数据
             const lsData = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 lsData[key] = localStorage.getItem(key);
             }
-
-            // 收集 IndexedDB 图片数据
             const dbData = await getAllImagesFromDB();
 
             const exportPayload = {
@@ -748,7 +784,7 @@
         }
     });
 
-    // 导入功能
+    // 导入
     const importFileInput = document.getElementById('import-file');
     document.getElementById('btn-import').addEventListener('click', () => {
         importFileInput.click();
@@ -767,16 +803,13 @@
                     throw new Error("无效的美化文件格式");
                 }
 
-                // 1. 清空现有 IndexedDB
                 await clearImageDB();
-
-                // 2. 恢复 LocalStorage
                 localStorage.clear();
+                
                 for (const [key, value] of Object.entries(importedData.localStorage)) {
                     localStorage.setItem(key, value);
                 }
 
-                // 3. 恢复 IndexedDB (异步写入所有图片)
                 const imagePromises = [];
                 for (const [key, base64] of Object.entries(importedData.indexedDB)) {
                     imagePromises.push(saveImageToDB(key, base64));
@@ -795,29 +828,54 @@
         reader.readAsText(file);
     });
 
+    // 恢复默认壁纸
+    document.getElementById('btn-reset-wallpaper').addEventListener('click', async () => {
+        if(confirm("确定要恢复默认桌面壁纸吗？")) {
+            await deleteImageFromDB('app_wallpaper');
+            localStorage.removeItem('wallpaper'); // 兼容清理
+            document.body.style.backgroundImage = 'none';
+        }
+    });
+
+    // 恢复默认图标与名称
+    document.getElementById('btn-reset-apps').addEventListener('click', async () => {
+        if(confirm("确定要将所有App（桌面及底部）恢复为默认的图标和名称吗？")) {
+            // 1. 清理本地存储中的名字
+            defaultApps.forEach(app => {
+                localStorage.removeItem(`app_name_${app.id}`);
+            });
+
+            // 2. 清理数据库中的图标 (只删除App相关的，不删头像和组件)
+            const keysToDelete = ['app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
+            for (let key of keysToDelete) {
+                await deleteImageFromDB(key);
+            }
+
+            // 3. 重新渲染
+            await renderApps();
+            alert("已恢复默认图标和名称！");
+        }
+    });
+
     // ==========================================
     // 8. 初始化加载
     // ==========================================
     async function initApp() {
         await renderApps();
         
-        // 恢复壁纸
         const wallpaperImg = await getImageFromDB('app_wallpaper');
         if (wallpaperImg) {
             document.body.style.backgroundImage = `url(${wallpaperImg})`;
         }
 
-        // 恢复头像
         const avatarImg = await getImageFromDB('other_img_avatar-img');
         if (avatarImg) document.getElementById('avatar-img').style.backgroundImage = `url(${avatarImg})`;
 
-        // 恢复顶部组件
         for (let i = 1; i <= 3; i++) {
             const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`);
             if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`;
         }
 
-        // 注入认证小勾
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
     }
