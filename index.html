@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>梨汁机</title>
+<!-- 引入 mammoth.js 用于解析 docx 文件 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
     :root {
         --bg-color: #f5f5f7;
@@ -39,7 +41,7 @@
         transition: background-image 0.3s ease;
     }
 
-    /* --- 基础桌面样式 (与原代码保持一致) --- */
+    /* --- 基础桌面样式 (保持不变) --- */
     .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; }
     .widget-row { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; margin-bottom: 20px; padding: 0 10px; }
     .widget-item { display: flex; flex-direction: column; align-items: center; }
@@ -83,9 +85,7 @@
     .setting-btn.danger { color: var(--red); border-color: #ffd6d6; }
     [contenteditable="true"] { outline: none; background-color: rgba(0, 122, 255, 0.1); border-radius: 4px; cursor: text; }
 
-    /* ==================================================== */
     /* --- 讯言 App 界面样式 --- */
-    /* ==================================================== */
     #xunyan-screen { background-color: #ffffff; z-index: 2000; }
     .xy-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
     .xy-header svg { width: 24px; height: 24px; fill: none; stroke: #555; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; }
@@ -108,296 +108,115 @@
     .xy-msg-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
     .xy-msg-header span { font-size: 13px; font-weight: 600; cursor: pointer; }
 
-    /* ==================================================== */
     /* --- 通讯录 App 列表界面 --- */
-    /* ==================================================== */
-    #contact-list-screen {
-        background-color: #ffffff;
-        z-index: 2000;
-        padding: 0; /* 让顶部导航贴边 */
-    }
-    .cl-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 24px;
-    }
-    .cl-header-btn {
-        font-size: 16px;
-        color: var(--blue);
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-    }
-    .cl-title {
-        font-size: 18px;
-        font-weight: 600;
-    }
-    .cl-list {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-bottom: 80px; /* 留出底部导航空间 */
-    }
-    .cl-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 24px;
-        border-bottom: 1px solid #f0f0f0;
-        cursor: pointer;
-    }
+    #contact-list-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
+    .cl-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
+    .cl-header-btn { font-size: 16px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; }
+    .cl-title { font-size: 18px; font-weight: 600; }
+    .cl-list { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; }
+    .cl-item { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
     .cl-item:active { background-color: #f9f9f9; }
-    .cl-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #a4b4e0; /* 默认淡蓝色背景 */
-        background-size: cover;
-        background-position: center;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        font-weight: bold;
-        margin-right: 16px;
-        flex-shrink: 0;
-    }
-    .cl-info {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .cl-remark {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1c1c1e;
-        margin-bottom: 4px;
-    }
-    .cl-sub {
-        font-size: 13px;
-        color: #8e8e93;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .cl-time {
-        font-size: 14px;
-        color: #8e8e93;
-        margin-left: 10px;
-    }
-    .cl-call-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: #f2f2f7;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 16px;
-        flex-shrink: 0;
-    }
-    .cl-call-icon svg {
-        width: 18px;
-        height: 18px;
-        fill: var(--blue);
-    }
+    .cl-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #a4b4e0; background-size: cover; background-position: center; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; margin-right: 16px; flex-shrink: 0; }
+    .cl-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+    .cl-remark { font-size: 16px; font-weight: 600; color: #1c1c1e; margin-bottom: 4px; }
+    .cl-sub { font-size: 13px; color: #8e8e93; display: flex; align-items: center; gap: 4px; }
+    .cl-time { font-size: 14px; color: #8e8e93; margin-left: 10px; }
+    .cl-call-icon { width: 32px; height: 32px; border-radius: 50%; background-color: #f2f2f7; display: flex; justify-content: center; align-items: center; margin-left: 16px; flex-shrink: 0; }
+    .cl-call-icon svg { width: 18px; height: 18px; fill: var(--blue); }
+    
     /* 底部导航 */
-    .cl-bottom-nav {
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        background-color: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 40px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        padding: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .cl-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        color: #8e8e93;
-        cursor: pointer;
-    }
-    .cl-nav-item.active {
-        color: var(--blue);
-    }
-    .cl-nav-item.active svg {
-        fill: var(--blue);
-    }
-    .cl-nav-item svg {
-        width: 24px;
-        height: 24px;
-        fill: #8e8e93;
-    }
-    .cl-nav-search {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background-color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+    .cl-bottom-nav { position: absolute; bottom: 20px; left: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; padding: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .cl-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: #8e8e93; cursor: pointer; }
+    .cl-nav-item.active { color: var(--blue); }
+    .cl-nav-item.active svg { fill: var(--blue); }
+    .cl-nav-item svg { width: 24px; height: 24px; fill: #8e8e93; }
+    .cl-nav-search { width: 44px; height: 44px; border-radius: 50%; background-color: #ffffff; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .cl-nav-search svg { width: 20px; height: 20px; stroke: #1c1c1e; stroke-width: 2; fill: none; }
 
-    /* ==================================================== */
     /* --- 通讯录 App 编辑界面 --- */
-    /* ==================================================== */
-    #contact-edit-screen {
-        background-color: #f5f5f7; /* 浅灰底色 */
-        z-index: 2100;
-        padding: 0;
-    }
-    .ce-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 24px;
-    }
-    .ce-icon-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-    }
+    #contact-edit-screen { background-color: #f5f5f7; z-index: 2100; padding: 0; }
+    .ce-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
+    .ce-icon-btn { width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .ce-icon-btn svg { width: 20px; height: 20px; stroke: #1c1c1e; stroke-width: 2; fill: none; }
-    .ce-icon-btn.check-btn svg { stroke: #cccccc; } /* 默认不可点状态 */
-    .ce-icon-btn.check-btn.active svg { stroke: var(--blue); } /* 必填项填完后变蓝 */
-    .ce-body {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 0 20px 40px;
-    }
-    .ce-avatar-section {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 24px;
-    }
-    .ce-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background-color: #a4b4e0;
-        background-size: cover;
-        background-position: center;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 56px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .ce-card {
-        background-color: #ffffff;
-        border-radius: 16px;
-        overflow: hidden;
-        margin-bottom: 20px;
-    }
-    .ce-input-row {
-        display: flex;
-        align-items: center;
-        padding: 16px;
-        border-bottom: 1px solid #f0f0f0;
-    }
+    .ce-icon-btn.check-btn svg { stroke: #cccccc; }
+    .ce-icon-btn.check-btn.active svg { stroke: var(--blue); }
+    .ce-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 40px; }
+    .ce-avatar-section { display: flex; justify-content: center; margin-bottom: 24px; }
+    .ce-avatar { width: 120px; height: 120px; border-radius: 50%; background-color: #a4b4e0; background-size: cover; background-position: center; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 56px; font-weight: bold; cursor: pointer; }
+    .ce-card { background-color: #ffffff; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+    .ce-input-row { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #f0f0f0; }
     .ce-input-row:last-child { border-bottom: none; }
-    .ce-input {
-        flex-grow: 1;
-        border: none;
-        outline: none;
-        font-size: 16px;
-        color: #1c1c1e;
-        background: transparent;
-    }
+    .ce-input { flex-grow: 1; border: none; outline: none; font-size: 16px; color: #1c1c1e; background: transparent; }
     .ce-input::placeholder { color: #c7c7cc; }
-    .ce-textarea {
-        width: 100%;
-        height: 150px;
-        border: none;
-        outline: none;
-        font-size: 16px;
-        color: #1c1c1e;
-        background: transparent;
-        padding: 16px;
-        resize: none;
-        font-family: inherit;
-    }
+    .ce-textarea { width: 100%; height: 150px; border: none; outline: none; font-size: 16px; color: #1c1c1e; background: transparent; padding: 16px; resize: none; font-family: inherit; }
     .ce-textarea::placeholder { color: #c7c7cc; }
-    .ce-action-btn {
-        background-color: #ffffff;
-        border-radius: 16px;
-        padding: 16px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 16px;
-        color: #1c1c1e;
-        cursor: pointer;
+    .ce-action-btn { background-color: #ffffff; border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-size: 16px; color: #1c1c1e; cursor: pointer; }
+    .ce-action-btn .plus-icon { width: 24px; height: 24px; border-radius: 50%; background-color: var(--green); color: #fff; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; line-height: 1; }
+    .ce-delete-btn { background-color: #ffffff; border-radius: 16px; padding: 16px; margin-top: 30px; text-align: center; font-size: 16px; color: var(--red); cursor: pointer; }
+
+    /* 显示关联人的区域 */
+    #relation-display { padding: 0 10px 10px; font-size: 14px; color: #555; display: none; line-height: 1.5; }
+    .relation-tag { background-color: #e5e5ea; padding: 4px 8px; border-radius: 6px; margin-right: 6px; margin-bottom: 6px; display: inline-block; }
+
+    /* ==================================================== */
+    /* --- 关联人弹窗样式 --- */
+    /* ==================================================== */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: rgba(0,0,0,0.4); z-index: 3000;
+        display: none; justify-content: center; align-items: center;
     }
-    .ce-action-btn .plus-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background-color: var(--green);
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 18px;
-        font-weight: bold;
-        line-height: 1;
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+        width: 85%; max-width: 340px;
+        background-color: #ffffff; border-radius: 20px;
+        padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        display: flex; flex-direction: column; max-height: 80vh;
     }
-    .ce-delete-btn {
-        background-color: #ffffff;
-        border-radius: 16px;
-        padding: 16px;
-        margin-top: 30px;
-        text-align: center;
-        font-size: 16px;
-        color: var(--red);
-        cursor: pointer;
+    .modal-title { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 16px; }
+    .modal-list {
+        flex-grow: 1; overflow-y: auto; margin-bottom: 16px;
+        border: 1px solid #f0f0f0; border-radius: 12px;
     }
+    .modal-item {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+    }
+    .modal-item:last-child { border-bottom: none; }
+    .modal-item.selected { background-color: rgba(0, 122, 255, 0.05); }
+    .modal-item-name { font-size: 16px; color: #1c1c1e; }
+    .modal-check {
+        width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .modal-item.selected .modal-check { border-color: var(--blue); background-color: var(--blue); }
+    .modal-item.selected .modal-check::after { content: ''; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+    
+    .modal-input-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .modal-input-group input {
+        width: 100%; padding: 12px; border: 1px solid #e5e5ea; border-radius: 10px;
+        font-size: 15px; outline: none;
+    }
+    .modal-actions { display: flex; gap: 12px; }
+    .modal-btn {
+        flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;
+    }
+    .modal-btn.cancel { background-color: #f2f2f7; color: #1c1c1e; }
+    .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
 
     /* 隐藏的文件输入 */
-    #file-upload { display: none; }
-    #import-file { display: none; }
-    #xy-file-upload { display: none; }
-    #ce-avatar-upload { display: none; }
-    #ce-docx-upload { display: none; }
+    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload { display: none; }
 </style>
 </head>
 <body>
 
+<!-- 桌面部分保持不变 -->
 <div class="app-container">
     <div class="widget-row">
-        <div class="widget-item">
-            <div class="widget-box" id="widget-img-1"></div>
-            <div class="widget-label editable" data-key="widget-label-1">暂无文本描述</div>
-        </div>
-        <div class="widget-item">
-            <div class="widget-box" id="widget-img-2"></div>
-        </div>
-        <div class="widget-item">
-            <div class="widget-box" id="widget-img-3"></div>
-            <div class="widget-label" id="live-time"></div>
-        </div>
+        <div class="widget-item"><div class="widget-box" id="widget-img-1"></div><div class="widget-label editable" data-key="widget-label-1">暂无文本描述</div></div>
+        <div class="widget-item"><div class="widget-box" id="widget-img-2"></div></div>
+        <div class="widget-item"><div class="widget-box" id="widget-img-3"></div><div class="widget-label" id="live-time"></div></div>
     </div>
-
     <div class="post-card">
         <div class="post-header">
             <div class="avatar" id="avatar-img"></div>
@@ -417,48 +236,19 @@
             <div class="action-btn"><svg style="width:18px;height:18px;fill:#8e8e93;" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg><span class="editable" data-key="action-likes">Likes</span></div>
         </div>
     </div>
-
     <div class="app-grid">
-        <div class="app-item" onclick="openXunyan()">
-            <div class="app-icon" id="home-icon-1"></div>
-            <div class="app-name" id="home-name-1">讯言</div>
-        </div>
-        <div class="app-item">
-            <div class="app-icon" id="home-icon-2"></div>
-            <div class="app-name" id="home-name-2">见面</div>
-        </div>
-        <!-- 点击进入通讯录列表 -->
-        <div class="app-item" onclick="openContactList()">
-            <div class="app-icon" id="home-icon-3"></div>
-            <div class="app-name" id="home-name-3">通讯录</div>
-        </div>
-        <div class="app-item" onclick="openManager()">
-            <div class="app-icon" id="home-icon-4"></div>
-            <div class="app-name" id="home-name-4">桌面</div>
-        </div>
+        <div class="app-item" onclick="openXunyan()"><div class="app-icon" id="home-icon-1"></div><div class="app-name" id="home-name-1">讯言</div></div>
+        <div class="app-item"><div class="app-icon" id="home-icon-2"></div><div class="app-name" id="home-name-2">见面</div></div>
+        <div class="app-item" onclick="openContactList()"><div class="app-icon" id="home-icon-3"></div><div class="app-name" id="home-name-3">通讯录</div></div>
+        <div class="app-item" onclick="openManager()"><div class="app-icon" id="home-icon-4"></div><div class="app-name" id="home-name-4">桌面</div></div>
     </div>
-
-    <div class="search-container">
-        <div class="search-bar">
-            <svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            搜索
-        </div>
-    </div>
-
-    <div class="dock">
-        <div class="dock-icon" id="home-dock-1"></div>
-        <div class="dock-icon" id="home-dock-2"></div>
-    </div>
+    <div class="search-container"><div class="search-bar"><svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>搜索</div></div>
+    <div class="dock"><div class="dock-icon" id="home-dock-1"></div><div class="dock-icon" id="home-dock-2"></div></div>
 </div>
 
-<!-- ================= 桌面管理界面 ================= -->
+<!-- 桌面管理界面 -->
 <div class="fullscreen-screen" id="manager-screen">
-    <div class="manager-header">
-        <button class="back-btn" onclick="closeScreen('manager-screen')">
-            <svg style="width:20px;height:20px;fill:#007aff;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 返回桌面
-        </button>
-        <div class="manager-title">桌面管理</div>
-    </div>
+    <div class="manager-header"><button class="back-btn" onclick="closeScreen('manager-screen')"><svg style="width:20px;height:20px;fill:#007aff;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 返回桌面</button><div class="manager-title">桌面管理</div></div>
     <div class="manager-section-title">桌面 App</div>
     <div class="manager-grid">
         <div class="app-item"><div class="app-icon manager-upload-btn" id="mg-icon-1" data-target="1"></div><div class="app-name manager-editable" id="mg-name-1" data-target="1">讯言</div></div>
@@ -481,12 +271,9 @@
     </div>
 </div>
 
-<!-- ================= 讯言 App 界面 ================= -->
+<!-- 讯言 App 界面 -->
 <div class="fullscreen-screen" id="xunyan-screen">
-    <div class="xy-header">
-        <svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-    </div>
+    <div class="xy-header"><svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
     <div class="xy-profile-section">
         <div class="xy-avatar" id="xy-avatar"></div>
         <div class="xy-info">
@@ -506,92 +293,67 @@
         <div class="xy-action-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg><span>Blog</span></div>
         <div class="xy-action-btn"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>Contact</span></div>
     </div>
-    <div class="xy-messages-section">
-        <div class="xy-msg-header"><h2>Messages</h2><span>See all</span></div>
-    </div>
+    <div class="xy-messages-section"><div class="xy-msg-header"><h2>Messages</h2><span>See all</span></div></div>
 </div>
 
-<!-- ================= 通讯录 App - 列表界面 ================= -->
+<!-- 通讯录 App - 列表界面 -->
 <div class="fullscreen-screen" id="contact-list-screen">
     <div class="cl-header">
         <button class="cl-header-btn" onclick="closeScreen('contact-list-screen')">返回</button>
         <div class="cl-title">人设</div>
-        <!-- 右上角编辑按钮（进入新建） -->
-        <button class="cl-header-btn" onclick="openContactEdit()">
-            <svg style="width:24px;height:24px;stroke:#007aff;stroke-width:2;fill:none;" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
-        </button>
+        <button class="cl-header-btn" onclick="openContactEdit()"><svg style="width:24px;height:24px;stroke:#007aff;stroke-width:2;fill:none;" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></button>
     </div>
-    
-    <div class="cl-list" id="contact-list-container">
-        <!-- 列表项由JS动态生成 -->
-    </div>
-
-    <!-- 底部导航栏 -->
+    <div class="cl-list" id="contact-list-container"></div>
     <div class="cl-bottom-nav">
-        <div class="cl-nav-item active">
-            <svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
-            <span>通话</span>
-        </div>
-        <div class="cl-nav-item">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            <span>通讯录</span>
-        </div>
-        <div class="cl-nav-item">
-            <svg viewBox="0 0 24 24"><path d="M9 4h6v2H9zm7 0h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M7 8h10M7 12h10M7 16h10"/></svg>
-            <span>拨号键盘</span>
-        </div>
-        <div class="cl-nav-search">
-            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        </div>
+        <div class="cl-nav-item active"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg><span>通话</span></div>
+        <div class="cl-nav-item"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>通讯录</span></div>
+        <div class="cl-nav-item"><svg viewBox="0 0 24 24"><path d="M9 4h6v2H9zm7 0h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M7 8h10M7 12h10M7 16h10"/></svg><span>拨号键盘</span></div>
+        <div class="cl-nav-search"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
     </div>
 </div>
 
-<!-- ================= 通讯录 App - 编辑界面 ================= -->
+<!-- 通讯录 App - 编辑界面 -->
 <div class="fullscreen-screen" id="contact-edit-screen">
     <div class="ce-header">
-        <div class="ce-icon-btn" onclick="closeScreen('contact-edit-screen')">
-            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-        </div>
-        <!-- 保存按钮 -->
-        <div class="ce-icon-btn check-btn" id="ce-save-btn" onclick="saveContact()">
-            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
-        </div>
+        <div class="ce-icon-btn" onclick="closeScreen('contact-edit-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+        <div class="ce-icon-btn check-btn" id="ce-save-btn" onclick="saveContact()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
     </div>
-    
     <div class="ce-body">
         <div class="ce-avatar-section">
             <div class="ce-avatar" id="ce-avatar" onclick="document.getElementById('ce-avatar-upload').click()"></div>
         </div>
-        
         <div class="ce-card">
-            <div class="ce-input-row">
-                <input type="text" class="ce-input" id="ce-remark" placeholder="添加备注（用户对char的称呼）">
-            </div>
-            <div class="ce-input-row">
-                <input type="text" class="ce-input" id="ce-name" placeholder="名字（真实名字，必填）">
-            </div>
-            <div class="ce-input-row">
-                <input type="text" class="ce-input" id="ce-identity" placeholder="身份">
-            </div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-remark" placeholder="添加备注"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-name" placeholder="名字 (必填)"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-identity" placeholder="身份"></div>
         </div>
-
         <div class="ce-action-btn" onclick="document.getElementById('ce-docx-upload').click()">
-            <div class="plus-icon">+</div>
-            上传 docx 文件导入人设
+            <div class="plus-icon">+</div> 上传人设文件
         </div>
-
-        <div class="ce-action-btn" onclick="addRelation()">
-            <div class="plus-icon">+</div>
-            添加关联人
+        <div class="ce-action-btn" onclick="openRelationModal()">
+            <div class="plus-icon">+</div> 添加关联人
         </div>
-        <div id="relation-display" style="padding: 0 10px 10px; font-size: 14px; color: #555; display: none;"></div>
-
+        <div id="relation-display"></div>
         <div class="ce-card" style="margin-top: 20px;">
-            <textarea class="ce-textarea" id="ce-bio" placeholder="生平（上传 char 的人设信息，必填）"></textarea>
+            <textarea class="ce-textarea" id="ce-bio" placeholder="生平 (必填)"></textarea>
         </div>
+        <div class="ce-delete-btn" id="ce-delete-btn" onclick="deleteContact()" style="display: none;">删除联系人</div>
+    </div>
+</div>
 
-        <div class="ce-delete-btn" id="ce-delete-btn" onclick="deleteContact()" style="display: none;">
-            删除联系人
+<!-- 关联人选择弹窗 -->
+<div class="modal-overlay" id="relation-modal">
+    <div class="modal-content">
+        <div class="modal-title">添加关联人</div>
+        <div class="modal-list" id="relation-target-list">
+            <!-- 动态渲染 -->
+        </div>
+        <div class="modal-input-group" id="relation-input-group" style="display: none;">
+            <input type="text" id="relation-text-input" placeholder="输入关系（如：朋友、父子、仇人）">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeRelationModal()">取消</button>
+            <button class="modal-btn confirm" onclick="confirmRelation()">确定</button>
         </div>
     </div>
 </div>
@@ -605,269 +367,88 @@
 
 <script>
     // ==========================================
-    // 1. 数据库与存储封装
+    // 1. 数据库与存储封装 (保持不变)
     // ==========================================
-    const DB_NAME = 'AppImageDB';
-    const DB_VERSION = 1;
-    const STORE_NAME = 'images';
-
-    function initDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
-            };
-            request.onsuccess = (e) => resolve(e.target.result);
-            request.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async function saveImageToDB(key, base64Data) {
-        const db = await initDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.put(base64Data, key);
-            req.onsuccess = () => resolve();
-            req.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async function getImageFromDB(key) {
-        const db = await initDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readonly');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.get(key);
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async function deleteImageFromDB(key) {
-        const db = await initDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.delete(key);
-            req.onsuccess = () => resolve();
-            req.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async function getAllImagesFromDB() {
-        const db = await initDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readonly');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.getAll();
-            const keysReq = store.getAllKeys();
-            tx.oncomplete = () => {
-                const result = {};
-                for(let i=0; i<keysReq.result.length; i++) result[keysReq.result[i]] = req.result[i];
-                resolve(result);
-            };
-            tx.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async function clearImageDB() {
-        const db = await initDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            store.clear();
-            tx.oncomplete = () => resolve();
-            tx.onerror = (e) => reject(e.target.error);
-        });
-    }
+    const DB_NAME = 'AppImageDB'; const DB_VERSION = 1; const STORE_NAME = 'images';
+    function initDB() { return new Promise((resolve, reject) => { const request = indexedDB.open(DB_NAME, DB_VERSION); request.onupgradeneeded = (e) => { const db = e.target.result; if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME); }; request.onsuccess = (e) => resolve(e.target.result); request.onerror = (e) => reject(e.target.error); }); }
+    async function saveImageToDB(key, base64Data) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.put(base64Data, key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
+    async function getImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.get(key); req.onsuccess = () => resolve(req.result); req.onerror = (e) => reject(e.target.error); }); }
+    async function deleteImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.delete(key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
+    async function getAllImagesFromDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.getAll(); const keysReq = store.getAllKeys(); tx.oncomplete = () => { const result = {}; for(let i=0; i<keysReq.result.length; i++) result[keysReq.result[i]] = req.result[i]; resolve(result); }; tx.onerror = (e) => reject(e.target.error); }); }
+    async function clearImageDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); store.clear(); tx.oncomplete = () => resolve(); tx.onerror = (e) => reject(e.target.error); }); }
 
     // ==========================================
-    // 2. 系统时间
+    // 2. 基础逻辑 (保持不变)
     // ==========================================
-    function updateLiveTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('live-time').innerText = `${hours}:${minutes}`;
-    }
-    setInterval(updateLiveTime, 1000);
-    updateLiveTime();
+    function updateLiveTime() { const now = new Date(); const hours = String(now.getHours()).padStart(2, '0'); const minutes = String(now.getMinutes()).padStart(2, '0'); document.getElementById('live-time').innerText = `${hours}:${minutes}`; }
+    setInterval(updateLiveTime, 1000); updateLiveTime();
 
-    // ==========================================
-    // 3. 全局界面控制
-    // ==========================================
     function openScreen(id) { document.getElementById(id).classList.add('active'); }
     function closeScreen(id) { document.getElementById(id).classList.remove('active'); }
-
     function openManager() { openScreen('manager-screen'); }
     function openXunyan() { openScreen('xunyan-screen'); }
     
-    function openContactList() {
-        renderContactList();
-        openScreen('contact-list-screen');
-    }
+    function openContactList() { renderContactList(); openScreen('contact-list-screen'); }
 
-    // ==========================================
-    // 4. 桌面 App 数据配置与渲染 (保持不变)
-    // ==========================================
-    const defaultApps = [
-        { id: '1', name: '讯言', isDock: false },
-        { id: '2', name: '见面', isDock: false },
-        { id: '3', name: '通讯录', isDock: false },
-        { id: '4', name: '桌面', isDock: false },
-        { id: 'd1', name: '', isDock: true },
-        { id: 'd2', name: '', isDock: true }
-    ];
+    const defaultApps = [ { id: '1', name: '讯言', isDock: false }, { id: '2', name: '见面', isDock: false }, { id: '3', name: '通讯录', isDock: false }, { id: '4', name: '桌面', isDock: false }, { id: 'd1', name: '', isDock: true }, { id: 'd2', name: '', isDock: true } ];
 
     async function renderApps() {
         for (const app of defaultApps) {
-            const savedName = localStorage.getItem(`app_name_${app.id}`);
-            const finalName = savedName !== null ? savedName : app.name;
+            const savedName = localStorage.getItem(`app_name_${app.id}`); const finalName = savedName !== null ? savedName : app.name;
             const savedImg = await getImageFromDB(`app_img_${app.id}`);
-
             if (!app.isDock) {
-                const homeNameEl = document.getElementById(`home-name-${app.id}`);
-                const homeIconEl = document.getElementById(`home-icon-${app.id}`);
+                const homeNameEl = document.getElementById(`home-name-${app.id}`); const homeIconEl = document.getElementById(`home-icon-${app.id}`);
                 if (homeNameEl) homeNameEl.innerText = finalName;
-                if (homeIconEl) {
-                    if (savedImg) homeIconEl.style.backgroundImage = `url(${savedImg})`;
-                    else homeIconEl.style.backgroundImage = 'none';
-                }
-                const mgNameEl = document.getElementById(`mg-name-${app.id}`);
-                const mgIconEl = document.getElementById(`mg-icon-${app.id}`);
+                if (homeIconEl) { if (savedImg) homeIconEl.style.backgroundImage = `url(${savedImg})`; else homeIconEl.style.backgroundImage = 'none'; }
+                const mgNameEl = document.getElementById(`mg-name-${app.id}`); const mgIconEl = document.getElementById(`mg-icon-${app.id}`);
                 if (mgNameEl) mgNameEl.innerText = finalName;
-                if (mgIconEl) {
-                    if (savedImg) mgIconEl.style.backgroundImage = `url(${savedImg})`;
-                    else mgIconEl.style.backgroundImage = 'none';
-                }
+                if (mgIconEl) { if (savedImg) mgIconEl.style.backgroundImage = `url(${savedImg})`; else mgIconEl.style.backgroundImage = 'none'; }
             } else {
-                const homeDockEl = document.getElementById(`home-dock-${app.id === 'd1' ? '1' : '2'}`);
-                const mgDockEl = document.getElementById(`mg-dock-${app.id === 'd1' ? '1' : '2'}`);
-                if (homeDockEl) {
-                    if (savedImg) homeDockEl.style.backgroundImage = `url(${savedImg})`;
-                    else homeDockEl.style.backgroundImage = 'none';
-                }
-                if (mgDockEl) {
-                    if (savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`;
-                    else mgDockEl.style.backgroundImage = 'none';
-                }
+                const homeDockEl = document.getElementById(`home-dock-${app.id === 'd1' ? '1' : '2'}`); const mgDockEl = document.getElementById(`mg-dock-${app.id === 'd1' ? '1' : '2'}`);
+                if (homeDockEl) { if (savedImg) homeDockEl.style.backgroundImage = `url(${savedImg})`; else homeDockEl.style.backgroundImage = 'none'; }
+                if (mgDockEl) { if (savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`; else mgDockEl.style.backgroundImage = 'none'; }
             }
         }
     }
 
-    // ==========================================
-    // 5. 文字双击编辑 (保持不变)
-    // ==========================================
     function setupEditableText(elements) {
         elements.forEach(el => {
-            const key = el.dataset.key;
-            const savedText = localStorage.getItem(key);
-            if (savedText) el.innerHTML = savedText;
-
-            el.addEventListener('dblclick', function(e) {
-                e.stopPropagation();
-                this.contentEditable = "true";
-                this.focus();
-                const range = document.createRange();
-                const sel = window.getSelection();
-                range.selectNodeContents(this);
-                range.collapse(false);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            });
-
-            el.addEventListener('blur', function() {
-                this.contentEditable = "false";
-                localStorage.setItem(key, this.innerHTML);
-            });
+            const key = el.dataset.key; const savedText = localStorage.getItem(key); if (savedText) el.innerHTML = savedText;
+            el.addEventListener('dblclick', function(e) { e.stopPropagation(); this.contentEditable = "true"; this.focus(); const range = document.createRange(); const sel = window.getSelection(); range.selectNodeContents(this); range.collapse(false); sel.removeAllRanges(); sel.addRange(range); });
+            el.addEventListener('blur', function() { this.contentEditable = "false"; localStorage.setItem(key, this.innerHTML); });
         });
     }
-
     document.querySelectorAll('.manager-editable').forEach(el => {
-        el.addEventListener('dblclick', function(e) {
-            e.stopPropagation();
-            this.contentEditable = "true";
-            this.focus();
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(this);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-        });
-
-        el.addEventListener('blur', function() {
-            this.contentEditable = "false";
-            const appId = this.dataset.target;
-            const newName = this.innerText.trim();
-            localStorage.setItem(`app_name_${appId}`, newName);
-            document.getElementById(`home-name-${appId}`).innerText = newName;
-        });
+        el.addEventListener('dblclick', function(e) { e.stopPropagation(); this.contentEditable = "true"; this.focus(); const range = document.createRange(); const sel = window.getSelection(); range.selectNodeContents(this); range.collapse(false); sel.removeAllRanges(); sel.addRange(range); });
+        el.addEventListener('blur', function() { this.contentEditable = "false"; const appId = this.dataset.target; const newName = this.innerText.trim(); localStorage.setItem(`app_name_${appId}`, newName); document.getElementById(`home-name-${appId}`).innerText = newName; });
     });
-
     setupEditableText(document.querySelectorAll('.editable, .xy-editable'));
 
-    // ==========================================
-    // 6. 桌面图片上传逻辑 (保持不变)
-    // ==========================================
-    const fileInput = document.getElementById('file-upload');
-    let currentUploadTarget = null;
-
-    document.querySelectorAll('.manager-upload-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            currentUploadTarget = { type: 'app', id: this.dataset.target };
-            fileInput.click();
-        });
-    });
-
-    function setupHomeImageUpload(elementId) {
-        const el = document.getElementById(elementId);
-        el.addEventListener('click', () => {
-            currentUploadTarget = { type: 'other', id: elementId };
-            fileInput.click();
-        });
-    }
-    
-    setupHomeImageUpload('widget-img-1');
-    setupHomeImageUpload('widget-img-2');
-    setupHomeImageUpload('widget-img-3');
-    setupHomeImageUpload('avatar-img');
-
-    document.getElementById('btn-change-wallpaper').addEventListener('click', () => {
-        currentUploadTarget = { type: 'wallpaper', id: 'wallpaper' };
-        fileInput.click();
-    });
+    const fileInput = document.getElementById('file-upload'); let currentUploadTarget = null;
+    document.querySelectorAll('.manager-upload-btn').forEach(btn => { btn.addEventListener('click', function() { currentUploadTarget = { type: 'app', id: this.dataset.target }; fileInput.click(); }); });
+    function setupHomeImageUpload(elementId) { const el = document.getElementById(elementId); el.addEventListener('click', () => { currentUploadTarget = { type: 'other', id: elementId }; fileInput.click(); }); }
+    setupHomeImageUpload('widget-img-1'); setupHomeImageUpload('widget-img-2'); setupHomeImageUpload('widget-img-3'); setupHomeImageUpload('avatar-img');
+    document.getElementById('btn-change-wallpaper').addEventListener('click', () => { currentUploadTarget = { type: 'wallpaper', id: 'wallpaper' }; fileInput.click(); });
 
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentUploadTarget) {
             const reader = new FileReader();
             reader.onload = async function(event) {
-                const base64Data = event.target.result;
-                let dbKey = '';
+                const base64Data = event.target.result; let dbKey = '';
                 if (currentUploadTarget.type === 'app') dbKey = `app_img_${currentUploadTarget.id}`;
                 else if (currentUploadTarget.type === 'wallpaper') dbKey = 'app_wallpaper';
                 else dbKey = `other_img_${currentUploadTarget.id}`;
-
                 await saveImageToDB(dbKey, base64Data);
-
                 if (currentUploadTarget.type === 'app') await renderApps(); 
                 else if (currentUploadTarget.type === 'wallpaper') document.body.style.backgroundImage = `url(${base64Data})`;
-                else {
-                    const el = document.getElementById(currentUploadTarget.id);
-                    if (el) el.style.backgroundImage = `url(${base64Data})`;
-                }
+                else { const el = document.getElementById(currentUploadTarget.id); if (el) el.style.backgroundImage = `url(${base64Data})`; }
                 fileInput.value = '';
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // ==========================================
-    // 7. 讯言专属头像上传逻辑
-    // ==========================================
     const xyFileInput = document.getElementById('xy-file-upload');
     document.getElementById('xy-avatar').addEventListener('click', () => xyFileInput.click());
     xyFileInput.addEventListener('change', function(e) {
@@ -884,104 +465,74 @@
         }
     });
 
-    // ==========================================
-    // 8. 导出/导入 & 恢复默认 (保持不变)
-    // ==========================================
+    // 导入/导出/恢复默认逻辑
     document.getElementById('btn-export').addEventListener('click', async () => {
         try {
-            const lsData = {};
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                lsData[key] = localStorage.getItem(key);
-            }
+            const lsData = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); lsData[key] = localStorage.getItem(key); }
             const dbData = await getAllImagesFromDB();
             const exportPayload = { version: 1.0, timestamp: Date.now(), localStorage: lsData, indexedDB: dbData };
             const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `desktop_beautify_${new Date().getTime()}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-            alert("导出成功！请保存好下载的 JSON 文件。");
+            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `desktop_beautify_${new Date().getTime()}.json`);
+            document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); alert("导出成功！");
         } catch (err) { alert("导出失败，请重试。"); }
     });
-
     const importFileInput = document.getElementById('import-file');
     document.getElementById('btn-import').addEventListener('click', () => importFileInput.click());
     importFileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = async function(event) {
             try {
                 const importedData = JSON.parse(event.target.result);
                 if (!importedData.localStorage || !importedData.indexedDB) throw new Error("无效格式");
-                await clearImageDB();
-                localStorage.clear();
+                await clearImageDB(); localStorage.clear();
                 for (const [key, value] of Object.entries(importedData.localStorage)) localStorage.setItem(key, value);
-                const imagePromises = [];
-                for (const [key, base64] of Object.entries(importedData.indexedDB)) imagePromises.push(saveImageToDB(key, base64));
-                await Promise.all(imagePromises);
-                alert("导入成功！点击确定后将刷新页面以应用新配置。");
-                location.reload();
-            } catch (err) { alert("导入失败：文件可能已损坏或格式不正确。"); }
+                const imagePromises = []; for (const [key, base64] of Object.entries(importedData.indexedDB)) imagePromises.push(saveImageToDB(key, base64));
+                await Promise.all(imagePromises); alert("导入成功！刷新页面应用。"); location.reload();
+            } catch (err) { alert("导入失败。"); }
             importFileInput.value = '';
         };
         reader.readAsText(file);
     });
-
     document.getElementById('btn-reset-wallpaper').addEventListener('click', async () => {
-        if(confirm("确定要恢复默认桌面壁纸吗？")) {
-            await deleteImageFromDB('app_wallpaper');
-            localStorage.removeItem('wallpaper');
-            document.body.style.backgroundImage = 'none';
-        }
+        if(confirm("确定要恢复默认桌面壁纸吗？")) { await deleteImageFromDB('app_wallpaper'); localStorage.removeItem('wallpaper'); document.body.style.backgroundImage = 'none'; }
     });
-
     document.getElementById('btn-reset-apps').addEventListener('click', async () => {
-        if(confirm("确定要将所有App（桌面及底部）恢复为默认的图标和名称吗？")) {
+        if(confirm("确定要将所有App恢复默认吗？")) {
             defaultApps.forEach(app => localStorage.removeItem(`app_name_${app.id}`));
             const keysToDelete = ['app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
             for (let key of keysToDelete) await deleteImageFromDB(key);
-            await renderApps();
-            alert("已恢复默认图标和名称！");
+            await renderApps(); alert("已恢复默认！");
         }
     });
 
     // ==========================================
-    // 9. 通讯录 App 核心逻辑
+    // 3. 通讯录 App 核心逻辑 (更新版)
     // ==========================================
-    // 数据结构：{ id, remark, name, identity, bio, relation, avatarImg (base64) }
     let contacts = JSON.parse(localStorage.getItem('contacts_data')) || [];
-    let currentEditId = null; // 记录当前正在编辑的联系人ID
+    let currentEditId = null;
+    // 临时保存当前编辑的关联人数据 [{targetId, targetName, relationDesc}]
+    let currentRelations = []; 
+    // 模态框状态
+    let selectedModalTargetId = null;
 
-    // 渲染列表
     async function renderContactList() {
         const container = document.getElementById('contact-list-container');
         container.innerHTML = '';
-        
         if (contacts.length === 0) {
             container.innerHTML = '<div style="text-align:center; color:#999; margin-top:50px;">暂无联系人</div>';
             return;
         }
-
         for (let i = 0; i < contacts.length; i++) {
             const c = contacts[i];
             const displayName = c.remark || c.name || '未命名';
             const initial = displayName.charAt(0);
-            
             const div = document.createElement('div');
             div.className = 'cl-item';
             div.onclick = () => openContactEdit(c.id);
-
-            // 头像处理
             let avatarStyle = '';
             const savedImg = await getImageFromDB(`contact_avatar_${c.id}`);
-            if (savedImg) {
-                avatarStyle = `background-image: url(${savedImg}); color: transparent;`;
-            }
-
+            if (savedImg) avatarStyle = `background-image: url(${savedImg}); color: transparent;`;
             div.innerHTML = `
                 <div class="cl-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
                 <div class="cl-info">
@@ -989,130 +540,238 @@
                     <div class="cl-sub">↗ ${c.identity || c.name || '未知'}</div>
                 </div>
                 <div class="cl-time">${i === 0 ? '刚刚' : '昨天'}</div>
-                <div class="cl-call-icon">
-                    <svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
-                </div>
+                <div class="cl-call-icon"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
             `;
             container.appendChild(div);
         }
     }
 
-    // 打开编辑界面
+    function renderRelationTags() {
+        const display = document.getElementById('relation-display');
+        display.innerHTML = '';
+        if (currentRelations.length > 0) {
+            display.style.display = 'block';
+            currentRelations.forEach((rel, index) => {
+                const tag = document.createElement('span');
+                tag.className = 'relation-tag';
+                tag.innerText = `${rel.targetName} (${rel.relationDesc})`;
+                // 点击删除该关联
+                tag.onclick = () => {
+                    if(confirm(`确定删除与 ${rel.targetName} 的关联吗？`)) {
+                        currentRelations.splice(index, 1);
+                        renderRelationTags();
+                    }
+                };
+                display.appendChild(tag);
+            });
+        } else {
+            display.style.display = 'none';
+        }
+    }
+
     async function openContactEdit(id = null) {
         currentEditId = id;
         const avatarEl = document.getElementById('ce-avatar');
-        const remarkEl = document.getElementById('ce-remark');
-        const nameEl = document.getElementById('ce-name');
-        const identityEl = document.getElementById('ce-identity');
-        const bioEl = document.getElementById('ce-bio');
-        const relationDisplay = document.getElementById('relation-display');
-        const deleteBtn = document.getElementById('ce-delete-btn');
-
-        // 重置表单
-        avatarEl.style.backgroundImage = 'none';
-        avatarEl.innerText = '?';
-        avatarEl.style.color = '#fff';
-        remarkEl.value = '';
-        nameEl.value = '';
-        identityEl.value = '';
-        bioEl.value = '';
-        relationDisplay.style.display = 'none';
-        relationDisplay.dataset.relation = '';
+        document.getElementById('ce-remark').value = '';
+        document.getElementById('ce-name').value = '';
+        document.getElementById('ce-identity').value = '';
+        document.getElementById('ce-bio').value = '';
+        avatarEl.style.backgroundImage = 'none'; avatarEl.innerText = '?'; avatarEl.style.color = '#fff';
+        document.getElementById('ce-delete-btn').style.display = id ? 'block' : 'none';
         
+        currentRelations = []; // 重置关联人
+
         if (id) {
-            // 编辑模式
             const c = contacts.find(x => x.id === id);
             if (c) {
-                remarkEl.value = c.remark || '';
-                nameEl.value = c.name || '';
-                identityEl.value = c.identity || '';
-                bioEl.value = c.bio || '';
+                document.getElementById('ce-remark').value = c.remark || '';
+                document.getElementById('ce-name').value = c.name || '';
+                document.getElementById('ce-identity').value = c.identity || '';
+                document.getElementById('ce-bio').value = c.bio || '';
+                currentRelations = c.relations || [];
                 
-                if (c.relation) {
-                    relationDisplay.style.display = 'block';
-                    relationDisplay.innerText = '关联人: ' + c.relation;
-                    relationDisplay.dataset.relation = c.relation;
-                }
-                
-                const initial = (c.remark || c.name || '?').charAt(0);
-                avatarEl.innerText = initial;
-
+                const initial = (c.remark || c.name || '?').charAt(0); avatarEl.innerText = initial;
                 const savedImg = await getImageFromDB(`contact_avatar_${id}`);
-                if (savedImg) {
-                    avatarEl.style.backgroundImage = `url(${savedImg})`;
-                    avatarEl.innerText = '';
-                }
-                
-                deleteBtn.style.display = 'block';
+                if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; }
             }
-        } else {
-            // 新建模式
-            deleteBtn.style.display = 'none';
         }
         
+        renderRelationTags();
         checkSaveBtnState();
         openScreen('contact-edit-screen');
     }
 
-    // 检查保存按钮状态 (名字和生平必填)
     function checkSaveBtnState() {
         const name = document.getElementById('ce-name').value.trim();
         const bio = document.getElementById('ce-bio').value.trim();
         const saveBtn = document.getElementById('ce-save-btn');
-        if (name && bio) {
-            saveBtn.classList.add('active');
-        } else {
-            saveBtn.classList.remove('active');
-        }
+        if (name && bio) saveBtn.classList.add('active');
+        else saveBtn.classList.remove('active');
     }
-
-    // 监听必填项输入
     document.getElementById('ce-name').addEventListener('input', checkSaveBtnState);
     document.getElementById('ce-bio').addEventListener('input', checkSaveBtnState);
 
-    // 关联人
-    function addRelation() {
-        const currentRel = document.getElementById('relation-display').dataset.relation || '';
-        const newRel = prompt("请输入关联人或关系描述（例如：父亲、同事）：", currentRel);
-        if (newRel !== null && newRel.trim() !== '') {
-            const display = document.getElementById('relation-display');
-            display.style.display = 'block';
-            display.innerText = '关联人: ' + newRel;
-            display.dataset.relation = newRel;
-        }
+    // ==========================================
+    // 4. 关联人弹窗逻辑
+    // ==========================================
+    function openRelationModal() {
+        selectedModalTargetId = null;
+        const listContainer = document.getElementById('relation-target-list');
+        listContainer.innerHTML = '';
+        document.getElementById('relation-input-group').style.display = 'none';
+        document.getElementById('relation-text-input').value = '';
+
+        // 1. 总是添加“用户(User)”选项
+        const userItem = document.createElement('div');
+        userItem.className = 'modal-item';
+        userItem.dataset.id = 'user_self';
+        userItem.dataset.name = '用户';
+        userItem.innerHTML = `<span class="modal-item-name">用户 (User)</span><div class="modal-check"></div>`;
+        userItem.onclick = () => selectModalTarget('user_self', '用户', userItem);
+        listContainer.appendChild(userItem);
+
+        // 2. 渲染其他 Char 选项 (排除自己)
+        contacts.forEach(c => {
+            if (c.id !== currentEditId) {
+                const displayName = c.remark || c.name || '未命名';
+                const charItem = document.createElement('div');
+                charItem.className = 'modal-item';
+                charItem.dataset.id = c.id;
+                charItem.dataset.name = displayName;
+                charItem.innerHTML = `<span class="modal-item-name">${displayName}</span><div class="modal-check"></div>`;
+                charItem.onclick = () => selectModalTarget(c.id, displayName, charItem);
+                listContainer.appendChild(charItem);
+            }
+        });
+
+        document.getElementById('relation-modal').classList.add('active');
     }
 
-    // 保存联系人
+    function selectModalTarget(id, name, el) {
+        // 清除所有选中状态
+        document.querySelectorAll('.modal-item').forEach(item => item.classList.remove('selected'));
+        // 当前选中
+        el.classList.add('selected');
+        selectedModalTargetId = id;
+        selectedModalTargetName = name;
+        // 显示关系输入框
+        document.getElementById('relation-input-group').style.display = 'block';
+        document.getElementById('relation-text-input').focus();
+    }
+
+    function closeRelationModal() {
+        document.getElementById('relation-modal').classList.remove('active');
+    }
+
+    function confirmRelation() {
+        if (!selectedModalTargetId) {
+            alert("请先选择一个关联对象");
+            return;
+        }
+        const relText = document.getElementById('relation-text-input').value.trim();
+        if (!relText) {
+            alert("请输入你们之间的关系（如：朋友）");
+            return;
+        }
+
+        // 检查是否已经添加过
+        const exists = currentRelations.find(r => r.targetId === selectedModalTargetId);
+        if (exists) {
+            exists.relationDesc = relText; // 更新
+        } else {
+            currentRelations.push({
+                targetId: selectedModalTargetId,
+                targetName: selectedModalTargetName,
+                relationDesc: relText
+            });
+        }
+
+        renderRelationTags();
+        closeRelationModal();
+    }
+
+    // ==========================================
+    // 5. docx 解析与文件上传逻辑
+    // ==========================================
+    document.getElementById('ce-docx-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const arrayBuffer = event.target.result;
+            
+            // 使用 mammoth 解析 docx
+            mammoth.extractRawText({arrayBuffer: arrayBuffer})
+                .then(function(result){
+                    const text = result.value;
+                    document.getElementById('ce-bio').value = text;
+                    checkSaveBtnState();
+                    alert("人设文件解析成功！文字已导入下方【生平】框中。");
+                })
+                .catch(function(err){
+                    alert("文件解析失败，请确保上传的是有效的 .docx 文件。\n\n错误信息：" + err.message);
+                    console.error(err);
+                });
+        };
+        reader.readAsArrayBuffer(file);
+        this.value = ''; // 清空以便重复上传
+    });
+
+    document.getElementById('ce-avatar-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Data = event.target.result;
+                const avatarEl = document.getElementById('ce-avatar');
+                avatarEl.style.backgroundImage = `url(${base64Data})`;
+                avatarEl.innerText = '';
+                
+                let tempId = currentEditId || 'temp_' + Date.now();
+                saveImageToDB(`contact_avatar_${tempId}`, base64Data).then(() => {
+                    if (!currentEditId) window.tempAvatarId = tempId;
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // ==========================================
+    // 6. 保存与删除联系人
+    // ==========================================
     async function saveContact() {
         const remark = document.getElementById('ce-remark').value.trim();
         const name = document.getElementById('ce-name').value.trim();
         const identity = document.getElementById('ce-identity').value.trim();
         const bio = document.getElementById('ce-bio').value.trim();
-        const relation = document.getElementById('relation-display').dataset.relation || '';
 
-        if (!name || !bio) {
-            alert("【名字】和【生平】是必填项！");
-            return;
-        }
+        if (!name || !bio) { alert("【名字】和【生平】是必填项！"); return; }
 
         let id = currentEditId;
         if (!id) {
             id = 'c_' + Date.now();
-            contacts.push({ id, remark, name, identity, bio, relation });
+            // 如果有临时头像，转移Key
+            if (window.tempAvatarId) {
+                const imgData = await getImageFromDB(`contact_avatar_${window.tempAvatarId}`);
+                if (imgData) { await saveImageToDB(`contact_avatar_${id}`, imgData); await deleteImageFromDB(`contact_avatar_${window.tempAvatarId}`); }
+                window.tempAvatarId = null;
+            }
+            // 存入数据
+            contacts.push({ id, remark, name, identity, bio, relations: currentRelations });
         } else {
             const index = contacts.findIndex(x => x.id === id);
             if (index > -1) {
-                contacts[index] = { id, remark, name, identity, bio, relation };
+                contacts[index] = { id, remark, name, identity, bio, relations: currentRelations };
             }
         }
 
         localStorage.setItem('contacts_data', JSON.stringify(contacts));
-        alert("保存成功！");
+        alert("保存成功！\n该 Char 的人设与关联关系数据已存档，将在未来的聊天中生效。");
         closeScreen('contact-edit-screen');
-        renderContactList(); // 刷新列表
+        renderContactList();
     }
 
-    // 删除联系人
     async function deleteContact() {
         if (!currentEditId) return;
         if (confirm("确定要删除这个联系人吗？")) {
@@ -1124,85 +783,8 @@
         }
     }
 
-    // 头像上传逻辑
-    document.getElementById('ce-avatar-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const base64Data = event.target.result;
-                const avatarEl = document.getElementById('ce-avatar');
-                avatarEl.style.backgroundImage = `url(${base64Data})`;
-                avatarEl.innerText = '';
-                
-                // 临时保存上传的图片，等点保存按钮时才写入DB
-                // 但是为了简单，我们可以直接生成一个临时ID写入，或者直接存到一张全局变量里
-                // 为了支持保存，这里直接存入DB（如果没ID就先随便给个临时ID，正式保存时如果ID变了再转存）
-                // 简单处理：如果没ID，给个临时ID
-                let tempId = currentEditId || 'temp_' + Date.now();
-                saveImageToDB(`contact_avatar_${tempId}`, base64Data).then(() => {
-                    if (!currentEditId) {
-                        // 如果原本是新建，现在上传了图，需要记住这个临时ID
-                        window.tempAvatarId = tempId;
-                    }
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // 重写保存逻辑以处理临时头像ID
-    const originalSaveContact = saveContact;
-    saveContact = async function() {
-        const remark = document.getElementById('ce-remark').value.trim();
-        const name = document.getElementById('ce-name').value.trim();
-        const identity = document.getElementById('ce-identity').value.trim();
-        const bio = document.getElementById('ce-bio').value.trim();
-        const relation = document.getElementById('relation-display').dataset.relation || '';
-
-        if (!name || !bio) {
-            alert("【名字】和【生平】是必填项！");
-            return;
-        }
-
-        let id = currentEditId;
-        if (!id) {
-            id = 'c_' + Date.now();
-            contacts.push({ id, remark, name, identity, bio, relation });
-            
-            // 如果有临时上传的头像，转移一下Key
-            if (window.tempAvatarId) {
-                const imgData = await getImageFromDB(`contact_avatar_${window.tempAvatarId}`);
-                if (imgData) {
-                    await saveImageToDB(`contact_avatar_${id}`, imgData);
-                    await deleteImageFromDB(`contact_avatar_${window.tempAvatarId}`);
-                }
-                window.tempAvatarId = null;
-            }
-        } else {
-            const index = contacts.findIndex(x => x.id === id);
-            if (index > -1) {
-                contacts[index] = { id, remark, name, identity, bio, relation };
-            }
-        }
-
-        localStorage.setItem('contacts_data', JSON.stringify(contacts));
-        alert("保存成功！");
-        closeScreen('contact-edit-screen');
-        renderContactList();
-    };
-
-    // 处理 docx 上传 (由于是纯前端单文件，无法原生解析复杂docx)
-    document.getElementById('ce-docx-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            alert(`已选择文件：${file.name}\n\n当前环境暂不支持直接解析 Word 文档内容。\n请手动打开该文档，将文字复制粘贴到下方的【生平】框中。`);
-            this.value = '';
-        }
-    });
-
     // ==========================================
-    // 10. 初始化加载
+    // 7. 初始化
     // ==========================================
     async function initApp() {
         await renderApps();
@@ -1224,7 +806,6 @@
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
         
-        // 启动时渲染一次通讯录列表
         renderContactList();
     }
 
