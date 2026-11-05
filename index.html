@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fan</title>
+<style>
+    :root {
+        --bg-color: #f5f5f7;
+        --card-bg: #ffffff;
+        --text-main: #1c1c1e;
+        --text-secondary: #8e8e93;
+        --placeholder-bg: #e5e5ea;
+        --border-color: #e5e5ea;
+        --blue: #007aff;
+    }
+
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px 12px;
+        background-color: var(--bg-color);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 顶部三个小方块区 */
+    .widget-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+
+    .widget-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30%;
+    }
+
+    .widget-box {
+        width: 80px;
+        height: 80px;
+        background-color: var(--placeholder-bg);
+        border-radius: 16px;
+        cursor: pointer;
+        background-size: cover;
+        background-position: center;
+        transition: opacity 0.2s;
+    }
+    .widget-box:active {
+        opacity: 0.7;
+    }
+
+    .widget-label {
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        min-height: 18px;
+    }
+
+    /* 中间大白框 (帖子区) */
+    .post-card {
+        background-color: var(--card-bg);
+        border-radius: 20px;
+        padding: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--placeholder-bg);
+        margin-right: 12px;
+        cursor: pointer;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+    }
+
+    .user-info {
+        flex-grow: 1;
+    }
+
+    .username {
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .post-time {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+    }
+
+    .more-icon {
+        color: var(--text-secondary);
+        font-weight: bold;
+        letter-spacing: 2px;
+        cursor: pointer;
+    }
+
+    .post-content {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    .post-content .translation {
+        color: var(--blue);
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 500;
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* 应用图标区 */
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        padding: 0 10px;
+        margin-bottom: 30px;
+    }
+
+    .app-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .app-icon {
+        width: 60px;
+        height: 60px;
+        background-color: var(--placeholder-bg);
+        border-radius: 14px;
+        margin-bottom: 8px;
+    }
+
+    .app-name {
+        font-size: 13px;
+        color: var(--text-main);
+        text-align: center;
+    }
+
+    /* 搜索栏容器：自动推到底部 */
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-top: auto; /* 将搜索框及胶囊推到底部 */
+        margin-bottom: 25px;
+    }
+
+    /* 搜索栏：小椭圆 */
+    .search-bar {
+        background-color: #e5e5ea;
+        color: #8e8e93;
+        border-radius: 20px;
+        padding: 6px 16px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .svg-icon-search {
+        width: 16px;
+        height: 16px;
+        fill: #8e8e93;
+    }
+
+    /* 底部胶囊 */
+    .dock {
+        background-color: #d1d1d6;
+        border-radius: 32px;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 10px;
+    }
+
+    .dock-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+
+    /* 双击可编辑状态样式 */
+    [contenteditable="true"] {
+        outline: none;
+        background-color: rgba(0, 122, 255, 0.1);
+        border-radius: 4px;
+        user-select: text;
+        -webkit-user-select: text;
+        cursor: text;
+    }
+
+    /* 隐藏上传输入框 */
+    #file-upload {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- 顶部三个小方块 -->
+    <div class="widget-row">
+        <div class="widget-item">
+            <div class="widget-box" id="widget-img-1"></div>
+            <div class="widget-label editable" data-key="widget-label-1">暂无文本描述</div>
+        </div>
+        <div class="widget-item">
+            <div class="widget-box" id="widget-img-2"></div>
+        </div>
+        <div class="widget-item">
+            <div class="widget-box" id="widget-img-3"></div>
+            <div class="widget-label" id="live-time"></div>
+        </div>
+    </div>
+
+    <!-- 中间大白框 -->
+    <div class="post-card">
+        <div class="post-header">
+            <div class="avatar" id="avatar-img"></div>
+            <div class="user-info">
+                <div class="username editable" data-key="username">暂无文本描述 <span id="verify-badge"></span></div>
+                <div class="post-time editable" data-key="post-time">暂无文本描述</div>
+            </div>
+            <div class="more-icon">...</div>
+        </div>
+        <div class="post-content">
+            <div class="editable" data-key="text-english">我们回到一切安稳 一切都来得及的时候吧 只要不是现在</div>
+            <div class="translation editable" data-key="text-translation">暂无文本描述</div>
+        </div>
+        <div class="post-actions">
+            <div class="action-btn">
+                <svg style="width:18px;height:18px;fill:#8e8e93;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                <span class="editable" data-key="action-repost">Repost</span>
+            </div>
+            <div class="action-btn">
+                <svg style="width:18px;height:18px;fill:#8e8e93;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+                <span class="editable" data-key="action-comments">Comments</span>
+            </div>
+            <div class="action-btn">
+                <svg style="width:18px;height:18px;fill:#8e8e93;" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                <span class="editable" data-key="action-likes">Likes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 应用图标区 -->
+    <div class="app-grid">
+        <div class="app-item">
+            <div class="app-icon"></div>
+            <div class="app-name">讯言</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon"></div>
+            <div class="app-name">见面</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon"></div>
+            <div class="app-name">通讯录</div>
+        </div>
+        <div class="app-item">
+            <div class="app-icon"></div>
+            <div class="app-name">桌面</div>
+        </div>
+    </div>
+
+    <!-- 搜索栏 (自动居中，小巧椭圆) -->
+    <div class="search-container">
+        <div class="search-bar">
+            <svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            搜索
+        </div>
+    </div>
+
+    <!-- 底部胶囊 -->
+    <div class="dock">
+        <div class="dock-icon"></div>
+        <div class="dock-icon"></div>
+    </div>
+</div>
+
+<!-- 隐藏的文件上传输入框 -->
+<input type="file" id="file-upload" accept="image/*">
+
+<script>
+    // === 1. 系统时间实时更新 ===
+    function updateLiveTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('live-time').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateLiveTime, 1000);
+    updateLiveTime();
+
+    // === 2. 双击文字编辑与本地存储加载 ===
+    const editableElements = document.querySelectorAll('.editable');
+    
+    editableElements.forEach(el => {
+        const key = el.dataset.key;
+        // 加载已保存的文字（如果有）
+        const savedText = localStorage.getItem(key);
+        if (savedText) {
+            el.innerHTML = savedText;
+        }
+
+        // 双击启用编辑
+        el.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            this.contentEditable = "true";
+            this.focus();
+            
+            // 将光标移至末尾
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(this);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        });
+
+        // 失去焦点时自动保存到本地
+        el.addEventListener('blur', function() {
+            this.contentEditable = "false";
+            localStorage.setItem(key, this.innerHTML);
+        });
+    });
+
+    // === 3. 图片上传与本地存储加载 ===
+    const fileInput = document.getElementById('file-upload');
+    let currentUploadTarget = null;
+
+    function setupImageUpload(elementId, storageKey) {
+        const el = document.getElementById(elementId);
+        
+        // 加载已保存的图片
+        const savedImg = localStorage.getItem(storageKey);
+        if (savedImg) {
+            el.style.backgroundImage = `url(${savedImg})`;
+        }
+
+        // 点击事件触发文件选择
+        el.addEventListener('click', () => {
+            currentUploadTarget = { element: el, key: storageKey };
+            fileInput.click();
+        });
+    }
+
+    // 处理文件选择后的逻辑
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && currentUploadTarget) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Data = event.target.result;
+                
+                // 更新视图
+                currentUploadTarget.element.style.backgroundImage = `url(${base64Data})`;
+
+                // 保存到本地
+                try {
+                    localStorage.setItem(currentUploadTarget.key, base64Data);
+                } catch (error) {
+                    alert("图片太大，本地存储空间不足！请换小一点的图片。");
+                }
+                
+                // 重置，允许重复上传同一张图
+                fileInput.value = ''; 
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 初始化绑定图片上传功能
+    setupImageUpload('widget-img-1', 'img-widget-1');
+    setupImageUpload('widget-img-2', 'img-widget-2');
+    setupImageUpload('widget-img-3', 'img-widget-3');
+    setupImageUpload('avatar-img', 'img-avatar');
+
+    // 原图中的蓝色认证小勾，使用 SVG 绘制
+    const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+    document.getElementById('verify-badge').innerHTML = badgeSvg;
+
+</script>
+</body>
+</html>
