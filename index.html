@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>莉亚</title>
+<title>梨汁机</title>
 <style>
     :root {
         --bg-color: #f5f5f7;
         --card-bg: #ffffff;
         --text-main: #1c1c1e;
         --text-secondary: #8e8e93;
-        --placeholder-bg: #e5e5ea; /* 统一的灰白底色 */
+        --placeholder-bg: #e5e5ea;
         --border-color: #e5e5ea;
         --blue: #007aff;
     }
@@ -196,12 +196,11 @@
         margin-bottom: 10px;
     }
 
-    /* 修复：胶囊里的初始图标颜色改为灰白色，与普通图标一致 */
     .dock-icon {
         width: 64px;
         height: 64px;
         border-radius: 16px;
-        background-color: var(--placeholder-bg); /* 修改了这里 */
+        background-color: var(--placeholder-bg);
         background-size: cover;
         background-position: center;
         cursor: pointer;
@@ -273,7 +272,6 @@
         gap: 30px;
     }
 
-    /* 管理界面的底部图标同样保持灰白 */
     .manager-grid.dock-grid .dock-icon {
         background-color: var(--placeholder-bg);
     }
@@ -312,7 +310,6 @@
     }
     .setting-btn:active { background-color: #f0f0f0; }
 
-    /* 恢复类按钮使用警告色 */
     .setting-btn.danger {
         color: #ff3b30;
         border-color: #ffd6d6;
@@ -321,8 +318,173 @@
         background-color: #fff0f0;
     }
 
+    /* ==================================================== */
+    /* --- 讯言 App 界面样式 --- */
+    /* ==================================================== */
+    #xunyan-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #ffffff; /* 图片背景是纯白 */
+        z-index: 2000;
+        display: none;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    #xunyan-screen.active { display: flex; }
+
+    /* 顶部导航栏 */
+    .xy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+    }
+    
+    .xy-header svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: #555;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        cursor: pointer;
+    }
+
+    /* 个人信息区 */
+    .xy-profile-section {
+        display: flex;
+        padding: 10px 24px 30px;
+        gap: 20px;
+    }
+
+    /* 头像缩小 */
+    .xy-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #555; /* 初始深色 */
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .xy-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+    .xy-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1c1c1e;
+        margin: 0 0 4px 0;
+    }
+
+    .xy-role {
+        font-size: 13px;
+        color: #8e8e93;
+        margin: 0 0 12px 0;
+    }
+
+    .xy-divider {
+        width: 40px;
+        height: 2px;
+        background-color: #b0c4de;
+        margin-bottom: 16px;
+    }
+
+    .xy-stats {
+        display: flex;
+        gap: 24px;
+    }
+
+    .xy-stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .xy-stat-num {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1c1c1e;
+    }
+
+    .xy-stat-label {
+        font-size: 11px;
+        color: #1c1c1e;
+        margin-top: 2px;
+    }
+
+    /* 四个功能按钮区 */
+    .xy-actions-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 30px 30px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .xy-action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .xy-action-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: #555;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .xy-action-btn span {
+        font-size: 12px;
+        color: #8e8e93;
+    }
+
+    /* Messages 区 */
+    .xy-messages-section {
+        padding: 24px;
+    }
+
+    .xy-msg-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .xy-msg-header h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .xy-msg-header span {
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* 隐藏的文件输入 */
     #file-upload { display: none; }
     #import-file { display: none; }
+    
+    /* 讯言界面的独立文件输入，防止冲突 */
+    #xy-file-upload { display: none; }
 </style>
 </head>
 <body>
@@ -372,7 +534,8 @@
     </div>
 
     <div class="app-grid">
-        <div class="app-item">
+        <!-- 讯言 App 添加点击事件进入新界面 -->
+        <div class="app-item" onclick="openXunyan()">
             <div class="app-icon" id="home-icon-1"></div>
             <div class="app-name" id="home-name-1">讯言</div>
         </div>
@@ -403,6 +566,7 @@
     </div>
 </div>
 
+<!-- ================= 桌面管理界面 ================= -->
 <div id="manager-screen">
     <div class="manager-header">
         <button class="back-btn" onclick="closeManager()">
@@ -448,22 +612,18 @@
             <svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
             更换桌面壁纸
         </button>
-        
         <button class="setting-btn" id="btn-export">
             <svg style="width:18px;height:18px;fill:#34c759;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             导出桌面美化
         </button>
-        
         <button class="setting-btn" id="btn-import">
             <svg style="width:18px;height:18px;fill:#ff9500;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
             导入桌面美化
         </button>
-
         <button class="setting-btn danger" id="btn-reset-wallpaper">
             <svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
             恢复默认桌面壁纸
         </button>
-
         <button class="setting-btn danger" id="btn-reset-apps">
             <svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
             恢复默认图标与名称
@@ -471,12 +631,82 @@
     </div>
 </div>
 
+<!-- ================= 讯言 App 界面 ================= -->
+<div id="xunyan-screen">
+    <!-- 顶部图标 -->
+    <div class="xy-header">
+        <!-- 菜单图标兼返回功能 -->
+        <svg onclick="closeXunyan()" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+        <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </div>
+
+    <!-- 个人信息 -->
+    <div class="xy-profile-section">
+        <div class="xy-avatar" id="xy-avatar"></div>
+        <div class="xy-info">
+            <div class="xy-name xy-editable" data-key="xy_name">暂无文本输入</div>
+            <div class="xy-role xy-editable" data-key="xy_role">暂无文本输入</div>
+            <div class="xy-divider"></div>
+            <div class="xy-stats">
+                <div class="xy-stat-item">
+                    <div class="xy-stat-num xy-editable" data-key="xy_posts">128</div>
+                    <div class="xy-stat-label">Posts</div>
+                </div>
+                <div class="xy-stat-item">
+                    <div class="xy-stat-num xy-editable" data-key="xy_followers">2.4K</div>
+                    <div class="xy-stat-label">Followers</div>
+                </div>
+                <div class="xy-stat-item">
+                    <div class="xy-stat-num xy-editable" data-key="xy_following">512</div>
+                    <div class="xy-stat-label">Following</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 四个功能按钮 -->
+    <div class="xy-actions-row">
+        <div class="xy-action-btn">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Bout</span>
+        </div>
+        <div class="xy-action-btn">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Portfolio</span>
+        </div>
+        <div class="xy-action-btn">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Blog</span>
+        </div>
+        <div class="xy-action-btn">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Contact</span>
+        </div>
+    </div>
+
+    <!-- Messages 区 -->
+    <div class="xy-messages-section">
+        <div class="xy-msg-header">
+            <h2>Messages</h2>
+            <span>See all</span>
+        </div>
+        <!-- 联系人列表留空 -->
+    </div>
+</div>
+
+<!-- 隐藏的输入框 -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
+<input type="file" id="xy-file-upload" accept="image/*">
 
 <script>
     // ==========================================
-    // 1. IndexedDB 大容量数据库封装 (未做任何重命名，确保兼容旧数据)
+    // 1. IndexedDB 大容量数据库封装
     // ==========================================
     const DB_NAME = 'AppImageDB';
     const DB_VERSION = 1;
@@ -572,11 +802,16 @@
     updateLiveTime();
 
     // ==========================================
-    // 3. 管理界面开关
+    // 3. 界面开关控制
     // ==========================================
     const managerScreen = document.getElementById('manager-screen');
     function openManager() { managerScreen.classList.add('active'); }
     function closeManager() { managerScreen.classList.remove('active'); }
+
+    const xunyanScreen = document.getElementById('xunyan-screen');
+    function openXunyan() { xunyanScreen.classList.add('active'); }
+    function closeXunyan() { xunyanScreen.classList.remove('active'); }
+
 
     // ==========================================
     // 4. App 数据配置与渲染
@@ -603,11 +838,8 @@
                 if (homeNameEl) homeNameEl.innerText = finalName;
                 
                 if (homeIconEl) {
-                    if (savedImg) {
-                        homeIconEl.style.backgroundImage = `url(${savedImg})`;
-                    } else {
-                        homeIconEl.style.backgroundImage = 'none';
-                    }
+                    if (savedImg) homeIconEl.style.backgroundImage = `url(${savedImg})`;
+                    else homeIconEl.style.backgroundImage = 'none';
                 }
                 
                 const mgNameEl = document.getElementById(`mg-name-${app.id}`);
@@ -615,11 +847,8 @@
                 if (mgNameEl) mgNameEl.innerText = finalName;
                 
                 if (mgIconEl) {
-                    if (savedImg) {
-                        mgIconEl.style.backgroundImage = `url(${savedImg})`;
-                    } else {
-                        mgIconEl.style.backgroundImage = 'none';
-                    }
+                    if (savedImg) mgIconEl.style.backgroundImage = `url(${savedImg})`;
+                    else mgIconEl.style.backgroundImage = 'none';
                 }
             } else {
                 const homeDockEl = document.getElementById(`home-dock-${app.id === 'd1' ? '1' : '2'}`);
@@ -638,8 +867,34 @@
     }
 
     // ==========================================
-    // 5. 文字双击编辑
+    // 5. 文字双击编辑 (通用)
     // ==========================================
+    function setupEditableText(elements) {
+        elements.forEach(el => {
+            const key = el.dataset.key;
+            const savedText = localStorage.getItem(key);
+            if (savedText) el.innerHTML = savedText;
+
+            el.addEventListener('dblclick', function(e) {
+                e.stopPropagation();
+                this.contentEditable = "true";
+                this.focus();
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(this);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            });
+
+            el.addEventListener('blur', function() {
+                this.contentEditable = "false";
+                localStorage.setItem(key, this.innerHTML);
+            });
+        });
+    }
+
+    // 桌面管理文字
     document.querySelectorAll('.manager-editable').forEach(el => {
         el.addEventListener('dblclick', function(e) {
             e.stopPropagation();
@@ -662,32 +917,11 @@
         });
     });
 
-    const editableElements = document.querySelectorAll('.editable');
-    editableElements.forEach(el => {
-        const key = el.dataset.key;
-        const savedText = localStorage.getItem(key);
-        if (savedText) el.innerHTML = savedText;
-
-        el.addEventListener('dblclick', function(e) {
-            e.stopPropagation();
-            this.contentEditable = "true";
-            this.focus();
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(this);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-        });
-
-        el.addEventListener('blur', function() {
-            this.contentEditable = "false";
-            localStorage.setItem(key, this.innerHTML);
-        });
-    });
+    // 主页帖子文字 & 讯言界面文字
+    setupEditableText(document.querySelectorAll('.editable, .xy-editable'));
 
     // ==========================================
-    // 6. 图片上传与壁纸逻辑
+    // 6. 图片上传逻辑
     // ==========================================
     const fileInput = document.getElementById('file-upload');
     let currentUploadTarget = null;
@@ -751,9 +985,30 @@
     });
 
     // ==========================================
-    // 7. 导出/导入 & 恢复默认数据
+    // 7. 讯言专属头像上传逻辑
     // ==========================================
-    // 导出
+    const xyFileInput = document.getElementById('xy-file-upload');
+    document.getElementById('xy-avatar').addEventListener('click', () => {
+        xyFileInput.click();
+    });
+
+    xyFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const base64Data = event.target.result;
+                await saveImageToDB('xunyan_avatar', base64Data);
+                document.getElementById('xy-avatar').style.backgroundImage = `url(${base64Data})`;
+                xyFileInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // ==========================================
+    // 8. 导出/导入 & 恢复默认数据
+    // ==========================================
     document.getElementById('btn-export').addEventListener('click', async () => {
         try {
             const lsData = {};
@@ -785,7 +1040,6 @@
         }
     });
 
-    // 导入
     const importFileInput = document.getElementById('import-file');
     document.getElementById('btn-import').addEventListener('click', () => {
         importFileInput.click();
@@ -829,7 +1083,6 @@
         reader.readAsText(file);
     });
 
-    // 恢复默认壁纸
     document.getElementById('btn-reset-wallpaper').addEventListener('click', async () => {
         if(confirm("确定要恢复默认桌面壁纸吗？")) {
             await deleteImageFromDB('app_wallpaper');
@@ -838,7 +1091,6 @@
         }
     });
 
-    // 恢复默认图标与名称
     document.getElementById('btn-reset-apps').addEventListener('click', async () => {
         if(confirm("确定要将所有App（桌面及底部）恢复为默认的图标和名称吗？")) {
             defaultApps.forEach(app => {
@@ -856,7 +1108,7 @@
     });
 
     // ==========================================
-    // 8. 初始化加载
+    // 9. 初始化加载
     // ==========================================
     async function initApp() {
         await renderApps();
@@ -872,6 +1124,12 @@
         for (let i = 1; i <= 3; i++) {
             const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`);
             if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`;
+        }
+
+        // 讯言 App 头像初始化
+        const xyAvatarImg = await getImageFromDB('xunyan_avatar');
+        if (xyAvatarImg) {
+            document.getElementById('xy-avatar').style.backgroundImage = `url(${xyAvatarImg})`;
         }
 
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
