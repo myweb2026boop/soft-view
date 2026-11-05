@@ -19,26 +19,13 @@
         --red: #ff3b30;
     }
 
-    * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-        margin: 0;
-        padding: 20px 12px;
-        background-color: var(--bg-color);
-        background-image: none;
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+        margin: 0; padding: 20px 12px;
+        background-color: var(--bg-color); background-image: none; background-size: cover; background-position: center; background-attachment: fixed;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        color: var(--text-main);
-        display: flex;
-        justify-content: center;
-        min-height: 100vh;
-        overflow-x: hidden;
-        transition: background-image 0.3s ease;
+        color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: background-image 0.3s ease;
     }
 
     /* --- 基础桌面样式 --- */
@@ -116,42 +103,38 @@
     .xy-msg-meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
     .xy-msg-time { font-size: 13px; color: #8e8e93; }
 
-    /* --- 讯言 App Blog 界面 (整体上移) --- */
-    #blog-screen { background-color: #ffffff; z-index: 2000; padding: 20px 20px 0 20px; color: #1c1c1e; }
+    /* --- 讯言 App Blog 界面 --- */
+    #blog-screen { background-color: #ffffff; z-index: 2000; padding: 15px 20px 0 20px; color: #1c1c1e; }
     .blog-header { display: flex; justify-content: space-between; align-items: center; padding-top: 0px; }
     .blog-header svg { width: 28px; height: 28px; stroke: #1c1c1e; stroke-width: 2; fill: none; cursor: pointer; }
     .blog-header .bell-icon { position: relative; cursor: pointer; z-index: 10; }
     .blog-header .bell-dot { position: absolute; top: 0; right: 2px; width: 8px; height: 8px; background-color: #a4b4e0; border-radius: 50%; }
-    .blog-profile { display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
-    
-    /* 圆圈缩小，点击上传头像 */
+    .blog-profile { display: flex; flex-direction: column; align-items: center; margin-top: -10px; }
     .blog-avatar-ring { width: 100px; height: 100px; border: 2px solid #e5e5ea; border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; background-size: cover; background-position: center; cursor: pointer; }
     .blog-avatar-ring::after { content: ''; position: absolute; bottom: 5px; right: 5px; width: 16px; height: 16px; background-color: #a4b4e0; border-radius: 50%; border: 2px solid #ffffff; }
-    
     .blog-name { font-size: 24px; font-weight: 600; margin-bottom: 6px; text-align: center; color: #1c1c1e; }
-    .blog-role { font-size: 15px; color: #8e8e93; margin-bottom: 24px; text-align: center; }
-    .blog-bio { font-size: 15px; color: #555555; text-align: center; line-height: 1.5; margin-bottom: 40px; padding: 0 20px; }
+    .blog-role { font-size: 15px; color: #8e8e93; margin-bottom: 20px; text-align: center; }
+    .blog-signature { font-size: 15px; color: #555555; text-align: center; line-height: 1.5; margin-bottom: 30px; padding: 0 20px; }
     .blog-stats-row { display: flex; justify-content: space-around; width: 100%; padding: 0 20px; }
     .blog-stat-item { display: flex; flex-direction: column; align-items: center; }
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* --- 通讯录 App 列表界面 --- */
+    /* --- 通讯录/用户人设 列表界面 --- */
     #contact-list-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
-    .cl-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
+    #user-persona-list-screen { background-color: #ffffff; z-index: 2500; padding: 0; } /* 列表层级较高 */
+    
+    .cl-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 24px; }
     .cl-header-btn { font-size: 16px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; }
     .cl-title { font-size: 18px; font-weight: 600; }
     .cl-list { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; }
-    .cl-item { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .cl-item { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid #f0f0f0; cursor: pointer; position: relative; }
     .cl-item:active { background-color: #f9f9f9; }
     .cl-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #a4b4e0; background-size: cover; background-position: center; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; margin-right: 16px; flex-shrink: 0; }
     .cl-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
     .cl-remark { font-size: 16px; font-weight: 600; color: #1c1c1e; margin-bottom: 4px; }
     .cl-sub { font-size: 13px; color: #8e8e93; display: flex; align-items: center; gap: 4px; }
-    .cl-time { font-size: 14px; color: #8e8e93; margin-left: 10px; }
-    .cl-call-icon { width: 32px; height: 32px; border-radius: 50%; background-color: #f2f2f7; display: flex; justify-content: center; align-items: center; margin-left: 16px; flex-shrink: 0; }
-    .cl-call-icon svg { width: 18px; height: 18px; fill: var(--blue); }
-    
+
     /* 底部导航 */
     .cl-bottom-nav { position: absolute; bottom: 20px; left: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; padding: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     .cl-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: #8e8e93; cursor: pointer; }
@@ -162,12 +145,15 @@
     .cl-nav-search svg { width: 20px; height: 20px; stroke: #1c1c1e; stroke-width: 2; fill: none; }
 
     /* --- 通用编辑界面 (Char 和 User 复用) --- */
-    #contact-edit-screen, #user-persona-edit-screen { background-color: #f5f5f7; z-index: 2100; padding: 0; }
+    #contact-edit-screen { background-color: #f5f5f7; z-index: 2100; padding: 0; }
+    /* 修改：用户人设编辑界面层级提至最高，直接覆盖在列表(2500)之上 */
+    #user-persona-edit-screen { background-color: #f5f5f7; z-index: 2600; padding: 0; } 
+
     .ce-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
     .ce-icon-btn { width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .ce-icon-btn svg { width: 20px; height: 20px; stroke: #1c1c1e; stroke-width: 2; fill: none; }
-    .ce-icon-btn.check-btn svg { stroke: #cccccc; }
-    .ce-icon-btn.check-btn.active svg { stroke: var(--blue); }
+    .ce-icon-btn.check-btn svg { stroke: #cccccc; transition: stroke 0.2s; }
+    .ce-icon-btn.check-btn.active svg { stroke: var(--blue); } /* 变蓝 */
     .ce-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 40px; }
     .ce-avatar-section { display: flex; justify-content: center; margin-bottom: 24px; }
     .ce-avatar { width: 120px; height: 120px; border-radius: 50%; background-color: #a4b4e0; background-size: cover; background-position: center; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 56px; font-weight: bold; cursor: pointer; }
@@ -195,18 +181,15 @@
     .modal-title { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 16px; }
     .modal-list { flex-grow: 1; overflow-y: auto; margin-bottom: 16px; border: 1px solid #f0f0f0; border-radius: 12px; min-height: 100px; }
     
-    /* 关联人 & Bout 选择项 */
     .modal-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
     .modal-item:last-child { border-bottom: none; }
     .modal-item.selected { background-color: rgba(0, 122, 255, 0.05); }
     .modal-item-name { font-size: 16px; color: #1c1c1e; }
     
-    /* 圆形Checkbox (关联人用) */
     .modal-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; display: flex; justify-content: center; align-items: center; }
     .modal-item.selected .modal-check { border-color: var(--blue); background-color: var(--blue); }
     .modal-item.selected .modal-check::after { content: ''; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
     
-    /* 方形Checkbox (Bout 用) */
     .bout-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
     .bout-list-item:last-child { border-bottom: none; }
     .bout-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid #ccc; display: flex; justify-content: center; align-items: center; }
@@ -316,11 +299,10 @@
     </div>
 </div>
 
-<!-- 讯言 App Blog 界面 (整体上移) -->
+<!-- 讯言 App Blog 界面 -->
 <div class="fullscreen-screen" id="blog-screen">
     <div class="blog-header">
         <svg onclick="closeScreen('blog-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
-        <!-- 铃铛点击进入用户人设列表，修复穿透问题 -->
         <div class="bell-icon" onclick="openUserPersonaList()">
             <svg style="pointer-events: none;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             <div class="bell-dot" style="pointer-events: none;"></div>
@@ -328,13 +310,10 @@
     </div>
     
     <div class="blog-profile">
-        <!-- 头像缩小，点击上传 -->
         <div class="blog-avatar-ring" id="blog-avatar" onclick="document.getElementById('blog-avatar-upload').click()"></div>
-        
-        <!-- 文字双击可改 -->
         <div class="blog-name xy-editable" data-key="blog_name">Alex Morgan</div>
         <div class="blog-role xy-editable" data-key="blog_role">Product Designer</div>
-        <div class="blog-bio xy-editable" data-key="blog_bio">Designing digital experiences<br>that are intuitive and impactful.</div>
+        <div class="blog-signature xy-editable" data-key="blog_signature">Designing digital experiences<br>that are intuitive and impactful.</div>
         
         <div class="blog-stats-row">
             <div class="blog-stat-item">
@@ -353,8 +332,8 @@
     </div>
 </div>
 
-<!-- 用户人设列表 (点击 Blog 铃铛进入) 提高 z-index 防止被挡住 -->
-<div class="fullscreen-screen" id="user-persona-list-screen" style="z-index: 2500;">
+<!-- 用户人设列表 -->
+<div class="fullscreen-screen" id="user-persona-list-screen">
     <div class="cl-header">
         <button class="cl-header-btn" onclick="closeScreen('user-persona-list-screen')">返回</button>
         <div class="cl-title">我的用户人设</div>
@@ -412,19 +391,20 @@
 <div class="fullscreen-screen" id="user-persona-edit-screen">
     <div class="ce-header">
         <div class="ce-icon-btn" onclick="closeScreen('user-persona-edit-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
-        <div class="ce-icon-btn check-btn" onclick="saveUserPersona()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
+        <div class="ce-icon-btn check-btn" id="user-save-btn" onclick="saveUserPersona()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
     </div>
     <div class="ce-body">
         <div class="ce-avatar-section">
             <div class="ce-avatar" id="user-avatar" onclick="document.getElementById('user-avatar-upload').click()"></div>
         </div>
         <div class="ce-card">
-            <div class="ce-input-row"><input type="text" class="ce-input" id="user-remark" placeholder="添加备注"></div>
-            <div class="ce-input-row"><input type="text" class="ce-input" id="user-name" placeholder="名字 (必填)"></div>
-            <div class="ce-input-row"><input type="text" class="ce-input" id="user-identity" placeholder="身份"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-remark" placeholder="网名 (必填)"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-name" placeholder="真实姓名"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-identity" placeholder="身份 (职业)"></div>
+            <div class="ce-input-row"><textarea class="ce-input" id="user-signature" placeholder="个性签名 (显示在图一)" rows="1" style="resize:none;"></textarea></div>
         </div>
         <div class="ce-action-btn" onclick="document.getElementById('user-docx-upload').click()">
-            <div class="plus-icon">+</div> 上传人设文件
+            <div class="plus-icon">+</div> 上传生平文件 (docx)
         </div>
         <div class="ce-action-btn" onclick="openUserRelationModal()">
             <div class="plus-icon">+</div> 添加关联人
@@ -476,15 +456,10 @@
 
 <script>
     // ==========================================
-    // 0. 安全解析 JSON，防止旧数据损坏导致整个程序崩溃
+    // 0. 安全解析 JSON
     // ==========================================
     function safeParseJSON(str, defaultVal) {
-        try { 
-            const parsed = JSON.parse(str); 
-            return parsed === null ? defaultVal : parsed;
-        } catch(e) { 
-            return defaultVal; 
-        }
+        try { const parsed = JSON.parse(str); return parsed === null ? defaultVal : parsed; } catch(e) { return defaultVal; }
     }
 
     // ==========================================
@@ -544,7 +519,7 @@
     });
     setupEditableText(document.querySelectorAll('.editable'));
 
-    // Blog 页面的文字双击编辑
+    // Blog 页面的文字双击编辑 (关联到当前人设)
     document.querySelectorAll('#blog-screen .xy-editable').forEach(el => {
         const field = el.dataset.key.replace('blog_', ''); 
         el.addEventListener('dblclick', function(e) {
@@ -560,7 +535,9 @@
                     if(field === 'posts') userPersonas[pIndex].posts = newVal;
                     else if(field === 'followers') userPersonas[pIndex].followers = newVal;
                     else if(field === 'following') userPersonas[pIndex].following = newVal;
-                    else userPersonas[pIndex][field] = newVal;
+                    else if(field === 'signature') userPersonas[pIndex].signature = newVal;
+                    else if(field === 'name') userPersonas[pIndex].remark = newVal;
+                    else if(field === 'role') userPersonas[pIndex].identity = newVal;
                     localStorage.setItem('user_personas', JSON.stringify(userPersonas));
                 }
             }
@@ -660,7 +637,7 @@
     if (!Array.isArray(userPersonas) || userPersonas.length === 0) {
         const defaultId = 'u_' + Date.now();
         userPersonas = [{
-            id: defaultId, remark: '', name: 'Alex Morgan', identity: 'Product Designer', bio: 'Designing digital experiences<br>that are intuitive and impactful.', posts: '128', followers: '2.4K', following: '512', relations: []
+            id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '128', followers: '2.4K', following: '512', relations: []
         }];
         localStorage.setItem('user_personas', JSON.stringify(userPersonas));
         activeUserPersonaId = defaultId;
@@ -675,12 +652,12 @@
         const p = userPersonas.find(x => x.id === activeUserPersonaId);
         if (!p) return;
 
-        document.querySelector('[data-key="blog_name"]').innerHTML = p.name || '暂无文本输入';
-        document.querySelector('[data-key="blog_role"]').innerHTML = p.identity || '暂无文本输入';
-        document.querySelector('[data-key="blog_bio"]').innerHTML = p.bio || '暂无文本输入';
-        document.querySelector('[data-key="blog_posts"]').innerHTML = p.posts || '128';
-        document.querySelector('[data-key="blog_followers"]').innerHTML = p.followers || '2.4K';
-        document.querySelector('[data-key="blog_following"]').innerHTML = p.following || '512';
+        document.querySelector('[data-key="blog_name"]').innerHTML = p.remark || p.name || '未命名用户';
+        document.querySelector('[data-key="blog_role"]').innerHTML = p.identity || '暂无身份';
+        document.querySelector('[data-key="blog_signature"]').innerHTML = p.signature || '双击修改个性签名';
+        document.querySelector('[data-key="blog_posts"]').innerHTML = p.posts || '0';
+        document.querySelector('[data-key="blog_followers"]').innerHTML = p.followers || '0';
+        document.querySelector('[data-key="blog_following"]').innerHTML = p.following || '0';
 
         const avatarEl = document.getElementById('blog-avatar');
         const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
@@ -715,7 +692,6 @@
 
     // 用户人设列表渲染
     function openUserPersonaList() {
-        // 立即打开页面，防止渲染导致卡顿错觉
         openScreen('user-persona-list-screen');
         renderUserPersonaList();
     }
@@ -726,13 +702,12 @@
             container.innerHTML = '';
             for (let i = 0; i < userPersonas.length; i++) {
                 const p = userPersonas[i];
-                const displayName = p.name || '未命名用户';
+                const displayName = p.remark || p.name || '未命名';
                 const initial = displayName.charAt(0);
                 const div = document.createElement('div');
                 div.className = 'cl-item';
                 
-                if (p.id === activeUserPersonaId) div.style.backgroundColor = '#f0f8ff';
-
+                // 核心逻辑：点击直接应用并进入编辑界面
                 div.onclick = () => {
                     activeUserPersonaId = p.id;
                     localStorage.setItem('active_user_persona_id', p.id);
@@ -743,22 +718,22 @@
                 const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
                 if (savedImg) avatarStyle = `background-image: url(${savedImg}); color: transparent;`;
                 
+                const isApplied = p.id === activeUserPersonaId;
+
                 div.innerHTML = `
                     <div class="cl-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
                     <div class="cl-info">
-                        <div class="cl-remark">${displayName} ${p.id === activeUserPersonaId ? '(当前展示)' : ''}</div>
+                        <div class="cl-remark">${displayName} ${isApplied ? '<span style="font-size:12px; color:#007aff; margin-left:6px;">(当前展示)</span>' : ''}</div>
                         <div class="cl-sub">↗ ${p.identity || '无身份'}</div>
                     </div>
                     <div class="cl-call-icon" style="background:none;"><svg viewBox="0 0 24 24" style="fill:#ccc;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
                 `;
                 container.appendChild(div);
             }
-        } catch (err) {
-            console.error(err);
-        }
+        } catch (err) { console.error(err); }
     }
 
-    // 编辑用户人设
+    // 编辑用户人设 (含必填校验和变蓝逻辑)
     async function openUserPersonaEdit(id = null) {
         currentUserEditId = id;
         const p = id ? userPersonas.find(x => x.id === id) : null;
@@ -766,6 +741,7 @@
         document.getElementById('user-remark').value = p ? (p.remark || '') : '';
         document.getElementById('user-name').value = p ? (p.name || '') : '';
         document.getElementById('user-identity').value = p ? (p.identity || '') : '';
+        document.getElementById('user-signature').value = p ? (p.signature || '').replace(/<br>/g, '\n') : '';
         document.getElementById('user-bio').value = p ? (p.bio || '').replace(/<br>/g, '\n') : '';
         document.getElementById('user-delete-btn').style.display = id ? 'block' : 'none';
 
@@ -773,14 +749,25 @@
         avatarEl.style.backgroundImage = 'none'; avatarEl.innerText = '?'; avatarEl.style.color = '#fff';
 
         if (p) {
-            const initial = (p.name || '?').charAt(0); avatarEl.innerText = initial;
+            const initial = (p.remark || p.name || '?').charAt(0); avatarEl.innerText = initial;
             const savedImg = await getImageFromDB(`user_avatar_${id}`);
             if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; }
         }
 
+        checkUserSaveBtnState(); 
         openScreen('user-persona-edit-screen');
     }
 
+    // 检查用户人设保存按钮：网名必填才变蓝
+    function checkUserSaveBtnState() {
+        const remark = document.getElementById('user-remark').value.trim();
+        const saveBtn = document.getElementById('user-save-btn');
+        if (remark) saveBtn.classList.add('active');
+        else saveBtn.classList.remove('active');
+    }
+    document.getElementById('user-remark').addEventListener('input', checkUserSaveBtnState);
+
+    // 用户头像上传
     document.getElementById('user-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -801,6 +788,7 @@
         this.value = '';
     });
 
+    // 用户 docx 上传
     document.getElementById('user-docx-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -821,9 +809,10 @@
         const remark = document.getElementById('user-remark').value.trim();
         const name = document.getElementById('user-name').value.trim();
         const identity = document.getElementById('user-identity').value.trim();
+        const signature = document.getElementById('user-signature').value.trim().replace(/\n/g, '<br>');
         const bio = document.getElementById('user-bio').value.trim().replace(/\n/g, '<br>');
 
-        if (!name) { alert("请至少填写一个名字！"); return; }
+        if (!remark) { alert("请填写网名！"); return; }
 
         let id = currentUserEditId;
         if (!id) {
@@ -833,13 +822,14 @@
                 if (imgData) { await saveImageToDB(`user_avatar_${id}`, imgData); await deleteImageFromDB(`user_avatar_${window.tempUserAvatarId}`); }
                 window.tempUserAvatarId = null;
             }
-            userPersonas.push({ id, remark, name, identity, bio, posts: '0', followers: '0', following: '0', relations: [] });
+            userPersonas.push({ id, remark, name, identity, signature, bio, posts: '0', followers: '0', following: '0', relations: [] });
+            // 新建后自动应用
             activeUserPersonaId = id;
             localStorage.setItem('active_user_persona_id', id);
         } else {
             const index = userPersonas.findIndex(x => x.id === id);
             if (index > -1) {
-                userPersonas[index] = { ...userPersonas[index], remark, name, identity, bio };
+                userPersonas[index] = { ...userPersonas[index], remark, name, identity, signature, bio };
             }
         }
 
@@ -852,10 +842,7 @@
 
     async function deleteUserPersona() {
         if (!currentUserEditId) return;
-        if (userPersonas.length <= 1) {
-            alert("至少需要保留一个人设哦！");
-            return;
-        }
+        if (userPersonas.length <= 1) { alert("至少需要保留一个人设哦！"); return; }
         if (confirm("确定要删除该用户人设吗？")) {
             userPersonas = userPersonas.filter(x => x.id !== currentUserEditId);
             localStorage.setItem('user_personas', JSON.stringify(userPersonas));
@@ -871,9 +858,7 @@
         }
     }
 
-    function openUserRelationModal() {
-        openRelationModalBase('user');
-    }
+    function openUserRelationModal() { openRelationModalBase('user'); }
 
     // ==========================================
     // 4. 讯言 Bout 功能
@@ -883,7 +868,6 @@
     function openBout() {
         const container = document.getElementById('bout-list-container');
         container.innerHTML = '';
-        
         if (contacts.length === 0) {
             container.innerHTML = '<div style="text-align:center; padding: 20px; color: #999;">暂无已上传的人设</div>';
         } else {
@@ -893,13 +877,8 @@
                 div.className = `bout-list-item ${selectedBoutIds.includes(c.id) ? 'selected' : ''}`;
                 div.innerHTML = `<span class="modal-item-name">${displayName}</span><div class="bout-check"></div>`;
                 div.onclick = function() {
-                    if (selectedBoutIds.includes(c.id)) {
-                        selectedBoutIds = selectedBoutIds.filter(id => id !== c.id);
-                        this.classList.remove('selected');
-                    } else {
-                        selectedBoutIds.push(c.id);
-                        this.classList.add('selected');
-                    }
+                    if (selectedBoutIds.includes(c.id)) { selectedBoutIds = selectedBoutIds.filter(id => id !== c.id); this.classList.remove('selected'); } 
+                    else { selectedBoutIds.push(c.id); this.classList.add('selected'); }
                 };
                 container.appendChild(div);
             });
@@ -921,8 +900,7 @@
 
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
         if(validIds.length !== selectedBoutIds.length) {
-            selectedBoutIds = validIds;
-            localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
+            selectedBoutIds = validIds; localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
         }
 
         for (const id of selectedBoutIds) {
