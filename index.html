@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>梨汁机</title>
+<!-- 引入 mammoth.js 用于解析 docx 文件 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
     :root {
@@ -95,12 +96,14 @@
     .xy-msg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .xy-msg-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
     .xy-msg-header span { font-size: 13px; font-weight: 600; cursor: pointer; }
-    .xy-msg-item { display: flex; align-items: center; margin-top: 16px; cursor: pointer; }
+    .xy-msg-item { display: flex; align-items: center; margin-top: 16px; cursor: pointer; padding: 4px 0; border-bottom: 1px solid transparent; }
+    .xy-msg-item:hover { background-color: #f9f9f9; }
     .xy-msg-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #e5e5ea; background-size: cover; background-position: center; margin-right: 16px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; color: #fff; font-weight: bold; font-size: 20px;}
     .xy-msg-info { flex-grow: 1; overflow: hidden; }
-    .xy-msg-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px;}
+    .xy-msg-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
     .xy-msg-meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
     .xy-msg-time { font-size: 13px; color: #8e8e93; }
+    .pin-badge { background-color: #e5e5ea; color: #666; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: normal; }
 
     /* --- 讯言 App Blog 界面 --- */
     #blog-screen { background-color: #ffffff; z-index: 2000; padding: 15px 20px 0 20px; color: #1c1c1e; }
@@ -121,12 +124,27 @@
 
     /* --- 通讯录/用户人设 列表界面 --- */
     #contact-list-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
-    #user-persona-list-screen { background-color: #ffffff; z-index: 2500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
+    
+    #user-persona-list-screen { 
+        background-color: #ffffff; 
+        z-index: 2500; 
+        padding: 0; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100vw; height: 100vh; 
+    }
     
     .cl-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 24px; }
     .cl-header-btn { font-size: 16px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; }
     .cl-title { font-size: 18px; font-weight: 600; }
-    .cl-list { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; -webkit-overflow-scrolling: touch; }
+    
+    .cl-list { 
+        flex-grow: 1; 
+        overflow-y: auto; 
+        padding-bottom: 80px; 
+        -webkit-overflow-scrolling: touch; 
+    }
+    
     .cl-item { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid #f0f0f0; cursor: pointer; position: relative; }
     .cl-item:active { background-color: #f9f9f9; }
     .cl-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #a4b4e0; background-size: cover; background-position: center; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; margin-right: 16px; flex-shrink: 0; }
@@ -145,7 +163,15 @@
 
     /* --- 通用编辑界面 (Char 和 User 复用) --- */
     #contact-edit-screen { background-color: #f5f5f7; z-index: 2100; padding: 0; }
-    #user-persona-edit-screen { background-color: #f5f5f7; z-index: 3000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; } 
+    
+    #user-persona-edit-screen { 
+        background-color: #f5f5f7; 
+        z-index: 3000; 
+        padding: 0; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100vw; height: 100vh; 
+    } 
 
     .ce-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
     .ce-icon-btn { width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; }
@@ -201,34 +227,35 @@
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
     .modal-btn.cancel { background-color: #f2f2f7; color: #1c1c1e; }
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
-    .modal-btn.danger { background-color: var(--red); color: white; font-weight: 600; }
 
     /* 隐藏的文件输入 */
-    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload { display: none; }
+    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload { display: none; }
 
     /* ==================================================== */
-    /* 🌟 聊天界面样式 (彻底修复全屏与隐藏) */
+    /* 🌟 聊天界面样式 */
     /* ==================================================== */
     #chat-screen { 
-        background-color: #ffffff; 
+        background-color: #ffffff; /* 默认纯白背景 */
         z-index: 4000; 
-        padding: 0 !important; /* 覆盖通用 padding */
+        padding: 0; 
+        background-size: cover;
+        background-position: center;
     }
     
     .chat-header { 
         display: flex; align-items: center; justify-content: space-between; 
-        padding: 12px 20px; background-color: rgba(255, 255, 255, 0.95); 
-        backdrop-filter: blur(10px); border-bottom: 1px solid #f0f0f0; flex-shrink: 0;
+        padding: 15px 20px; background-color: rgba(255, 255, 255, 0.95); 
+        backdrop-filter: blur(10px); border-bottom: 1px solid #eaeaea; flex-shrink: 0;
         z-index: 10;
     }
     .chat-back-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
     .chat-back-btn svg { width: 24px; height: 24px; stroke: #333; stroke-width: 2; fill: none; }
-    .chat-title { font-size: 17px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 4px; }
+    .chat-title { font-size: 18px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 4px; }
     .chat-title-sub { font-size: 12px; color: #888; font-weight: normal; margin-left: 4px;}
     .chat-more-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
     .chat-more-btn svg { width: 24px; height: 24px; fill: #333; }
 
-    .chat-container { flex-grow: 1; padding: 20px 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; }
+    .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; }
     
     /* 消息行容器 */
     .chat-msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 100%; }
@@ -236,28 +263,33 @@
     .chat-msg-row.right { flex-direction: row-reverse; justify-content: flex-start; }
 
     .chat-msg-avatar { 
-        width: 36px; height: 36px; border-radius: 50%; 
+        width: 40px; height: 40px; border-radius: 50%; 
         background-color: #e5e5ea; background-size: cover; background-position: center; 
         flex-shrink: 0; display: flex; justify-content: center; align-items: center; 
-        font-weight: bold; font-size: 16px; color: #fff;
+        font-weight: bold; font-size: 18px; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
     /* 对方名字和气泡的容器 */
-    .chat-msg-content { display: flex; flex-direction: column; max-width: calc(100% - 100px); }
+    .chat-msg-content { display: flex; flex-direction: column; max-width: 75%; /* 缩小最大宽度限制 */ }
     .chat-msg-row.left .chat-msg-content { align-items: flex-start; }
     .chat-msg-row.right .chat-msg-content { align-items: flex-end; }
     
     /* 发送者名字 */
-    .chat-sender-name { font-size: 11px; color: #999; margin-bottom: 4px; padding: 0 4px; }
+    .chat-sender-name { font-size: 12px; color: #999; margin-bottom: 4px; padding: 0 4px; }
 
-    /* 文本气泡 */
+    /* 文本气泡 (缩小优化) */
     .chat-bubble { 
-        padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; 
-        word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        padding: 10px 14px; /* 缩小 padding */
+        border-radius: 16px; 
+        font-size: 14px; /* 缩小字体 */
+        line-height: 1.5; 
+        word-break: break-word; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .chat-msg-row.left .chat-bubble { 
-        background-color: #f2f2f2; color: #333; 
+        background-color: #ffffff; color: #333; 
         border-top-left-radius: 4px; 
+        border: 1px solid #f0f0f0; /* 增加浅色边框 */
     }
     .chat-msg-row.right .chat-bubble { 
         background-color: #333333; color: #ffffff; 
@@ -267,22 +299,22 @@
     /* 引用/回复气泡 */
     .chat-quote-bubble {
         background-color: #333333; color: #aaaaaa;
-        padding: 8px 12px; border-radius: 8px; font-size: 12px;
-        margin-bottom: 6px; border-left: 3px solid #666;
+        padding: 8px 12px; border-radius: 8px; font-size: 13px;
+        margin-bottom: 4px; border-left: 3px solid #666;
         max-width: 100%;
     }
 
     /* 颜文字/动作消息 (无气泡) */
     .chat-bubble-plain {
         background: transparent !important; box-shadow: none !important;
-        font-size: 15px; padding: 0 4px; color: #666;
+        font-size: 16px; padding: 0 4px; color: #333;
     }
 
     /* 底部输入框 */
     .chat-input-bar {
-        flex-shrink: 0; background-color: #ffffff; padding: 10px 12px; 
-        display: flex; align-items: center; gap: 8px; border-top: 1px solid #f0f0f0;
-        padding-bottom: env(safe-area-inset-bottom, 10px);
+        flex-shrink: 0; background-color: #ffffff; padding: 10px 15px; 
+        display: flex; align-items: center; gap: 10px; box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
+        border-radius: 30px; margin: 10px 15px 20px;
     }
     .chat-input-icon-btn { background: none; border: none; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .chat-input-icon-btn svg { width: 24px; height: 24px; fill: #666; }
@@ -292,26 +324,30 @@
     }
     .chat-input-field::placeholder { color: #aaa; }
 
-    /* 聊天详情设置面板样式 */
-    .chat-settings-panel {
-        position: absolute; top: 50px; right: 15px; background: #fff;
-        border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        width: 200px; display: none; flex-direction: column; z-index: 20;
-        overflow: hidden;
+    /* --- 🌟 聊天详情弹窗样式 --- */
+    #chat-detail-modal .modal-content { max-height: 90vh; }
+    .chat-detail-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+        font-size: 16px; color: #1c1c1e;
     }
-    .chat-settings-panel.active { display: flex; }
-    .chat-setting-item {
-        padding: 12px 16px; font-size: 14px; color: #333; cursor: pointer;
-        border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center;
+    .chat-detail-item:last-child { border-bottom: none; }
+    .chat-detail-item.danger { color: var(--red); justify-content: center; }
+    .chat-detail-switch {
+        width: 40px; height: 24px; background-color: #e5e5ea; border-radius: 12px;
+        position: relative; transition: background-color 0.3s;
     }
-    .chat-setting-item:last-child { border-bottom: none; }
-    .chat-setting-item.danger { color: var(--red); }
-    .chat-setting-item:active { background-color: #f9f9f9; }
-    
-    /* 聊天内容搜索框 */
-    .chat-search-bar { display: none; padding: 10px 15px; background: #fff; border-bottom: 1px solid #eee; z-index: 9; }
-    .chat-search-bar.active { display: flex; gap: 10px; align-items: center; }
-    .chat-search-input { flex-grow: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-size: 14px; }
+    .chat-detail-switch::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+        background-color: #fff; border-radius: 50%; transition: transform 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .chat-detail-switch.on { background-color: var(--green); }
+    .chat-detail-switch.on::after { transform: translateX(16px); }
+
+    /* 搜索栏区域 */
+    #chat-search-bar { display: none; padding: 10px 20px; background: #fff; border-bottom: 1px solid #eaeaea; }
+    #chat-search-input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #e5e5ea; outline: none; background: #f5f5f7; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -524,36 +560,27 @@
 </div>
 
 <!-- 🌟 聊天界面 -->
-<div class="fullscreen-screen" id="chat-screen" style="position:relative;">
+<div class="fullscreen-screen" id="chat-screen">
     <!-- 顶部导航 -->
     <div class="chat-header">
         <button class="chat-back-btn" onclick="closeScreen('chat-screen')">
             <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
         </button>
         <div class="chat-title" id="chat-title">角色名称</div>
-        <button class="chat-more-btn" onclick="toggleChatSettings(event)">
+        <button class="chat-more-btn" onclick="openChatDetailModal()">
             <svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </button>
     </div>
-
-    <!-- 聊天详情设置面板 (点击...弹出) -->
-    <div class="chat-settings-panel" id="chat-settings-panel">
-        <div class="chat-setting-item" onclick="document.getElementById('chat-char-avatar-upload').click(); toggleChatSettings(event)">更换 Char 头像</div>
-        <div class="chat-setting-item" onclick="document.getElementById('chat-user-avatar-upload').click(); toggleChatSettings(event)">更换我的头像</div>
-        <div class="chat-setting-item" onclick="toggleChatPin(); toggleChatSettings(event)" id="chat-pin-btn">置顶聊天</div>
-        <div class="chat-setting-item" onclick="toggleChatSearch(); toggleChatSettings(event)">搜索聊天记录</div>
-        <div class="chat-setting-item danger" onclick="clearChatHistory(); toggleChatSettings(event)">清空聊天记录</div>
-        <div class="chat-setting-item danger" onclick="deleteChatSession(); toggleChatSettings(event)">删除当前对话</div>
-    </div>
-
-    <!-- 搜索框 -->
-    <div class="chat-search-bar" id="chat-search-bar">
-        <input type="text" class="chat-search-input" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
-        <button class="modal-btn cancel" style="padding:6px 12px; font-size:12px;" onclick="toggleChatSearch()">取消</button>
-    </div>
     
+    <!-- 搜索栏 (默认隐藏) -->
+    <div id="chat-search-bar">
+        <input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
+    </div>
+
     <!-- 聊天内容区 -->
-    <div class="chat-container" id="chat-container"></div>
+    <div class="chat-container" id="chat-container">
+        <!-- 聊天记录动态渲染 -->
+    </div>
 
     <!-- 底部输入框 -->
     <div class="chat-input-bar">
@@ -567,6 +594,50 @@
         <button class="chat-input-icon-btn">
             <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         </button>
+    </div>
+</div>
+
+<!-- 🌟 聊天详情弹窗 -->
+<div class="modal-overlay" id="chat-detail-modal">
+    <div class="modal-content" style="padding: 0; overflow: hidden;">
+        <!-- 顶部信息区域 -->
+        <div style="padding: 24px 20px 16px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid #f0f0f0;">
+            <div style="display: flex; gap: 30px; justify-content: center; width: 100%;">
+                <!-- 角色头像 -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div class="ce-avatar" id="chat-detail-char-avatar" style="width: 64px; height: 64px; font-size: 24px;" onclick="document.getElementById('chat-char-avatar-upload').click()"></div>
+                    <span style="font-size: 12px; color: #666;">换 Char 头像</span>
+                </div>
+                <!-- 用户头像 -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div class="ce-avatar" id="chat-detail-user-avatar" style="width: 64px; height: 64px; font-size: 24px; background-color: #d8b4e0;" onclick="document.getElementById('chat-user-avatar-upload').click()"></div>
+                    <span style="font-size: 12px; color: #666;">换我的头像</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
+            <div class="chat-detail-item" onclick="togglePinChat()">
+                <span>置顶聊天</span>
+                <div class="chat-detail-switch" id="pin-switch"></div>
+            </div>
+            <div class="chat-detail-item" onclick="toggleChatSearch()">
+                <span>搜索聊天记录</span>
+            </div>
+            <div class="chat-detail-item" onclick="document.getElementById('chat-bg-upload').click()">
+                <span>更换聊天背景</span>
+            </div>
+            <div class="chat-detail-item" onclick="clearChatHistory()">
+                <span>清空聊天记录</span>
+            </div>
+            <div class="chat-detail-item danger" onclick="deleteChatSession()">
+                <span>删除该聊天</span>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 10px; padding: 0 20px 20px;">
+            <button class="modal-btn cancel" onclick="closeChatDetailModal()">关闭</button>
+        </div>
     </div>
 </div>
 
@@ -620,8 +691,10 @@
 <input type="file" id="blog-avatar-upload" accept="image/*">
 <input type="file" id="user-avatar-upload" accept="image/*">
 <input type="file" id="user-docx-upload" accept=".docx">
+<!-- 聊天详情专用的图片上传 -->
 <input type="file" id="chat-char-avatar-upload" accept="image/*">
 <input type="file" id="chat-user-avatar-upload" accept="image/*">
+<input type="file" id="chat-bg-upload" accept="image/*">
 
 <script>
     // ==========================================
@@ -1051,7 +1124,6 @@
     // 4. 讯言 Bout 功能
     // ==========================================
     let selectedBoutIds = safeParseJSON(localStorage.getItem('xy_selected_chars'), []);
-    let pinnedChats = safeParseJSON(localStorage.getItem('xy_pinned_chats'), []);
 
     function openBout() {
         const container = document.getElementById('bout-list-container');
@@ -1083,42 +1155,47 @@
     async function renderXunyanMessages() {
         const container = document.getElementById('xy-msg-list');
         container.innerHTML = '';
-        
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        // 获取置顶名单
+        const pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
+
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
         if(validIds.length !== selectedBoutIds.length) {
             selectedBoutIds = validIds; localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
         }
 
-        const sortedIds = [...selectedBoutIds].sort((a, b) => {
-            const aPinned = pinnedChats.includes(a);
-            const bPinned = pinnedChats.includes(b);
+        // 排序: 置顶的排前面
+        validIds.sort((a, b) => {
+            const aPinned = pinnedIds.includes(a);
+            const bPinned = pinnedIds.includes(b);
             if (aPinned && !bPinned) return -1;
             if (!aPinned && bPinned) return 1;
-            return 0;
+            return 0; // 保持原有顺序
         });
 
-        for (const id of sortedIds) {
+        for (const id of validIds) {
             const c = contacts.find(x => x.id === id);
             if (c) {
                 const displayName = c.remark || c.name || '未命名';
+                const isPinned = pinnedIds.includes(id);
                 let avatarStyle = '';
                 const savedImg = await getImageFromDB(`contact_avatar_${c.id}`);
                 if (savedImg) avatarStyle = `background-image: url(${savedImg});`;
                 else avatarStyle = `background-color:#a4b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:20px;`;
                 const initial = displayName.charAt(0);
                 
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                const isPinned = pinnedChats.includes(c.id);
-
                 const div = document.createElement('div');
                 div.className = 'xy-msg-item';
-                // 绑定点击事件
                 div.onclick = () => openChatScreen(c.id);
                 div.innerHTML = `
                     <div class="xy-msg-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
                     <div class="xy-msg-info">
-                        <div class="xy-msg-name">${displayName} ${isPinned ? '<span style="font-size:10px; color:#007aff; background:#e5f0ff; padding:2px 4px; border-radius:4px;">置顶</span>' : ''}</div>
+                        <div class="xy-msg-name">
+                            ${displayName} 
+                            ${isPinned ? '<span class="pin-badge">置顶</span>' : ''}
+                        </div>
                     </div>
                     <div class="xy-msg-meta"><div class="xy-msg-time">${timeString}</div></div>
                 `;
@@ -1356,14 +1433,8 @@
             contacts = contacts.filter(x => x.id !== currentEditId);
             localStorage.setItem('contacts_data', JSON.stringify(contacts));
             await deleteImageFromDB(`contact_avatar_${currentEditId}`);
-            selectedBoutIds = selectedBoutIds.filter(id => id !== currentEditId);
-            pinnedChats = pinnedChats.filter(id => id !== currentEditId);
-            localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
-            localStorage.setItem('xy_pinned_chats', JSON.stringify(pinnedChats));
-            
             closeScreen('contact-edit-screen');
             renderContactList();
-            renderXunyanMessages();
         }
     }
 
@@ -1380,177 +1451,236 @@
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
         
         const container = document.getElementById('chat-container');
-        container.innerHTML = ''; 
+        container.innerHTML = ''; // 清空
 
-        const chatHistory = safeParseJSON(localStorage.getItem(`chat_history_${charId}`), []);
-        
-        if (chatHistory.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">暂无聊天记录</div>';
+        // 🌟 纯白背景，无多余图案。如果有设置过聊天背景，则加载
+        const customBg = await getImageFromDB(`chat_bg_${charId}`);
+        const chatScreen = document.getElementById('chat-screen');
+        if (customBg) {
+            chatScreen.style.backgroundImage = `url(${customBg})`;
         } else {
-            for (const msg of chatHistory) {
-                renderChatBubble(msg.role, msg.content, msg.quote);
-            }
+            chatScreen.style.backgroundImage = 'none'; // 默认纯白
         }
 
-        updateChatPinBtnState();
+        // 初始没有任何聊天记录，你可以发送新消息
+        const hasHistory = localStorage.getItem(`chat_history_${charId}`);
+        if(hasHistory) {
+            const history = safeParseJSON(hasHistory, []);
+            history.forEach(msg => renderChatMessage(msg.text, msg.isSelf, false));
+        }
+
+        // 滚动到底部
+        container.scrollTop = container.scrollHeight;
+
         openScreen('chat-screen');
-        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
     }
 
-    async function renderChatBubble(role, content, quoteText = null) {
+    // 渲染单条消息
+    async function renderChatMessage(text, isSelf, scroll = true) {
         const container = document.getElementById('chat-container');
-        const isMe = role === 'user';
         
         let avatarHtml = '';
-        if (isMe) {
-            let savedImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
-            if (!savedImg) {
-                const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
-                savedImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
-            }
+        let nameHtml = '';
+
+        if (isSelf) {
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
-            const initial = activeP ? (activeP.remark || activeP.name || '我').charAt(0) : '我';
-            const style = savedImg ? `background-image:url(${savedImg})` : `background-color:#d8b4e0;`;
-            avatarHtml = `<div class="chat-msg-avatar" style="${style}">${savedImg ? '' : initial}</div>`;
+            const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
+            // 聊天专属用户头像
+            const chatUserImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
+            const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
+            const finalImg = chatUserImg || globalUserImg;
+            
+            let style = `background-color:#d8b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`;
+            if(finalImg) style = `background-image:url(${finalImg}); background-size:cover;`;
+            avatarHtml = `<div class="chat-msg-avatar" style="${style}">${finalImg ? '' : name.charAt(0)}</div>`;
+            nameHtml = `<div class="chat-sender-name">${name}</div>`;
         } else {
-            const savedImg = await getImageFromDB(`contact_avatar_${currentChatCharId}`);
-            const initial = (document.getElementById('chat-title').innerText || '?').charAt(0);
-            const style = savedImg ? `background-image:url(${savedImg})` : `background-color:#a4b4e0;`;
-            avatarHtml = `<div class="chat-msg-avatar" style="${style}">${savedImg ? '' : initial}</div>`;
+            const char = contacts.find(c => c.id === currentChatCharId);
+            if(char) {
+                const charImg = await getImageFromDB(`contact_avatar_${char.id}`);
+                let style = `background-color:#a4b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`;
+                if(charImg) style = `background-image:url(${charImg}); background-size:cover;`;
+                avatarHtml = `<div class="chat-msg-avatar" style="${style}">${charImg ? '' : (char.remark||char.name||'?').charAt(0)}</div>`;
+            }
         }
 
-        let quoteHtml = '';
-        if (quoteText) {
-            quoteHtml = `<div class="chat-quote-bubble">${quoteText}</div>`;
+        const msgRow = document.createElement('div');
+        msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
+        
+        // 处理普通气泡 or 颜文字气泡
+        let bubbleHtml = `<div class="chat-bubble">${text}</div>`;
+        if(text.includes('( ') || text.includes('₍')) {
+            bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`;
         }
 
-        const msgHtml = `
-            <div class="chat-msg-row ${isMe ? 'right' : 'left'}" style="margin-top:10px;">
-                ${avatarHtml}
-                <div class="chat-msg-content">
-                    ${isMe ? `<div class="chat-sender-name">${userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我'}</div>` : ''}
-                    <div class="chat-bubble" style="padding:0; background:transparent; box-shadow:none;">
-                        ${quoteHtml}
-                        <div class="chat-bubble" style="margin-top:${quoteText ? '4px' : '0'}; ${quoteText ? 'border-top-right-radius:4px;' : ''}">
-                            ${content}
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        container.insertAdjacentHTML('beforeend', msgHtml);
+        msgRow.innerHTML = `
+            ${avatarHtml}
+            <div class="chat-msg-content">
+                ${nameHtml}
+                ${bubbleHtml}
+            </div>
+        `;
+        container.appendChild(msgRow);
+
+        if (scroll) container.scrollTop = container.scrollHeight;
     }
 
+    // 发送消息逻辑
     document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim();
             this.value = '';
-            const container = document.getElementById('chat-container');
             
-            if (container.innerText.includes('暂无聊天记录')) container.innerHTML = '';
+            renderChatMessage(msgText, true, true);
 
-            await renderChatBubble('user', msgText);
-            
-            const chatHistory = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            chatHistory.push({ role: 'user', content: msgText, time: Date.now() });
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(chatHistory));
-
-            container.scrollTop = container.scrollHeight;
+            // 保存聊天记录
+            if(currentChatCharId) {
+                const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+                history.push({ text: msgText, isSelf: true, time: Date.now() });
+                localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            }
         }
     });
 
-    // 聊天设置面板交互
-    function toggleChatSettings(e) {
-        if(e) e.stopPropagation();
-        document.getElementById('chat-settings-panel').classList.toggle('active');
-        document.getElementById('chat-search-bar').classList.remove('active');
-    }
-    document.getElementById('chat-container').addEventListener('click', () => {
-        document.getElementById('chat-settings-panel').classList.remove('active');
-    });
-
-    // 置顶逻辑
-    function updateChatPinBtnState() {
-        const btn = document.getElementById('chat-pin-btn');
-        if (pinnedChats.includes(currentChatCharId)) btn.innerText = '取消置顶';
-        else btn.innerText = '置顶聊天';
-    }
-    function toggleChatPin() {
+    // ==========================================
+    // 🌟 8. 聊天详情页逻辑
+    // ==========================================
+    function openChatDetailModal() {
         if (!currentChatCharId) return;
-        if (pinnedChats.includes(currentChatCharId)) {
-            pinnedChats = pinnedChats.filter(id => id !== currentChatCharId);
-        } else {
-            pinnedChats.push(currentChatCharId);
-        }
-        localStorage.setItem('xy_pinned_chats', JSON.stringify(pinnedChats));
-        updateChatPinBtnState();
-        renderXunyanMessages();
+        
+        // 设置开关状态
+        const pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
+        const pinSwitch = document.getElementById('pin-switch');
+        if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on');
+        else pinSwitch.classList.remove('on');
+
+        // 加载头像预览
+        loadDetailAvatars();
+
+        document.getElementById('chat-detail-modal').classList.add('active');
     }
 
-    // 搜索聊天记录
-    function toggleChatSearch() {
-        const bar = document.getElementById('chat-search-bar');
-        const input = document.getElementById('chat-search-input');
-        if (bar.classList.contains('active')) {
-            bar.classList.remove('active');
-            input.value = '';
-            filterChatMessages();
-        } else {
-            bar.classList.add('active');
-            input.focus();
-        }
+    function closeChatDetailModal() {
+        document.getElementById('chat-detail-modal').classList.remove('active');
+        document.getElementById('chat-search-bar').style.display = 'none'; // 关闭详情时隐藏搜索框
     }
+
+    // 加载详情页的头像
+    async function loadDetailAvatars() {
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charAvatarEl = document.getElementById('chat-detail-char-avatar');
+        if (char) {
+            const img = await getImageFromDB(`contact_avatar_${char.id}`);
+            if (img) { charAvatarEl.style.backgroundImage = `url(${img})`; charAvatarEl.innerText = ''; }
+            else { charAvatarEl.style.backgroundImage = 'none'; charAvatarEl.innerText = (char.remark||char.name||'?').charAt(0); }
+        }
+
+        const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
+        const userAvatarEl = document.getElementById('chat-detail-user-avatar');
+        const chatUserImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
+        const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
+        const finalImg = chatUserImg || globalUserImg;
+        if (finalImg) { userAvatarEl.style.backgroundImage = `url(${finalImg})`; userAvatarEl.innerText = ''; }
+        else { userAvatarEl.style.backgroundImage = 'none'; userAvatarEl.innerText = activeP ? (activeP.remark||activeP.name||'我').charAt(0) : '我'; }
+    }
+
+    // 1. 置顶开关
+    function togglePinChat() {
+        if (!currentChatCharId) return;
+        let pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
+        const index = pinnedIds.indexOf(currentChatCharId);
+        const pinSwitch = document.getElementById('pin-switch');
+        
+        if (index > -1) {
+            pinnedIds.splice(index, 1);
+            pinSwitch.classList.remove('on');
+        } else {
+            pinnedIds.push(currentChatCharId);
+            pinSwitch.classList.add('on');
+        }
+        localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
+        renderXunyanMessages(); // 更新首页
+    }
+
+    // 2. 搜索聊天记录
+    function toggleChatSearch() {
+        const searchBar = document.getElementById('chat-search-bar');
+        if (searchBar.style.display === 'none' || !searchBar.style.display) {
+            searchBar.style.display = 'block';
+            document.getElementById('chat-search-input').focus();
+        } else {
+            searchBar.style.display = 'none';
+            document.getElementById('chat-search-input').value = '';
+            filterChatMessages();
+        }
+        closeChatDetailModal(); // 关闭详情弹窗以露出搜索框
+    }
+
     function filterChatMessages() {
-        const query = document.getElementById('chat-search-input').value.toLowerCase();
-        const bubbles = document.querySelectorAll('.chat-msg-row');
-        bubbles.forEach(bubble => {
-            const text = bubble.innerText.toLowerCase();
-            bubble.style.display = text.includes(query) ? 'flex' : 'none';
+        const keyword = document.getElementById('chat-search-input').value.trim().toLowerCase();
+        const rows = document.querySelectorAll('#chat-container .chat-msg-row');
+        rows.forEach(row => {
+            const text = row.querySelector('.chat-bubble, .chat-bubble-plain')?.innerText.toLowerCase() || '';
+            if (!keyword || text.includes(keyword)) row.style.display = 'flex';
+            else row.style.display = 'none';
         });
     }
 
-    // 清空聊天记录
+    // 3. 清空聊天记录
     function clearChatHistory() {
-        if (!currentChatCharId) return;
-        if (confirm("确定要清空当前的聊天记录吗？")) {
+        if(confirm("确定要清空该聊天的所有记录吗？此操作不可恢复！")) {
             localStorage.removeItem(`chat_history_${currentChatCharId}`);
-            document.getElementById('chat-container').innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">暂无聊天记录</div>';
+            document.getElementById('chat-container').innerHTML = '';
+            closeChatDetailModal();
         }
     }
 
-    // 删除当前对话 (仅移除列表，不删通讯录)
+    // 4. 删除聊天会话 (不删除通讯录)
     function deleteChatSession() {
-        if (!currentChatCharId) return;
-        if (confirm("确定要删除与该角色的聊天界面吗？\n(角色人设不会从通讯录删除，以后可通过 Bout 重新添加)")) {
-            selectedBoutIds = selectedBoutIds.filter(id => id !== currentChatCharId);
-            pinnedChats = pinnedChats.filter(id => id !== currentChatCharId);
-            localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
-            localStorage.setItem('xy_pinned_chats', JSON.stringify(pinnedChats));
+        if(confirm("仅删除与该角色的聊天界面，通讯录不受影响。重新添加可通过 Bout 列表。")) {
+            // 从 xy_selected_chars 中移除
+            let boutIds = safeParseJSON(localStorage.getItem('xy_selected_chars'), []);
+            boutIds = boutIds.filter(id => id !== currentChatCharId);
+            localStorage.setItem('xy_selected_chars', JSON.stringify(boutIds));
             
+            // 移除置顶标记
+            let pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
+            pinnedIds = pinnedIds.filter(id => id !== currentChatCharId);
+            localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
+
+            // 清空聊天记录
+            localStorage.removeItem(`chat_history_${currentChatCharId}`);
+
+            // 关闭聊天界面
             closeScreen('chat-screen');
+            closeChatDetailModal();
+            
+            // 更新首页列表
+            selectedBoutIds = boutIds;
             renderXunyanMessages();
         }
     }
 
-    // 聊天界面单独换头像逻辑
-    document.getElementById('chat-char-avatar-upload').addEventListener('change', function(e) {
+    // 5. 更换 Char 头像
+    document.getElementById('chat-char-avatar-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file && currentChatCharId) {
             const reader = new FileReader();
             reader.onload = async function(event) {
                 const base64Data = event.target.result;
+                // 1. 更新全局通讯录头像
                 await saveImageToDB(`contact_avatar_${currentChatCharId}`, base64Data);
-                document.querySelectorAll('.chat-msg-row.left .chat-msg-avatar').forEach(el => {
-                    el.style.backgroundImage = `url(${base64Data})`;
-                    el.innerText = '';
-                });
-                renderXunyanMessages(); 
-                alert("Char 头像已更新。");
+                // 2. 更新详情页预览
+                loadDetailAvatars();
+                // 3. 重绘聊天记录中的头像
+                reRenderChatHistory();
             };
             reader.readAsDataURL(file);
         }
         this.value = '';
     });
 
+    // 6. 更换用户头像 (仅本聊天)
     document.getElementById('chat-user-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentChatCharId) {
@@ -1558,20 +1688,46 @@
             reader.onload = async function(event) {
                 const base64Data = event.target.result;
                 await saveImageToDB(`chat_user_avatar_${currentChatCharId}`, base64Data);
-                
-                document.querySelectorAll('.chat-msg-row.right .chat-msg-avatar').forEach(el => {
-                    el.style.backgroundImage = `url(${base64Data})`;
-                    el.innerText = '';
-                });
-                alert("当前聊天界面的我的头像已更新。");
+                loadDetailAvatars();
+                reRenderChatHistory();
             };
             reader.readAsDataURL(file);
         }
         this.value = '';
     });
 
+    // 7. 更换聊天背景
+    document.getElementById('chat-bg-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && currentChatCharId) {
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const base64Data = event.target.result;
+                await saveImageToDB(`chat_bg_${currentChatCharId}`, base64Data);
+                document.getElementById('chat-screen').style.backgroundImage = `url(${base64Data})`;
+                alert("聊天背景更新成功！");
+            };
+            reader.readAsDataURL(file);
+        }
+        this.value = '';
+    });
+
+    // 重绘历史聊天记录
+    async function reRenderChatHistory() {
+        const container = document.getElementById('chat-container');
+        container.innerHTML = '';
+        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
+        if(hasHistory) {
+            const history = safeParseJSON(hasHistory, []);
+            for(const msg of history) {
+                await renderChatMessage(msg.text, msg.isSelf, false);
+            }
+        }
+        container.scrollTop = container.scrollHeight;
+    }
+
     // ==========================================
-    // 8. 初始化
+    // 9. 初始化
     // ==========================================
     async function initApp() {
         await renderApps();
