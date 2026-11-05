@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>西西莉亚</title>
+<title>莉亚</title>
 <style>
     :root {
         --bg-color: #f5f5f7;
         --card-bg: #ffffff;
         --text-main: #1c1c1e;
         --text-secondary: #8e8e93;
-        --placeholder-bg: #e5e5ea;
+        --placeholder-bg: #e5e5ea; /* 统一的灰白底色 */
         --border-color: #e5e5ea;
         --blue: #007aff;
     }
@@ -196,11 +196,12 @@
         margin-bottom: 10px;
     }
 
+    /* 修复：胶囊里的初始图标颜色改为灰白色，与普通图标一致 */
     .dock-icon {
         width: 64px;
         height: 64px;
         border-radius: 16px;
-        background-color: #ffffff;
+        background-color: var(--placeholder-bg); /* 修改了这里 */
         background-size: cover;
         background-position: center;
         cursor: pointer;
@@ -272,6 +273,7 @@
         gap: 30px;
     }
 
+    /* 管理界面的底部图标同样保持灰白 */
     .manager-grid.dock-grid .dock-icon {
         background-color: var(--placeholder-bg);
     }
@@ -516,7 +518,6 @@
         });
     }
 
-    // 新增：从DB中删除特定记录
     async function deleteImageFromDB(key) {
         const db = await initDB();
         return new Promise((resolve, reject) => {
@@ -605,7 +606,7 @@
                     if (savedImg) {
                         homeIconEl.style.backgroundImage = `url(${savedImg})`;
                     } else {
-                        homeIconEl.style.backgroundImage = 'none'; // 恢复默认
+                        homeIconEl.style.backgroundImage = 'none';
                     }
                 }
                 
@@ -832,7 +833,7 @@
     document.getElementById('btn-reset-wallpaper').addEventListener('click', async () => {
         if(confirm("确定要恢复默认桌面壁纸吗？")) {
             await deleteImageFromDB('app_wallpaper');
-            localStorage.removeItem('wallpaper'); // 兼容清理
+            localStorage.removeItem('wallpaper');
             document.body.style.backgroundImage = 'none';
         }
     });
@@ -840,18 +841,15 @@
     // 恢复默认图标与名称
     document.getElementById('btn-reset-apps').addEventListener('click', async () => {
         if(confirm("确定要将所有App（桌面及底部）恢复为默认的图标和名称吗？")) {
-            // 1. 清理本地存储中的名字
             defaultApps.forEach(app => {
                 localStorage.removeItem(`app_name_${app.id}`);
             });
 
-            // 2. 清理数据库中的图标 (只删除App相关的，不删头像和组件)
             const keysToDelete = ['app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
             for (let key of keysToDelete) {
                 await deleteImageFromDB(key);
             }
 
-            // 3. 重新渲染
             await renderApps();
             alert("已恢复默认图标和名称！");
         }
