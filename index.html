@@ -123,7 +123,6 @@
     /* --- 通讯录/用户人设 列表界面 --- */
     #contact-list-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
     
-    /* 🌟 核心修复：图一列表层级设为 2500，全屏铺满确保滚动 */
     #user-persona-list-screen { 
         background-color: #ffffff; 
         z-index: 2500; 
@@ -137,7 +136,6 @@
     .cl-header-btn { font-size: 16px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; }
     .cl-title { font-size: 18px; font-weight: 600; }
     
-    /* 🌟 核心修复：列表滚动属性 */
     .cl-list { 
         flex-grow: 1; 
         overflow-y: auto; 
@@ -164,7 +162,6 @@
     /* --- 通用编辑界面 (Char 和 User 复用) --- */
     #contact-edit-screen { background-color: #f5f5f7; z-index: 2100; padding: 0; }
     
-    /* 🌟 核心修复：图二编辑界面层级最高设为 3000，直接覆盖在图一之上 */
     #user-persona-edit-screen { 
         background-color: #f5f5f7; 
         z-index: 3000; 
@@ -357,7 +354,7 @@
     </div>
 </div>
 
-<!-- 用户人设列表 (图一) -->
+<!-- 用户人设列表 -->
 <div class="fullscreen-screen" id="user-persona-list-screen">
     <div class="cl-header">
         <button class="cl-header-btn" onclick="closeScreen('user-persona-list-screen')">返回</button>
@@ -412,7 +409,7 @@
     </div>
 </div>
 
-<!-- 用户人设编辑界面 (图二) -->
+<!-- 用户人设编辑界面 -->
 <div class="fullscreen-screen" id="user-persona-edit-screen">
     <div class="ce-header">
         <div class="ce-icon-btn" onclick="closeScreen('user-persona-edit-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
@@ -423,20 +420,20 @@
             <div class="ce-avatar" id="user-avatar" onclick="document.getElementById('user-avatar-upload').click()"></div>
         </div>
         <div class="ce-card">
-            <div class="ce-input-row"><input type="text" class="ce-input" id="user-remark" placeholder="网名 (必填)"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-remark" placeholder="网名"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="user-name" placeholder="真实姓名"></div>
-            <div class="ce-input-row"><input type="text" class="ce-input" id="user-identity" placeholder="身份 (职业)"></div>
-            <div class="ce-input-row"><textarea class="ce-input" id="user-signature" placeholder="个性签名 (显示在图一)" rows="1" style="resize:none;"></textarea></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-identity" placeholder="身份"></div>
+            <div class="ce-input-row"><textarea class="ce-input" id="user-signature" placeholder="个性签名" rows="1" style="resize:none;"></textarea></div>
         </div>
         <div class="ce-action-btn" onclick="document.getElementById('user-docx-upload').click()">
-            <div class="plus-icon">+</div> 上传生平文件 (docx)
+            <div class="plus-icon">+</div> 上传生平文件
         </div>
         <div class="ce-action-btn" onclick="openUserRelationModal()">
             <div class="plus-icon">+</div> 添加关联人
         </div>
         <div id="user-relation-display"></div>
         <div class="ce-card" style="margin-top: 20px;">
-            <textarea class="ce-textarea" id="user-bio" placeholder="生平 (选填)"></textarea>
+            <textarea class="ce-textarea" id="user-bio" placeholder="生平"></textarea>
         </div>
         <div class="ce-delete-btn" id="user-delete-btn" onclick="deleteUserPersona()" style="display: none;">删除该用户人设</div>
     </div>
@@ -732,7 +729,6 @@
                 const div = document.createElement('div');
                 div.className = 'cl-item';
                 
-                // 🌟 核心修复：在这里加入 e.stopPropagation() 阻止事件冒泡，并直接触发编辑
                 div.onclick = (e) => {
                     e.preventDefault();
                     e.stopPropagation(); 
