@@ -325,6 +325,8 @@
     .chat-input-field::placeholder { color: #aaa; }
 
     /* --- 🌟 聊天详情弹窗样式 --- */
+    /* 提升聊天详情弹窗的层级，确保它在聊天界面之上 */
+    #chat-detail-modal { z-index: 5000; } 
     #chat-detail-modal .modal-content { max-height: 90vh; }
     .chat-detail-item {
         display: flex; justify-content: space-between; align-items: center;
@@ -567,6 +569,7 @@
             <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
         </button>
         <div class="chat-title" id="chat-title">角色名称</div>
+        <!-- 确保按钮在聊天界面上，且不会被穿透 -->
         <button class="chat-more-btn" onclick="openChatDetailModal()">
             <svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </button>
@@ -626,6 +629,10 @@
             </div>
             <div class="chat-detail-item" onclick="document.getElementById('chat-bg-upload').click()">
                 <span>更换聊天背景</span>
+            </div>
+            <!-- 🌟 新增：清除背景图 -->
+            <div class="chat-detail-item" onclick="clearChatBackground()">
+                <span>清空聊天背景 (恢复纯白)</span>
             </div>
             <div class="chat-detail-item" onclick="clearChatHistory()">
                 <span>清空聊天记录</span>
@@ -1188,6 +1195,7 @@
                 
                 const div = document.createElement('div');
                 div.className = 'xy-msg-item';
+                // 绑定点击进入聊天事件
                 div.onclick = () => openChatScreen(c.id);
                 div.innerHTML = `
                     <div class="xy-msg-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
@@ -1453,23 +1461,24 @@
         const container = document.getElementById('chat-container');
         container.innerHTML = ''; // 清空
 
-        // 🌟 纯白背景，无多余图案。如果有设置过聊天背景，则加载
+        // 加载聊天背景
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
         const chatScreen = document.getElementById('chat-screen');
         if (customBg) {
             chatScreen.style.backgroundImage = `url(${customBg})`;
         } else {
-            chatScreen.style.backgroundImage = 'none'; // 默认纯白
+            chatScreen.style.backgroundImage = 'none';
         }
 
-        // 初始没有任何聊天记录，你可以发送新消息
+        // 加载聊天记录
         const hasHistory = localStorage.getItem(`chat_history_${charId}`);
         if(hasHistory) {
             const history = safeParseJSON(hasHistory, []);
-            history.forEach(msg => renderChatMessage(msg.text, msg.isSelf, false));
+            for (const msg of history) {
+                await renderChatMessage(msg.text, msg.isSelf, false);
+            }
         }
 
-        // 滚动到底部
         container.scrollTop = container.scrollHeight;
 
         openScreen('chat-screen');
@@ -1531,7 +1540,7 @@
             const msgText = this.value.trim();
             this.value = '';
             
-            renderChatMessage(msgText, true, true);
+            await renderChatMessage(msgText, true, true);
 
             // 保存聊天记录
             if(currentChatCharId) {
@@ -1711,6 +1720,17 @@
         }
         this.value = '';
     });
+
+    // 🌟 8. 清空聊天背景
+    async function clearChatBackground() {
+        if(!currentChatCharId) return;
+        if(confirm("确定要清空聊天背景，恢复为纯白吗？")) {
+            await deleteImageFromDB(`chat_bg_${currentChatCharId}`);
+            document.getElementById('chat-screen').style.backgroundImage = 'none';
+            alert("聊天背景已清空！");
+            closeChatDetailModal();
+        }
+    }
 
     // 重绘历史聊天记录
     async function reRenderChatHistory() {
