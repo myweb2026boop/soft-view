@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>fan</title>
+<title>仿制桌面</title>
 <style>
     :root {
         --bg-color: #f5f5f7;
@@ -245,13 +245,6 @@
         margin-right: 50px;
     }
 
-    .manager-tips {
-        text-align: center;
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-bottom: 20px;
-    }
-
     .manager-section-title {
         font-size: 14px;
         color: var(--text-secondary);
@@ -270,6 +263,11 @@
         display: flex;
         justify-content: flex-start;
         gap: 30px;
+    }
+
+    /* 管理界面的底部图标覆盖为灰色 */
+    .manager-grid.dock-grid .dock-icon {
+        background-color: var(--placeholder-bg);
     }
 
     [contenteditable="true"] {
@@ -369,7 +367,7 @@
         <div class="manager-title">桌面管理</div>
     </div>
     
-    <div class="manager-tips">双击文字修改名称，点击图标上传高清图片（无容量限制）</div>
+    <!-- 提示语已删除 -->
 
     <div class="manager-section-title">桌面 App</div>
     <div class="manager-grid">
@@ -391,7 +389,8 @@
         </div>
     </div>
 
-    <div class="manager-section-title">底部胶囊</div>
+    <!-- 文字修改为底部App -->
+    <div class="manager-section-title">底部App</div>
     <div class="manager-grid dock-grid">
         <div class="app-item">
             <div class="dock-icon manager-upload-btn" id="mg-dock-1" data-target="d1"></div>
@@ -406,7 +405,7 @@
 
 <script>
     // ==========================================
-    // 1. IndexedDB 大容量数据库封装 (核心！)
+    // 1. IndexedDB 大容量数据库封装
     // ==========================================
     const DB_NAME = 'AppImageDB';
     const DB_VERSION = 1;
@@ -418,7 +417,7 @@
             request.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains(STORE_NAME)) {
-                    db.createObjectStore(STORE_NAME); // 纯键值对存储
+                    db.createObjectStore(STORE_NAME);
                 }
             };
             request.onsuccess = (e) => resolve(e.target.result);
@@ -448,7 +447,7 @@
         });
     }
 
-    // 清除旧版 localStorage 中存过的图片，防止占用那 5MB 宝贵的空间
+    // 清除旧版 localStorage 中可能存在的图片，防止占用空间
     function clearOldLocalImages() {
         const keysToRemove = ['img-widget-1', 'img-widget-2', 'img-widget-3', 'img-avatar', 'app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
         keysToRemove.forEach(k => localStorage.removeItem(k));
@@ -475,7 +474,7 @@
     function closeManager() { managerScreen.classList.remove('active'); }
 
     // ==========================================
-    // 4. App 数据配置与异步渲染 (读取 IndexedDB)
+    // 4. App 数据配置与异步渲染
     // ==========================================
     const defaultApps = [
         { id: '1', name: '讯言', isDock: false },
@@ -488,11 +487,9 @@
 
     async function renderApps() {
         for (const app of defaultApps) {
-            // 名字用 localStorage 读取
             const savedName = localStorage.getItem(`app_name_${app.id}`);
             const finalName = savedName !== null ? savedName : app.name;
 
-            // 图片用 IndexedDB 读取
             const savedImg = await getImageFromDB(`app_img_${app.id}`);
 
             if (!app.isDock) {
@@ -564,12 +561,11 @@
     });
 
     // ==========================================
-    // 6. 图片上传逻辑 (统一使用 IndexedDB)
+    // 6. 图片上传逻辑 (使用 IndexedDB)
     // ==========================================
     const fileInput = document.getElementById('file-upload');
     let currentUploadTarget = null;
 
-    // 绑定管理界面图标点击
     document.querySelectorAll('.manager-upload-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             currentUploadTarget = { type: 'app', id: this.dataset.target };
@@ -577,7 +573,6 @@
         });
     });
 
-    // 绑定主页组件和头像点击
     function setupHomeImageUpload(elementId) {
         const el = document.getElementById(elementId);
         el.addEventListener('click', () => {
@@ -591,7 +586,6 @@
     setupHomeImageUpload('widget-img-3');
     setupHomeImageUpload('avatar-img');
 
-    // 文件选择后读取与存储
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentUploadTarget) {
@@ -606,10 +600,8 @@
                     dbKey = `other_img_${currentUploadTarget.id}`;
                 }
 
-                // 存入超大容量数据库 IndexedDB
                 await saveImageToDB(dbKey, base64Data);
 
-                // 更新视图
                 if (currentUploadTarget.type === 'app') {
                     await renderApps(); 
                 } else {
@@ -617,36 +609,31 @@
                     if (el) el.style.backgroundImage = `url(${base64Data})`;
                 }
                 
-                fileInput.value = ''; // 允许重复选择同一张图
+                fileInput.value = '';
             };
             reader.readAsDataURL(file);
         }
     });
 
     // ==========================================
-    // 7. 初始化加载 (从 DB 恢复所有图片)
+    // 7. 初始化加载
     // ==========================================
     async function initApp() {
         await renderApps();
         
-        // 恢复头像
         const avatarImg = await getImageFromDB('other_img_avatar-img');
         if (avatarImg) document.getElementById('avatar-img').style.backgroundImage = `url(${avatarImg})`;
 
-        // 恢复顶部组件
         for (let i = 1; i <= 3; i++) {
             const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`);
             if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`;
         }
 
-        // 注入认证小勾
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
     }
 
-    // 启动加载
     initApp();
-
 </script>
 </body>
 </html>
