@@ -207,14 +207,12 @@
     #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload { display: none; }
 
     /* ==================================================== */
-    /* 🌟 聊天界面样式 (修复：严格隐藏初始状态) */
+    /* 🌟 聊天界面样式 (彻底修复全屏与隐藏) */
     /* ==================================================== */
     #chat-screen { 
         background-color: #ffffff; 
         z-index: 4000; 
-        padding: 0; 
-        /* 注意：基础的 .fullscreen-screen 已经设为 display: none，
-           加上 active 才会 display: flex，所以不会穿透显示了 */
+        padding: 0 !important; /* 覆盖通用 padding */
     }
     
     .chat-header { 
@@ -1086,13 +1084,11 @@
         const container = document.getElementById('xy-msg-list');
         container.innerHTML = '';
         
-        // 过滤掉可能已经从通讯录删除的无效ID
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
         if(validIds.length !== selectedBoutIds.length) {
             selectedBoutIds = validIds; localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
         }
 
-        // 排序：置顶的排在前面
         const sortedIds = [...selectedBoutIds].sort((a, b) => {
             const aPinned = pinnedChats.includes(a);
             const bPinned = pinnedChats.includes(b);
@@ -1117,6 +1113,7 @@
 
                 const div = document.createElement('div');
                 div.className = 'xy-msg-item';
+                // 绑定点击事件
                 div.onclick = () => openChatScreen(c.id);
                 div.innerHTML = `
                     <div class="xy-msg-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
@@ -1359,7 +1356,6 @@
             contacts = contacts.filter(x => x.id !== currentEditId);
             localStorage.setItem('contacts_data', JSON.stringify(contacts));
             await deleteImageFromDB(`contact_avatar_${currentEditId}`);
-            // 从聊天列表和置顶中移除
             selectedBoutIds = selectedBoutIds.filter(id => id !== currentEditId);
             pinnedChats = pinnedChats.filter(id => id !== currentEditId);
             localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
@@ -1384,9 +1380,8 @@
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
         
         const container = document.getElementById('chat-container');
-        container.innerHTML = ''; // 清空之前的记录
+        container.innerHTML = ''; 
 
-        // 读取真实的聊天记录 (如果没有则显示为空)
         const chatHistory = safeParseJSON(localStorage.getItem(`chat_history_${charId}`), []);
         
         if (chatHistory.length === 0) {
@@ -1402,14 +1397,12 @@
         setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
     }
 
-    // 渲染单条气泡 DOM 的公共方法
     async function renderChatBubble(role, content, quoteText = null) {
         const container = document.getElementById('chat-container');
         const isMe = role === 'user';
         
         let avatarHtml = '';
         if (isMe) {
-            // 优先读取专属聊天头像，没有就读取人设头像
             let savedImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
             if (!savedImg) {
                 const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
@@ -1447,7 +1440,6 @@
         container.insertAdjacentHTML('beforeend', msgHtml);
     }
 
-    // 聊天输入框发送逻辑
     document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim();
