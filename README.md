@@ -1,1 +1,1 @@
-# -soft-view
+# soft-view
