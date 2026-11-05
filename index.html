@@ -207,12 +207,14 @@
     #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload { display: none; }
 
     /* ==================================================== */
-    /* 🌟 聊天界面样式 (纯白背景，紧凑气泡) */
+    /* 🌟 聊天界面样式 (修复：严格隐藏初始状态) */
     /* ==================================================== */
     #chat-screen { 
         background-color: #ffffff; 
         z-index: 4000; 
         padding: 0; 
+        /* 注意：基础的 .fullscreen-screen 已经设为 display: none，
+           加上 active 才会 display: flex，所以不会穿透显示了 */
     }
     
     .chat-header { 
@@ -597,7 +599,7 @@
     </div>
 </div>
 
-<!-- 🌟 弹窗：全局提示词 (Portfolio) -->
+<!-- 弹窗：全局提示词 (Portfolio) -->
 <div class="modal-overlay" id="global-prompt-modal">
     <div class="modal-content">
         <div class="modal-title">全局提示词 (内置)</div>
@@ -620,7 +622,6 @@
 <input type="file" id="blog-avatar-upload" accept="image/*">
 <input type="file" id="user-avatar-upload" accept="image/*">
 <input type="file" id="user-docx-upload" accept=".docx">
-<!-- 聊天专属头像上传 -->
 <input type="file" id="chat-char-avatar-upload" accept="image/*">
 <input type="file" id="chat-user-avatar-upload" accept="image/*">
 
@@ -1051,7 +1052,6 @@
     // ==========================================
     // 4. 讯言 Bout 功能
     // ==========================================
-    // 🌟 修改：新增置顶列表管理
     let selectedBoutIds = safeParseJSON(localStorage.getItem('xy_selected_chars'), []);
     let pinnedChats = safeParseJSON(localStorage.getItem('xy_pinned_chats'), []);
 
@@ -1384,13 +1384,12 @@
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
         
         const container = document.getElementById('chat-container');
-        container.innerHTML = ''; // 清空之前的记录，现在改为从 localStorage 读取真实的聊天记录
+        container.innerHTML = ''; // 清空之前的记录
 
         // 读取真实的聊天记录 (如果没有则显示为空)
         const chatHistory = safeParseJSON(localStorage.getItem(`chat_history_${charId}`), []);
         
         if (chatHistory.length === 0) {
-            // 无记录时留空，不再插入默认的假气泡
             container.innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">暂无聊天记录</div>';
         } else {
             for (const msg of chatHistory) {
@@ -1408,11 +1407,15 @@
         const container = document.getElementById('chat-container');
         const isMe = role === 'user';
         
-        // 获取头像
         let avatarHtml = '';
         if (isMe) {
+            // 优先读取专属聊天头像，没有就读取人设头像
+            let savedImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
+            if (!savedImg) {
+                const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
+                savedImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
+            }
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
-            const savedImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
             const initial = activeP ? (activeP.remark || activeP.name || '我').charAt(0) : '我';
             const style = savedImg ? `background-image:url(${savedImg})` : `background-color:#d8b4e0;`;
             avatarHtml = `<div class="chat-msg-avatar" style="${style}">${savedImg ? '' : initial}</div>`;
@@ -1451,13 +1454,10 @@
             this.value = '';
             const container = document.getElementById('chat-container');
             
-            // 移除“暂无聊天记录”的提示
             if (container.innerText.includes('暂无聊天记录')) container.innerHTML = '';
 
-            // 渲染到界面
             await renderChatBubble('user', msgText);
             
-            // 保存到本地
             const chatHistory = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
             chatHistory.push({ role: 'user', content: msgText, time: Date.now() });
             localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(chatHistory));
@@ -1472,7 +1472,6 @@
         document.getElementById('chat-settings-panel').classList.toggle('active');
         document.getElementById('chat-search-bar').classList.remove('active');
     }
-    // 点击其他区域关闭面板
     document.getElementById('chat-container').addEventListener('click', () => {
         document.getElementById('chat-settings-panel').classList.remove('active');
     });
@@ -1502,7 +1501,7 @@
         if (bar.classList.contains('active')) {
             bar.classList.remove('active');
             input.value = '';
-            filterChatMessages(); // 恢复显示
+            filterChatMessages();
         } else {
             bar.classList.add('active');
             input.focus();
@@ -1548,12 +1547,11 @@
             reader.onload = async function(event) {
                 const base64Data = event.target.result;
                 await saveImageToDB(`contact_avatar_${currentChatCharId}`, base64Data);
-                // 刷新当前聊天界面头像
                 document.querySelectorAll('.chat-msg-row.left .chat-msg-avatar').forEach(el => {
                     el.style.backgroundImage = `url(${base64Data})`;
                     el.innerText = '';
                 });
-                renderXunyanMessages(); // 同步刷新列表头像
+                renderXunyanMessages(); 
                 alert("Char 头像已更新。");
             };
             reader.readAsDataURL(file);
@@ -1567,7 +1565,6 @@
             const reader = new FileReader();
             reader.onload = async function(event) {
                 const base64Data = event.target.result;
-                // 这里用特定的 key 保存仅限当前聊天界面的头像
                 await saveImageToDB(`chat_user_avatar_${currentChatCharId}`, base64Data);
                 
                 document.querySelectorAll('.chat-msg-row.right .chat-msg-avatar').forEach(el => {
