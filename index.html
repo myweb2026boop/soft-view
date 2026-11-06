@@ -16,6 +16,7 @@
         --blue: #007aff;
         --green: #34c759;
         --red: #ff3b30;
+        --global-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -26,7 +27,7 @@
     body {
         margin: 0; padding: 20px 12px;
         background-color: var(--bg-color); background-image: none; background-size: cover; background-position: center; background-attachment: fixed;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family: var(--global-font);
         color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: background-image 0.3s ease;
     }
 
@@ -360,6 +361,7 @@
         top: 0; left: 0; width: 100vw; height: 100vh;
         background-size: cover;
         background-position: center;
+        font-family: var(--offline-font, var(--global-font)); /* 线下字体优先 */
     }
     .dashboard-top-nav {
         margin: 15px 20px;
@@ -716,6 +718,48 @@
     .ins-btn-text {
         background: none; border: none; color: #007aff; font-size: 14px; cursor: pointer; padding: 0; margin-top: 5px;
     }
+
+    /* ==================================================== */
+    /* 🌟 自定义预设管理界面 (P2风格) */
+    /* ==================================================== */
+    #preset-manage-modal {
+        z-index: 5500;
+    }
+    .preset-container {
+        background: #fff; border-radius: 16px; padding: 20px; width: 90%; max-width: 360px;
+        display: flex; flex-direction: column; gap: 15px;
+    }
+    .preset-title { font-size: 18px; font-weight: 600; color: #1c1c1e; margin-bottom: 5px; }
+    .preset-row {
+        display: flex; gap: 10px; align-items: center;
+    }
+    .preset-input {
+        flex-grow: 1; padding: 12px; border: 1px solid #e5e5ea; border-radius: 10px; font-size: 14px;
+        outline: none; transition: border 0.3s; font-family: inherit;
+    }
+    .preset-input:focus { border-color: var(--blue); }
+    .preset-btn {
+        padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500;
+        border: none; cursor: pointer; color: #fff; transition: opacity 0.2s;
+        white-space: nowrap;
+    }
+    .preset-btn:active { opacity: 0.8; }
+    .preset-btn.green { background-color: var(--green); flex-shrink: 0; }
+    .preset-btn.blue { background-color: var(--blue); flex: 1; }
+    .preset-btn.red { background-color: var(--red); flex: 1; }
+    
+    .preset-select {
+        width: 100%; padding: 12px; border: 1px solid #e5e5ea; border-radius: 10px; font-size: 14px;
+        outline: none; background-color: #fff; font-family: inherit;
+        appearance: none; -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px top 50%;
+        background-size: 10px auto;
+    }
+    .preset-close-btn {
+        margin-top: 10px; padding: 12px; background: #f2f2f7; border-radius: 10px; text-align: center; color: #1c1c1e; font-weight: 600; cursor: pointer;
+    }
 </style>
 </head>
 <body>
@@ -778,6 +822,10 @@
     <div class="manager-section-title">美化与设置</div>
     <div class="settings-group">
         <button class="setting-btn" id="btn-change-wallpaper"><svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>更换桌面壁纸</button>
+        <!-- 全局字体上传入口 -->
+        <button class="setting-btn" onclick="document.getElementById('global-font-upload').click()" style="color:#007aff;">
+            <svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>上传全局字体
+        </button>
         <button class="setting-btn" id="btn-export"><svg style="width:18px;height:18px;fill:#34c759;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>导出桌面美化</button>
         <button class="setting-btn" id="btn-import"><svg style="width:18px;height:18px;fill:#ff9500;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>导入桌面美化</button>
         <button class="setting-btn danger" id="btn-reset-wallpaper"><svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>恢复默认桌面壁纸</button>
@@ -787,16 +835,14 @@
 
 <!-- 设置 App (仿 iOS) -->
 <div class="fullscreen-screen" id="settings-screen">
-    <!-- 顶栏优化 -->
     <div class="settings-header-bar">
         <div class="back-icon" onclick="closeScreen('settings-screen')">
             <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
         </div>
         <div class="settings-title">设置</div>
-        <div style="width:36px;"></div> <!-- 占位平衡布局 -->
+        <div style="width:36px;"></div>
     </div>
     
-    <!-- 账户模块 -->
     <div class="settings-account">
         <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
         <div class="settings-account-info">
@@ -806,16 +852,13 @@
         <div class="settings-list-arrow"></div>
     </div>
 
-    <!-- 功能列表 -->
     <div class="settings-group-list">
-        <!-- 飞行模式 -> 全屏 -->
         <div class="settings-list-item" onclick="toggleFullscreenMode()">
             <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
             <div class="settings-list-text">全屏模式</div>
             <div class="settings-switch" id="toggle-fullscreen"></div>
         </div>
         
-        <!-- WLAN -> API 设置 (跳转全屏) -->
         <div class="settings-list-item" onclick="openApiScreen()">
             <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
             <div class="settings-list-text">API 接口</div>
@@ -823,25 +866,21 @@
             <div class="settings-list-arrow"></div>
         </div>
 
-        <!-- 蜂窝网络 -> 铃声 -->
         <div class="settings-list-item">
             <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
             <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
-            <!-- 试听按钮 -->
             <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()">
                 <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg>
             </div>
             <div class="settings-list-arrow" onclick="document.getElementById('ringtone-upload').click()"></div>
         </div>
 
-        <!-- 个人热点 -> 导入数据 -->
         <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
             <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
             <div class="settings-list-text">导入全局数据</div>
             <div class="settings-list-arrow"></div>
         </div>
 
-        <!-- 电池 -> 导出数据 -->
         <div class="settings-list-item" onclick="exportGlobalData()">
             <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
             <div class="settings-list-text">导出全局数据</div>
@@ -849,7 +888,6 @@
         </div>
     </div>
 
-    <!-- 通知模块 (全部改为标准行) -->
     <div class="settings-group-list" style="margin-top: 20px;">
         <div class="settings-list-item" onclick="toggleBackgroundKeepAlive()">
             <div class="settings-list-icon" style="background-color: #3478f6;"><svg viewBox="0 0 24 24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"></path></svg></div>
@@ -1127,6 +1165,10 @@
             <div class="chat-detail-item" onclick="openOfflineCharSelectModal()">
                 <span>选择 Char 开启线下</span>
             </div>
+            <!-- 线下专属字体上传入口 -->
+            <div class="chat-detail-item" onclick="document.getElementById('offline-font-upload').click()" style="color:#007aff;">
+                <span>上传线下专属字体</span>
+            </div>
         </div>
 
         <div class="ce-card" style="padding: 16px;">
@@ -1159,7 +1201,7 @@
         </div>
 
         <div class="ce-card">
-            <div class="chat-detail-item" onclick="manageOfflinePresets()">
+            <div class="chat-detail-item" onclick="openPresetManageModal()">
                 <span>管理预设</span>
             </div>
         </div>
@@ -1189,6 +1231,30 @@
         </div>
     </div>
 </div>
+
+<!-- 🌟 弹窗：自定义预设管理 (P2风格) -->
+<div class="modal-overlay" id="preset-manage-modal">
+    <div class="preset-container">
+        <div class="preset-title">预设管理</div>
+        
+        <!-- 保存区域 -->
+        <div class="preset-row">
+            <input type="text" class="preset-input" id="new-preset-name" placeholder="输入预设名称（如：粉色主题）">
+            <button class="preset-btn green" onclick="saveCurrentPreset()">保存预设</button>
+        </div>
+
+        <!-- 选择/操作区域 -->
+        <select class="preset-select" id="preset-select-list">
+            <option value="">-- 选择预设 --</option>
+        </select>
+        <div class="preset-row">
+            <button class="preset-btn blue" onclick="applySelectedPreset()">应用</button>
+            <button class="preset-btn red" onclick="deleteSelectedPreset()">删除</button>
+        </div>
+        <div class="preset-close-btn" onclick="closePresetManageModal()">取消</div>
+    </div>
+</div>
+
 
 <!-- 用户人设列表 -->
 <div class="fullscreen-screen" id="user-persona-list-screen">
@@ -1277,31 +1343,23 @@
 
 <!-- 🌟 聊天界面 -->
 <div class="fullscreen-screen" id="chat-screen">
-    <!-- 顶部导航 -->
     <div class="chat-header">
         <button class="chat-back-btn" onclick="closeScreen('chat-screen')">
             <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
         </button>
         <div class="chat-title" id="chat-title">角色名称</div>
-        <!-- 确保按钮在聊天界面上，且不会被穿透 -->
         <button class="chat-more-btn" onclick="openChatDetailModal()">
             <svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </button>
     </div>
     
-    <!-- 搜索栏 (默认隐藏) -->
     <div id="chat-search-bar">
         <input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
     </div>
 
-    <!-- 聊天内容区 -->
-    <div class="chat-container" id="chat-container">
-        <!-- 聊天记录动态渲染 -->
-    </div>
+    <div class="chat-container" id="chat-container"></div>
 
-    <!-- 底部输入框 -->
     <div class="chat-input-bar">
-        <!-- 🌟 麦克风按钮，绑定了 triggerCharReply -->
         <button class="chat-input-icon-btn" onclick="triggerCharReply()">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
         </button>
@@ -1318,15 +1376,12 @@
 <!-- 🌟 聊天详情弹窗 -->
 <div class="modal-overlay" id="chat-detail-modal">
     <div class="modal-content" style="padding: 0; overflow: hidden;">
-        <!-- 顶部信息区域 -->
         <div style="padding: 24px 20px 16px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid #f0f0f0;">
             <div style="display: flex; gap: 30px; justify-content: center; width: 100%;">
-                <!-- 角色头像 -->
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
                     <div class="ce-avatar" id="chat-detail-char-avatar" style="width: 64px; height: 64px; font-size: 24px;" onclick="document.getElementById('chat-char-avatar-upload').click()"></div>
                     <span style="font-size: 12px; color: #666;">换 Char 头像</span>
                 </div>
-                <!-- 用户头像 -->
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
                     <div class="ce-avatar" id="chat-detail-user-avatar" style="width: 64px; height: 64px; font-size: 24px; background-color: #d8b4e0;" onclick="document.getElementById('chat-user-avatar-upload').click()"></div>
                     <span style="font-size: 12px; color: #666;">换我的头像</span>
@@ -1335,11 +1390,9 @@
         </div>
 
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
-            <!-- 🌟 新增：编辑备注 -->
             <div class="chat-detail-item" onclick="editChatRemark()">
                 <span>编辑备注</span>
             </div>
-            <!-- 🌟 新增：绑定世界书 -->
             <div class="chat-detail-item" onclick="openChatBookBindModal()">
                 <span>绑定世界书</span>
             </div>
@@ -1430,6 +1483,10 @@
 <input type="file" id="book-file-upload" accept=".docx,.json">
 <input type="file" id="ringtone-upload" accept="audio/mpeg,audio/mp3">
 <input type="file" id="settings-avatar-upload" accept="image/*">
+<!-- 字体上传 -->
+<input type="file" id="global-font-upload" accept=".ttf,.otf,.woff,.woff2">
+<input type="file" id="offline-font-upload" accept=".ttf,.otf,.woff,.woff2">
+
 
 <script>
     // ==========================================
@@ -1440,11 +1497,12 @@
     }
 
     // ==========================================
-    // 1. 数据库与存储封装
+    // 1. 数据库与存储封装 (新增字体的 Blob 存储)
     // ==========================================
-    const DB_NAME = 'AppImageDB'; const DB_VERSION = 1; const STORE_NAME = 'images';
+    const DB_NAME = 'AppImageDB'; const DB_VERSION = 2; const STORE_NAME = 'images'; // 升级版本以支持字体
     function initDB() { return new Promise((resolve, reject) => { const request = indexedDB.open(DB_NAME, DB_VERSION); request.onupgradeneeded = (e) => { const db = e.target.result; if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME); }; request.onsuccess = (e) => resolve(e.target.result); request.onerror = (e) => reject(e.target.error); }); }
-    async function saveImageToDB(key, base64Data) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.put(base64Data, key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
+    // 兼容 Base64 和 Blob
+    async function saveImageToDB(key, data) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.put(data, key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
     async function getImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.get(key); req.onsuccess = () => resolve(req.result); req.onerror = (e) => reject(e.target.error); }); }
     async function deleteImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.delete(key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
     async function getAllImagesFromDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.getAll(); const keysReq = store.getAllKeys(); tx.oncomplete = () => { const result = {}; for(let i=0; i<keysReq.result.length; i++) result[keysReq.result[i]] = req.result[i]; resolve(result); }; tx.onerror = (e) => reject(e.target.error); }); }
@@ -1481,8 +1539,7 @@
                 if (mgDockEl) { if (savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`; else mgDockEl.style.backgroundImage = 'none'; }
             }
         }
-        // Dock 1 强制改为设置图标
-        document.getElementById('home-dock-1').style.backgroundColor = '#e5e5ea'; // 占位色
+        document.getElementById('home-dock-1').style.backgroundColor = '#e5e5ea';
     }
 
     function setupEditableText(elements) {
@@ -1521,6 +1578,64 @@
                 }
             }
         });
+    });
+
+    // ==========================================
+    // 🌟 字体渲染与极致压缩逻辑
+    // ==========================================
+    // 核心逻辑：将字体文件转为 Blob 存入 IndexedDB，用 FontFace API 直接加载，不进行 Base64 编码，从而极致节省内存（不消耗大模型 Token）。
+
+    async function applyGlobalFont() {
+        const fontBlob = await getImageFromDB('global_font_blob');
+        if (fontBlob) {
+            try {
+                const fontUrl = URL.createObjectURL(fontBlob);
+                const fontFace = new FontFace('CustomGlobalFont', `url(${fontUrl})`);
+                await fontFace.load();
+                document.fonts.add(fontFace);
+                document.documentElement.style.setProperty('--global-font', 'CustomGlobalFont, sans-serif');
+            } catch (e) { console.error("全局字体加载失败", e); }
+        } else {
+            document.documentElement.style.setProperty('--global-font', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif');
+        }
+    }
+
+    async function applyOfflineFont() {
+        const fontBlob = await getImageFromDB('offline_font_blob');
+        if (fontBlob) {
+            try {
+                const fontUrl = URL.createObjectURL(fontBlob);
+                const fontFace = new FontFace('CustomOfflineFont', `url(${fontUrl})`);
+                await fontFace.load();
+                document.fonts.add(fontFace);
+                // 给线下界面注入专属字体变量
+                document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'CustomOfflineFont, sans-serif');
+            } catch (e) { console.error("线下字体加载失败", e); }
+        } else {
+            document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'var(--global-font)');
+        }
+    }
+
+    document.getElementById('global-font-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            saveImageToDB('global_font_blob', file).then(() => {
+                applyGlobalFont();
+                alert("全局字体更新成功！");
+            });
+        }
+        this.value = '';
+    });
+
+    document.getElementById('offline-font-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            saveImageToDB('offline_font_blob', file).then(() => {
+                applyOfflineFont();
+                alert("线下专属字体更新成功！");
+            });
+        }
+        this.value = '';
     });
 
     // --- 图片上传通用逻辑 ---
@@ -1570,7 +1685,6 @@
     // ==========================================
     async function openSettingsApp() {
         openScreen('settings-screen');
-        // 初始化 UI 状态
         const fsState = localStorage.getItem('settings_fullscreen') === 'true';
         document.getElementById('toggle-fullscreen').classList.toggle('on', fsState);
 
@@ -1582,7 +1696,6 @@
             document.getElementById('api-status-text').innerText = '已配置';
         }
 
-        // 加载铃声状态
         const ringName = localStorage.getItem('settings_ringtone_name');
         if (ringName) {
             document.getElementById('ringtone-play-btn').style.display = 'block';
@@ -1590,7 +1703,6 @@
             document.getElementById('ringtone-play-btn').style.display = 'none';
         }
 
-        // 加载账户信息
         const savedName = localStorage.getItem('settings_account_name');
         document.getElementById('settings-account-name').innerText = savedName || '默认昵称';
 
@@ -1604,7 +1716,6 @@
         }
     }
 
-    // 账户改名
     function editAccountName() {
         const el = document.getElementById('settings-account-name');
         const currentName = el.innerText;
@@ -1615,7 +1726,6 @@
         }
     }
 
-    // 账户头像上传
     document.getElementById('settings-avatar-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if(!file) return;
@@ -1630,7 +1740,6 @@
         this.value = '';
     });
 
-    // 1. 全屏模式
     function toggleFullscreenMode() {
         const el = document.getElementById('toggle-fullscreen');
         const isOn = el.classList.contains('on');
@@ -1646,7 +1755,6 @@
         }
     }
 
-    // 2. API 设置 (全屏跳转)
     function openApiScreen() {
         openScreen('api-screen');
         const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), { url: '', key: '', model: '', temp: 0.7 });
@@ -1655,7 +1763,6 @@
         document.getElementById('api-model-manual').value = apiConf.model;
         document.getElementById('api-temp').value = apiConf.temp;
         
-        // 加载预设
         const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
         const sel = document.getElementById('api-preset-select');
         sel.innerHTML = '<option value="">选择预设...</option>';
@@ -1735,7 +1842,6 @@
         }
     }
 
-    // 3. 后台保活通知
     function toggleBackgroundKeepAlive() {
         const el = document.getElementById('toggle-bg-keepalive');
         const isOn = el.classList.contains('on');
@@ -1751,7 +1857,6 @@
         }
     }
 
-    // 测试弹窗
     function testNotification() {
         if (Notification.permission === "granted") {
             new Notification("测试消息", { body: "这是一条来自梨汁机的测试通知，说明你的后台保活已成功开启！" });
@@ -1760,7 +1865,6 @@
         }
     }
 
-    // 4. 上传铃声 & 试听
     document.getElementById('ringtone-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -1786,12 +1890,21 @@
         } else { alert('暂无自定义铃声'); }
     }
 
-    // 5. 导出数据
     async function exportGlobalData() {
         try {
             const lsData = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); lsData[key] = localStorage.getItem(key); }
             const dbData = await getAllImagesFromDB();
-            const exportPayload = { version: 2.1, timestamp: Date.now(), localStorage: lsData, indexedDB: dbData };
+            // 处理 Blob 数据以便序列化
+            const dbDataSerialized = {};
+            for (const [k, v] of Object.entries(dbData)) {
+                if (v instanceof Blob) {
+                    dbDataSerialized[k] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r({ type: 'blob', data: fr.result }); fr.readAsDataURL(v); });
+                } else {
+                    dbDataSerialized[k] = { type: 'string', data: v };
+                }
+            }
+
+            const exportPayload = { version: 3.0, timestamp: Date.now(), localStorage: lsData, indexedDB: dbDataSerialized };
             
             const blob = new Blob([JSON.stringify(exportPayload)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
@@ -1807,7 +1920,6 @@
         } catch (err) { alert("导出失败: " + err.message); }
     }
 
-    // 6. 导入数据
     document.getElementById('import-data-file').addEventListener('change', function(e) {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
@@ -1817,7 +1929,17 @@
                 if (!importedData.localStorage || !importedData.indexedDB) throw new Error("无效的数据格式");
                 await clearImageDB(); localStorage.clear();
                 for (const [key, value] of Object.entries(importedData.localStorage)) localStorage.setItem(key, value);
-                const imagePromises = []; for (const [key, base64] of Object.entries(importedData.indexedDB)) imagePromises.push(saveImageToDB(key, base64));
+                
+                const imagePromises = []; 
+                for (const [key, obj] of Object.entries(importedData.indexedDB)) {
+                    if (obj.type === 'blob') {
+                        const res = await fetch(obj.data);
+                        const blob = await res.blob();
+                        imagePromises.push(saveImageToDB(key, blob));
+                    } else {
+                        imagePromises.push(saveImageToDB(key, obj.data));
+                    }
+                }
                 await Promise.all(imagePromises); alert("导入成功！页面将刷新以应用新数据。"); location.reload();
             } catch (err) { alert("导入失败: " + err.message); }
             this.value = '';
@@ -2232,6 +2354,7 @@
 
         document.getElementById('offline-style-textarea').value = localStorage.getItem('offline_style') || '';
         renderOfflineContent();
+        applyOfflineFont(); // 应用线下专属字体
     }
 
     function openOfflineDetailScreen() { openScreen('offline-detail-screen'); }
@@ -2358,7 +2481,6 @@
         input.value = ''; renderOfflineContent();
     }
 
-    // 🌟 自动总结线下内容（调用 API）
     async function summarizeOffline(btnElement) {
         const savedContent = localStorage.getItem('offline_content') || '';
         if (!savedContent) { alert("线下没有任何内容可以总结哦！"); return; }
@@ -2368,7 +2490,6 @@
         const config = safeParseJSON(configStr, null);
         if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
 
-        // 按钮加载状态
         const originalText = btnElement.innerText;
         btnElement.innerText = "总结中...";
         btnElement.style.pointerEvents = 'none';
@@ -2397,11 +2518,9 @@
             const data = await res.json();
             let summaryText = data.choices[0].message.content;
 
-            // 将总结追加到内容中
             const newContent = savedContent + `\n\n【线下总结】\n${summaryText}`;
             localStorage.setItem('offline_content', newContent);
             
-            // 自动滚动到底部并渲染
             renderOfflineContent();
             const area = document.getElementById('offline-content-area');
             area.scrollTop = area.scrollHeight;
@@ -2418,43 +2537,90 @@
     }
 
     function openOfflineBookBindModal() {
-        // 修复：直接在当前界面弹窗，不关闭详情页
         openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)');
     }
 
-    function manageOfflinePresets() {
-        closeScreen('offline-detail-screen');
+    // 🌟 重写预设管理逻辑 (P2风格)
+    function openPresetManageModal() {
+        closeScreen('offline-detail-screen'); // 隐藏详情页，准备弹窗
         const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
-        const action = prompt("输入操作：1. 保存当前预设\n2. 切换预设 (输入预设名)\n3. 删除预设 (输入预设名)");
         
-        if(action === '1') {
-            const name = prompt("预设名称：");
-            if(name) {
-                presets[name] = {
-                    bg: document.getElementById('contact-offline-screen').style.backgroundImage, css: localStorage.getItem('offline_custom_css') || '',
-                    content: localStorage.getItem('offline_content') || '', style: localStorage.getItem('offline_style') || '', books: localStorage.getItem('offline_worldbook') || '[]'
-                };
-                localStorage.setItem('offline_presets', JSON.stringify(presets)); alert("预设已保存！");
-            }
-        } else if(action === '2') {
-            const name = prompt("要切换的预设名：");
-            if(name && presets[name]) {
-                const p = presets[name];
-                document.getElementById('contact-offline-screen').style.backgroundImage = p.bg;
-                localStorage.setItem('offline_custom_css', p.css); localStorage.setItem('offline_content', p.content);
-                localStorage.setItem('offline_style', p.style || ''); localStorage.setItem('offline_worldbook', p.books || '[]');
-                let styleEl = document.getElementById('offline-custom-style');
-                if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); }
-                styleEl.innerHTML = p.css;
-                document.getElementById('offline-style-textarea').value = p.style || '';
-                document.getElementById('offline-css-textarea').value = p.css || '';
-                renderOfflineContent(); alert("预设已切换！");
-            } else { alert("预设不存在！"); }
-        } else if(action === '3') {
-            const name = prompt("要删除的预设名：");
-            if(name && presets[name]) { delete presets[name]; localStorage.setItem('offline_presets', JSON.stringify(presets)); alert("预设已删除！"); }
+        // 渲染下拉列表
+        const sel = document.getElementById('preset-select-list');
+        sel.innerHTML = '<option value="">-- 选择预设 --</option>';
+        Object.keys(presets).forEach(name => {
+            sel.innerHTML += `<option value="${name}">${name}</option>`;
+        });
+        
+        document.getElementById('new-preset-name').value = ''; // 清空输入
+        document.getElementById('preset-manage-modal').classList.add('active');
+    }
+
+    function closePresetManageModal() {
+        document.getElementById('preset-manage-modal').classList.remove('active');
+    }
+
+    function saveCurrentPreset() {
+        const name = document.getElementById('new-preset-name').value.trim();
+        if (!name) { alert("请输入预设名称！"); return; }
+
+        const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
+        presets[name] = {
+            bg: document.getElementById('contact-offline-screen').style.backgroundImage, 
+            css: localStorage.getItem('offline_custom_css') || '',
+            content: localStorage.getItem('offline_content') || '', 
+            style: localStorage.getItem('offline_style') || '', 
+            books: localStorage.getItem('offline_worldbook') || '[]'
+            // 字体是Blob存在DB里，如果要连字体一起存档，比较复杂。暂且不包字体进预设，简化处理。
+        };
+        localStorage.setItem('offline_presets', JSON.stringify(presets));
+        
+        // 刷新下拉框
+        const sel = document.getElementById('preset-select-list');
+        sel.innerHTML += `<option value="${name}">${name}</option>`;
+        alert("预设已保存！");
+    }
+
+    function applySelectedPreset() {
+        const name = document.getElementById('preset-select-list').value;
+        if (!name) { alert("请先选择一个预设！"); return; }
+        const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
+        const p = presets[name];
+        if (p) {
+            document.getElementById('contact-offline-screen').style.backgroundImage = p.bg;
+            localStorage.setItem('offline_custom_css', p.css); 
+            localStorage.setItem('offline_content', p.content);
+            localStorage.setItem('offline_style', p.style || ''); 
+            localStorage.setItem('offline_worldbook', p.books || '[]');
+            
+            let styleEl = document.getElementById('offline-custom-style');
+            if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); }
+            styleEl.innerHTML = p.css;
+            
+            // 重新打开详情页更新UI
+            closePresetManageModal();
+            openContactOffline(); // 重新加载线下环境
+            alert("预设已成功应用！");
+        } else { alert("预设不存在！"); }
+    }
+
+    function deleteSelectedPreset() {
+        const name = document.getElementById('preset-select-list').value;
+        if (!name) { alert("请先选择一个预设！"); return; }
+        if (confirm(`确定要删除预设 "${name}" 吗？`)) {
+            const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
+            delete presets[name];
+            localStorage.setItem('offline_presets', JSON.stringify(presets));
+            
+            const sel = document.getElementById('preset-select-list');
+            sel.innerHTML = '<option value="">-- 选择预设 --</option>';
+            Object.keys(presets).forEach(k => {
+                sel.innerHTML += `<option value="${k}">${k}</option>`;
+            });
+            alert("预设已删除！");
         }
     }
+
 
     // ==========================================
     // 3. 用户人设 (User Persona) 核心逻辑
@@ -2980,17 +3146,13 @@
         const config = safeParseJSON(configStr, null);
         if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
 
-        // 获取角色信息
         const char = contacts.find(c => c.id === currentChatCharId);
         const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
         
-        // 构建 Prompt (人设 + 世界书 + 聊天记录)
         let systemPrompt = localStorage.getItem('global_system_prompt') || "你是一个真实的聊天对象。";
-        
         let charPersona = `【角色设定】\n名字: ${char.remark || char.name || '未命名'}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
         let userPersona = activeP ? `【用户设定】\n名字: ${activeP.remark || activeP.name || '我'}\n身份: ${activeP.identity || '未知'}\n` : '';
 
-        // 拼装世界书
         bookWorldBooks.forEach(b => {
             if(b.bindType === 'global' || (b.bindType === 'char' && b.boundCharId === char.id)) {
                 let content = b.content;
@@ -3002,16 +3164,12 @@
 
         systemPrompt = systemPrompt + '\n' + charPersona + userPersona;
 
-        // 获取历史记录
         const history = safeParseJSON(localStorage.getItem(`chat_history_${char.id}`), []);
         const messages = [{ role: "system", content: systemPrompt }];
         
         const recentHistory = history.slice(-15);
-        recentHistory.forEach(msg => {
-            messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text });
-        });
+        recentHistory.forEach(msg => { messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text }); });
 
-        // 显示加载中
         const container = document.getElementById('chat-container');
         const loadingRow = document.createElement('div');
         loadingRow.className = `chat-msg-row left`;
@@ -3041,13 +3199,11 @@
             const replyText = data.choices[0].message.content;
 
             container.removeChild(loadingRow);
-
             await renderChatMessage(replyText, false, true);
 
             history.push({ text: replyText, isSelf: false, time: Date.now() });
             localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history));
 
-            // 触发铃声/弹窗通知
             if (document.visibilityState === 'hidden') {
                 playRingtone();
                 if (localStorage.getItem('settings_bg_keepalive') === 'true' && Notification.permission === 'granted') {
@@ -3220,6 +3376,8 @@
     // ==========================================
     async function initApp() {
         await renderApps();
+        await applyGlobalFont(); // 初始化全局字体
+        
         const wallpaperImg = await getImageFromDB('app_wallpaper');
         if (wallpaperImg) document.body.style.backgroundImage = `url(${wallpaperImg})`;
 
