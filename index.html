@@ -568,6 +568,20 @@
         top: 0; left: 0; 
         width: 100vw; height: 100vh; 
     }
+    
+    /* 自定义下拉选择器样式 */
+    .custom-select {
+        border: none;
+        background-color: transparent;
+        font-size: 16px;
+        color: #007aff;
+        outline: none;
+        text-align: right;
+        max-width: 60%;
+        font-family: inherit;
+        -webkit-appearance: none;
+        appearance: none;
+    }
 </style>
 </head>
 <body>
@@ -724,17 +738,37 @@
         <div class="ce-icon-btn check-btn active" onclick="saveBookEdit()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
     </div>
     <div class="ce-body">
+        <!-- 编辑内容区 -->
         <div class="ce-card" style="padding: 16px;">
             <div class="ce-input-row" style="padding: 0 0 16px 0; border-bottom: 1px solid #f0f0f0;">
                 <input type="text" class="ce-input" id="book-edit-title" placeholder="世界书名称" style="font-weight: 600;">
             </div>
             <textarea class="ce-textarea" id="book-edit-content" placeholder="输入世界书内容..." style="height: 400px; padding: 16px 0 0 0;"></textarea>
         </div>
+
+        <!-- 新增的设置区 -->
+        <div class="ce-card">
+            <div class="ce-input-row" style="justify-content: space-between;">
+                <span style="font-size: 16px; color: #1c1c1e;">运用方式</span>
+                <select id="book-bind-type-select" class="custom-select">
+                    <!-- 动态渲染 -->
+                </select>
+            </div>
+            <div class="ce-input-row" style="justify-content: space-between;">
+                <span style="font-size: 16px; color: #1c1c1e;">插入位置</span>
+                <select id="book-insert-pos-select" class="custom-select">
+                    <option value="before">人设前</option>
+                    <option value="middle">人设中</option>
+                    <option value="after">人设后</option>
+                </select>
+            </div>
+        </div>
+
         <div class="ce-delete-btn" onclick="deleteBookItem()">删除该世界书</div>
     </div>
 </div>
 
-<!-- 🌟 通用世界书绑定多选弹窗 -->
+<!-- 🌟 通用世界书绑定多选弹窗 (仅用于线下) -->
 <div class="modal-overlay" id="global-book-bind-modal">
     <div class="modal-content">
         <div class="modal-title" id="book-bind-title">选择世界书</div>
@@ -1009,9 +1043,9 @@
             <div class="chat-detail-item" onclick="editChatRemark()">
                 <span>编辑备注</span>
             </div>
-            <!-- 🌟 新增：绑定世界书 -->
-            <div class="chat-detail-item" onclick="openCharBookBindModal()">
-                <span>绑定世界书</span>
+            <!-- 🌟 新增：绑定世界书 (使用全屏编辑页面进行) -->
+            <div class="chat-detail-item" onclick="closeChatDetailModal(); openBookApp();">
+                <span>去 Book 编辑/绑定世界书</span>
             </div>
             <div class="chat-detail-item" onclick="togglePinChat()">
                 <span>置顶聊天</span>
@@ -1297,9 +1331,9 @@
     // ==========================================
     let bookWorldBooks = safeParseJSON(localStorage.getItem('book_world_books'), []);
     let currentEditingBookId = null;
-    let globalBookBindTargetId = null; // 用于记录当前是给哪个 Char 绑定或离线绑定的目标
-    let globalBookBindType = ''; // 'char' 或 'offline'
-    let selectedBookIds = []; // 弹窗中勾选的书籍ID集合
+    let globalBookBindTargetId = null; 
+    let globalBookBindType = ''; 
+    let selectedBookIds = []; 
 
     function openBookApp() {
         openScreen('book-app-screen');
@@ -1396,7 +1430,8 @@
             title: title,
             content: content,
             bindType: 'local',
-            boundCharId: null
+            boundCharId: null,
+            insertPos: 'before' // 默认人设前
         };
         bookWorldBooks.push(newBook);
         localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
@@ -1412,6 +1447,30 @@
 
         document.getElementById('book-edit-title').value = book.title;
         document.getElementById('book-edit-content').value = book.content;
+
+        // 渲染绑定选项
+        const bindSelect = document.getElementById('book-bind-type-select');
+        bindSelect.innerHTML = `
+            <option value="global">全局运用</option>
+            <option value="local">局部运用 (不绑定)</option>
+        `;
+        contacts.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = 'char_' + c.id;
+            opt.text = '绑定: ' + (c.remark || c.name || '未命名');
+            bindSelect.appendChild(opt);
+        });
+
+        // 设置当前选中值
+        if (book.bindType === 'char' && book.boundCharId) {
+            bindSelect.value = 'char_' + book.boundCharId;
+        } else {
+            bindSelect.value = book.bindType || 'global';
+        }
+
+        // 设置插入位置
+        document.getElementById('book-insert-pos-select').value = book.insertPos || 'before';
+
         openScreen('book-edit-screen');
     }
 
@@ -1420,6 +1479,20 @@
         if(book) {
             book.title = document.getElementById('book-edit-title').value.trim() || '未命名世界书';
             book.content = document.getElementById('book-edit-content').value;
+            
+            // 保存绑定状态
+            const bindVal = document.getElementById('book-bind-type-select').value;
+            if (bindVal.startsWith('char_')) {
+                book.bindType = 'char';
+                book.boundCharId = bindVal.replace('char_', '');
+            } else {
+                book.bindType = bindVal; // 'global' 或 'local'
+                book.boundCharId = null;
+            }
+            
+            // 保存插入位置
+            book.insertPos = document.getElementById('book-insert-pos-select').value;
+
             localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
             renderBookShelf();
             alert("世界书已保存");
@@ -1437,7 +1510,7 @@
     }
 
     // ==========================================
-    // 🌟 世界书通用绑定多选弹窗 (用于Chat局部绑定和线下绑定)
+    // 🌟 世界书多选弹窗 (仅用于线下绑定)
     // ==========================================
     function openGlobalBookBindModal(type, targetId, titleStr) {
         globalBookBindType = type;
@@ -1455,16 +1528,10 @@
                 let isDisabled = false;
                 let isSelected = false;
 
-                if(type === 'char') {
-                    // Chat 局部绑定：不能选全局的，不能选其他char的
-                    if(book.bindType === 'global') isDisabled = true;
-                    else if(book.bindType === 'char' && book.boundCharId !== targetId) isDisabled = true;
-                    else if(book.bindType === 'char' && book.boundCharId === targetId) isSelected = true;
-                } else if(type === 'offline') {
+                if(type === 'offline') {
                     // 线下绑定：可以选所有非全局的
                     if(book.bindType === 'global') isDisabled = true;
                     
-                    // 线下书单存在 offline_worldbook 数组中
                     const offlineBooks = safeParseJSON(localStorage.getItem('offline_worldbook'), []);
                     if(offlineBooks.includes(book.id)) isSelected = true;
                 }
@@ -1489,7 +1556,7 @@
                 }
 
                 div.innerHTML = `
-                    <span class="modal-item-name">${book.title} ${isDisabled ? '(不可用)' : ''}</span>
+                    <span class="modal-item-name">${book.title} ${isDisabled ? '(全局不可用)' : ''}</span>
                     <div class="modal-check"></div>
                 `;
                 listContainer.appendChild(div);
@@ -1504,26 +1571,7 @@
     }
 
     function saveGlobalBookBind() {
-        if(globalBookBindType === 'char') {
-            // 1. 先把当前绑给该 char 的书解绑 (变成 local)
-            bookWorldBooks.forEach(b => {
-                if(b.bindType === 'char' && b.boundCharId === globalBookBindTargetId) {
-                    b.bindType = 'local';
-                    b.boundCharId = null;
-                }
-            });
-            // 2. 再将选中的书绑定给该 char
-            selectedBookIds.forEach(id => {
-                const book = bookWorldBooks.find(b => b.id === id);
-                if(book) {
-                    book.bindType = 'char';
-                    book.boundCharId = globalBookBindTargetId;
-                }
-            });
-            localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
-            renderBookShelf(); // 如果书架开着，更新一下
-            alert("角色专属世界书已更新");
-        } else if (globalBookBindType === 'offline') {
+        if (globalBookBindType === 'offline') {
             // 保存选择的数组到 offline_worldbook
             localStorage.setItem('offline_worldbook', JSON.stringify(selectedBookIds));
             alert("线下专属世界书已更新");
@@ -2597,12 +2645,6 @@
             renderContactList();
             alert("备注修改成功！");
         }
-    }
-
-    // 🌟 新增：绑定局部世界书
-    function openCharBookBindModal() {
-        if (!currentChatCharId) return;
-        openGlobalBookBindModal('char', currentChatCharId, '绑定角色专属世界书');
     }
 
     // 1. 置顶开关
