@@ -415,10 +415,10 @@
     .sticker-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px 10px; }
     .sticker-panel-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
     
-    /* Tabs 分类 */
-    .sticker-tabs-container { display: flex; overflow-x: auto; padding: 0 20px 10px; gap: 10px; border-bottom: 1px solid #f0f0f0; -webkit-overflow-scrolling: touch; }
+    /* Tabs 分类 (修复显示不全的问题) */
+    .sticker-tabs-container { display: flex; overflow-x: auto; padding: 0 20px 10px; gap: 10px; border-bottom: 1px solid #f0f0f0; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     .sticker-tabs-container::-webkit-scrollbar { display: none; }
-    .sticker-tab { padding: 6px 12px; background: #f2f2f7; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; flex-shrink: 0; }
+    .sticker-tab { padding: 6px 12px; background: #f2f2f7; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
     .sticker-tab.active { background: var(--blue); color: #fff; }
 
     .sticker-panel-content { flex-grow: 1; overflow-y: auto; display: flex; flex-wrap: wrap; padding: 15px; gap: 10px; align-content: flex-start; }
@@ -1259,18 +1259,20 @@
         }
     }
 
-    // 核心：强化版文本提取解析
+    // 核心：强化版文本提取解析，支持各种奇葩排版
     function extractStickersFromText(text) {
         let stickers = [];
-        // 1. 统一换行
+        // 1. 统一换行符
         text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         
-        // 2. 处理 Markdown 语法
+        // 2. 处理 Markdown 语法 ![名称](链接)
         text = text.replace(/!\[(.*?)\]\((https?:\/\/[^\)]+)\)/g, "$1：$2");
         
-        // 3. 处理被意外换行截断的 URL
-        // 匹配：http 开头，到行尾。如果行尾没有常见的图片后缀，且下一行看起来像 URL 的一部分（字母数字开头）
+        // 3. 尝试修复换行导致 URL 断开的问题
         text = text.replace(/(https?:\/\/[^\s]+)\s*\n\s*([a-zA-Z0-9_\-\.]+(?:\s*jpeg|\s*png|\s*gif|\s*jpg)?)/gi, (match, p1, p2) => {
+            // 如果 p1 已经包含后缀，可能是同一行的换行，不合并
+            if (/\.(jpg|jpeg|png|gif|webp)$/i.test(p1)) return match;
+            // 合并链接
             return p1 + p2;
         });
 
@@ -1280,39 +1282,46 @@
             line = line.trim();
             if (!line) return;
             
-            const httpIndex = line.search(/https?:\/\//);
-            if (httpIndex !== -1) {
+            const httpMatch = line.match(/https?:\/\//i);
+            if (httpMatch) {
+                const httpIndex = httpMatch.index;
                 let rawUrl = line.substring(httpIndex).trim();
-                // 去除所有空格
+                
+                // 去除 URL 中的所有空格（解决有些文档带空格的问题）
                 let cleanUrl = rawUrl.replace(/\s/g, '');
-                // 去除尾部可能附带的标点
-                cleanUrl = cleanUrl.replace(/[`'"，。！？、\[【（]+$/, '');
+                // 去掉尾部的标点符号
+                cleanUrl = cleanUrl.replace(/[`'"，。！？、\]【（]+$/, '');
                 
+                // 获取名字（http 前面的所有文本）
                 let meaning = line.substring(0, httpIndex).trim();
-                // 清理名字里的特殊符号
-                meaning = meaning.replace(/^[`'"|\s]*/, '').replace(/[`'"|\s:：\-]+$/, '');
                 
-                if (!meaning || meaning === '图源小红书，表情描述可改。' || meaning.startsWith('=====')) {
+                // 如果这一行只有 URL，则检查上一行是不是名字
+                if (!meaning && idx > 0) {
+                    const prevLine = lines[idx - 1].trim();
+                    // 过滤掉换页符等无用信息
+                    if (prevLine && !prevLine.includes('http') && !prevLine.startsWith('=====') && !prevLine.startsWith('[file')) {
+                        meaning = prevLine;
+                    }
+                }
+
+                // 清理名字里的特殊符号
+                meaning = meaning.replace(/^[`'"|\s:：\-]+/, '').replace(/[`'"|\s:：\-]+$/, '');
+                meaning = meaning.replace(/\\/g, ''); // 去除可能存在的反斜杠
+
+                if (!meaning || meaning === '图源小红书，表情描述可改。' || meaning.startsWith('=====') || meaning.length < 1) {
                     meaning = '未命名';
                 }
 
                 if (cleanUrl.startsWith('http')) {
-                    stickers.push({ id: 'st_' + Date.now() + idx, image: cleanUrl, meaning: meaning });
+                    // 去重
+                    if (!stickers.find(s => s.image === cleanUrl)) {
+                        stickers.push({ id: 'st_' + Date.now() + Math.random() + idx, image: cleanUrl, meaning: meaning });
+                    }
                 }
             }
         });
         
-        // 5. 去重
-        const uniqueStickers = [];
-        const seenUrls = new Set();
-        stickers.forEach(s => {
-            if (!seenUrls.has(s.image)) {
-                seenUrls.add(s.image);
-                uniqueStickers.push(s);
-            }
-        });
-        
-        return uniqueStickers;
+        return stickers;
     }
 
     // 解析链接并创建合集
