@@ -241,9 +241,22 @@
     .chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
     .chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
     
-    /* 表情包图片样式（去掉原有气泡的 padding 限制） */
-    .chat-msg-content img.sticker-img { max-width: 150px; max-height: 150px; border-radius: 8px; display: block; object-fit: contain; }
-    .chat-bubble img.sticker-img { max-width: 100px; max-height: 100px; border-radius: 8px; display: block; object-fit: contain; }
+    /* 🌟 修复表情包过大问题，全局限制表情包大小 */
+    .chat-msg-content img.sticker-img { 
+        width: 120px; 
+        height: 120px; 
+        object-fit: contain; 
+        border-radius: 8px; 
+        display: block; 
+        margin: 0;
+    }
+    /* 如果在气泡内部的小表情 */
+    .chat-bubble img.sticker-img { 
+        width: 60px; 
+        height: 60px; 
+        vertical-align: middle; 
+        margin: 0 2px; 
+    }
     
     .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; }
 
@@ -435,17 +448,17 @@
     #sticker-bind-modal { z-index: 6000 !important; }
 
     /* ==================================================== */
-    /* 🌟 全新音乐 App (完美仿图二) */
+    /* 🌟 全新音乐 App (完美仿图2，包含三个灰框) */
     /* ==================================================== */
     #music-app-screen { background-color: #f2f2f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #music-app-screen.active { display: flex; }
     
-    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 0; overflow-y: auto; }
+    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 0; overflow-y: hidden; }
     
     /* 图二白板卡片 */
     .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; border-radius: 24px; margin: 0 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow: hidden; }
     .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .music-card-title { font-size: 22px; font-weight: 700; color: #000; outline: none; }
+    .music-card-title { font-size: 22px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
     .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
     
     /* 横向滚动列表 */
@@ -453,10 +466,10 @@
     .music-list::-webkit-scrollbar { display: none; }
     
     .music-item { display: flex; flex-direction: column; min-width: 130px; width: 130px; cursor: pointer; }
-    .music-item-cover { width: 100%; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; }
+    .music-item-cover { width: 130px; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; }
     .music-item-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; flex: 1; line-height: 1.2; }
     .music-item-artist { font-size: 13px; color: #888; outline: none; margin-top: 4px; word-break: break-all; }
-    .music-item-more { font-size: 18px; font-weight: bold; color: #000; line-height: 1; cursor: pointer; margin-left: 5px; }
+    .music-item-more { font-size: 20px; font-weight: 800; color: #000; line-height: 1; cursor: pointer; margin-left: 5px; position: relative; top: -2px; }
 
     /* 底部胶囊操作栏 */
     .music-floating-actions { padding: 10px 20px 30px; display: flex; gap: 15px; flex-shrink: 0; }
@@ -569,7 +582,7 @@
     </div>
 </div>
 
-<!-- 🌟 全新音乐 App 结构 (完美仿图二，无黑框，含返回键) -->
+<!-- 🌟 全新音乐 App 结构 (完美仿图二，含返回键及三个灰框) -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
@@ -583,7 +596,7 @@
                 <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
             </div>
             <div id="music-list-container" class="music-list">
-                <!-- 动态渲染歌曲列表 -->
+                <!-- 动态渲染歌曲列表或灰色占位框 -->
             </div>
         </div>
     </div>
@@ -1736,7 +1749,7 @@
     }
 
     // ==========================================
-    // 🌟 4. 全新音乐 App 逻辑 (横向仿图二)
+    // 🌟 4. 全新音乐 App 逻辑 (横向仿图二，三个灰框)
     // ==========================================
     let musicList = safeParseJSON(localStorage.getItem('music_list'), []);
     let currentPlayingSongId = null;
@@ -1775,11 +1788,7 @@
         const container = document.getElementById('music-list-container');
         container.innerHTML = '';
         
-        if (musicList.length === 0) {
-            container.innerHTML = '<div style="text-align: center; color: #999; margin-top: 20px; width: 100%;">暂无音乐，点击下方胶囊上传</div>';
-            return;
-        }
-
+        // 1. 渲染真实的歌曲
         for (const song of musicList) {
             const cover = await getImageFromDB(`music_cover_${song.id}`);
             const coverStyle = cover ? `background-image: url(${cover});` : '';
@@ -1788,16 +1797,33 @@
             div.className = 'music-item';
             div.onclick = () => openPlayingScreen(song.id);
             
-            // 图二风格卡片结构
             div.innerHTML = `
                 <div class="music-item-cover" style="${coverStyle}" onclick="event.stopPropagation(); triggerUploadCover('${song.id}')"></div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
                     <div class="music-item-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongTitle('${song.id}', this.innerText)">${song.title}</div>
                     <div class="music-item-more" onclick="event.stopPropagation(); showSongMenu('${song.id}')">...</div>
                 </div>
                 <div class="music-item-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist}</div>
             `;
             container.appendChild(div);
+        }
+
+        // 2. 若歌曲不足三个，补齐三个灰色占位框
+        if (musicList.length < 3) {
+            for (let i = musicList.length; i < 3; i++) {
+                const div = document.createElement('div');
+                div.className = 'music-item';
+                div.onclick = () => document.getElementById('music-audio-upload').click();
+                div.innerHTML = `
+                    <div class="music-item-cover" style="background-color: #e5e5ea;"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
+                        <div class="music-item-title">待添加</div>
+                        <div class="music-item-more">...</div>
+                    </div>
+                    <div class="music-item-artist">点击上传</div>
+                `;
+                container.appendChild(div);
+            }
         }
     }
 
@@ -2844,12 +2870,11 @@
         const msgRow = document.createElement('div'); msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
         let bubbleHtml = '';
         
+        // 🌟 修复表情包大小，这里不写内联宽高，由 CSS 统一控制为 120x120
         if (imageBase64) {
-            // 直接显示图片（表情包），不加气泡边框
-            bubbleHtml = `<img src="${imageBase64}" class="sticker-img" alt="${text}" style="max-width: 150px; max-height: 150px; border-radius: 8px; display: block;">`;
+            bubbleHtml = `<img src="${imageBase64}" class="sticker-img" alt="${text}">`;
         } else {
             const stickerRegex = /\[表情:(.*?)\]/g;
-            // 判断是否整条消息只是一个表情包
             const pureStickerMatch = text.match(/^\[表情:(.*?)\]$/);
             
             if (pureStickerMatch) {
@@ -2864,8 +2889,7 @@
                     }
                 }
                 if (foundImg) {
-                    // 直接显示图片（表情包），不加气泡边框
-                    bubbleHtml = `<img src="${foundImg}" class="sticker-img" alt="${meaning}" title="${meaning}" style="max-width: 150px; max-height: 150px; border-radius: 8px; display: block;">`;
+                    bubbleHtml = `<img src="${foundImg}" class="sticker-img" alt="${meaning}" title="${meaning}">`;
                 } else {
                     bubbleHtml = `<div class="chat-bubble">${text}</div>`;
                 }
