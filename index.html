@@ -229,7 +229,7 @@
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
 
     /* 隐藏的文件输入 */
-    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-css-upload, #offline-style-upload, #offline-worldbook-upload, #book-file-upload { display: none; }
+    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-style-upload, #offline-worldbook-upload, #book-file-upload { display: none; }
 
     /* ==================================================== */
     /* 🌟 聊天界面样式 */
@@ -457,19 +457,19 @@
         top: 0; left: 0; width: 100vw; height: 100vh;
     }
     .book-header-area {
-        padding: 40px 30px 20px;
+        padding: 20px 30px 10px;
         position: relative;
     }
     .book-quote-mark {
-        font-size: 80px;
+        font-size: 70px;
         font-family: Georgia, serif;
         font-weight: 900;
         line-height: 0.8;
         color: #000;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
     .book-main-text {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         line-height: 1.4;
         color: #444;
@@ -485,7 +485,7 @@
     .book-actions {
         display: flex;
         gap: 12px;
-        padding: 0 30px 20px;
+        padding: 0 30px 10px;
     }
     .book-btn {
         background-color: #f0f0f0;
@@ -503,7 +503,7 @@
     .book-btn svg { width: 18px; height: 18px; fill: #333; }
     
     .book-shelf-title {
-        padding: 10px 30px;
+        padding: 5px 30px;
         font-size: 16px;
         font-weight: 600;
         color: #888;
@@ -557,6 +557,16 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+
+    /* 全屏编辑界面样式 */
+    #book-edit-screen {
+        background-color: #f5f5f7; 
+        z-index: 5500; 
+        padding: 0; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100vw; height: 100vh; 
     }
 </style>
 </head>
@@ -707,59 +717,33 @@
     </div>
 </div>
 
-<!-- 🌟 Book App 操作弹窗 -->
-<div class="modal-overlay" id="book-action-modal">
-    <div class="modal-content">
-        <div class="modal-title">世界书操作</div>
-        <div class="modal-list" style="border:none;">
-            <div class="chat-detail-item" onclick="editBookContent()">
-                <span>编辑世界书内容</span>
+<!-- 🌟 Book 全屏编辑界面 -->
+<div class="fullscreen-screen" id="book-edit-screen">
+    <div class="ce-header">
+        <div class="ce-icon-btn" onclick="closeScreen('book-edit-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+        <div class="ce-icon-btn check-btn active" onclick="saveBookEdit()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
+    </div>
+    <div class="ce-body">
+        <div class="ce-card" style="padding: 16px;">
+            <div class="ce-input-row" style="padding: 0 0 16px 0; border-bottom: 1px solid #f0f0f0;">
+                <input type="text" class="ce-input" id="book-edit-title" placeholder="世界书名称" style="font-weight: 600;">
             </div>
-            <div class="chat-detail-item" onclick="openBindBookModal()">
-                <span>绑定/运用设置</span>
-            </div>
-            <div class="chat-detail-item danger" onclick="deleteBookItem()">
-                <span>删除该世界书</span>
-            </div>
+            <textarea class="ce-textarea" id="book-edit-content" placeholder="输入世界书内容..." style="height: 400px; padding: 16px 0 0 0;"></textarea>
         </div>
-        <div class="modal-actions">
-            <button class="modal-btn cancel" onclick="closeBookActionModal()">关闭</button>
-        </div>
+        <div class="ce-delete-btn" onclick="deleteBookItem()">删除该世界书</div>
     </div>
 </div>
 
-<!-- 🌟 Book App 编辑世界书内容弹窗 -->
-<div class="modal-overlay" id="book-edit-modal">
+<!-- 🌟 通用世界书绑定多选弹窗 -->
+<div class="modal-overlay" id="global-book-bind-modal">
     <div class="modal-content">
-        <div class="modal-title">编辑世界书内容</div>
-        <div class="modal-input-group">
-            <textarea id="book-edit-textarea"></textarea>
+        <div class="modal-title" id="book-bind-title">选择世界书</div>
+        <div class="modal-list" id="book-bind-list-container">
+            <!-- 动态渲染 -->
         </div>
         <div class="modal-actions">
-            <button class="modal-btn cancel" onclick="closeBookEditModal()">取消</button>
-            <button class="modal-btn confirm" onclick="saveBookContent()">保存</button>
-        </div>
-    </div>
-</div>
-
-<!-- 🌟 Book App 绑定设置弹窗 -->
-<div class="modal-overlay" id="book-bind-modal">
-    <div class="modal-content">
-        <div class="modal-title">选择运用方式</div>
-        <div class="modal-list" id="book-bind-list">
-            <div class="modal-item" data-type="global" onclick="selectBindTarget('global', this)">
-                <span class="modal-item-name">运用全局</span>
-                <div class="modal-check"></div>
-            </div>
-            <div class="modal-item" data-type="local" onclick="selectBindTarget('local', this)">
-                <span class="modal-item-name">局部运用</span>
-                <div class="modal-check"></div>
-            </div>
-            <!-- 动态渲染Char列表绑定 -->
-        </div>
-        <div class="modal-actions">
-            <button class="modal-btn cancel" onclick="closeBindBookModal()">取消</button>
-            <button class="modal-btn confirm" onclick="saveBindTarget()">确认</button>
+            <button class="modal-btn cancel" onclick="closeGlobalBookBindModal()">取消</button>
+            <button class="modal-btn confirm" onclick="saveGlobalBookBind()">保存</button>
         </div>
     </div>
 </div>
@@ -845,7 +829,7 @@
 
         <!-- 第三模块：世界书与总结 -->
         <div class="ce-card">
-            <div class="chat-detail-item" onclick="editOfflineWorldBook()">
+            <div class="chat-detail-item" onclick="openOfflineBookBindModal()">
                 <span>挂专属世界书</span>
             </div>
             <div class="chat-detail-item" onclick="summarizeOffline()">
@@ -1024,6 +1008,10 @@
             <!-- 🌟 新增：编辑备注 -->
             <div class="chat-detail-item" onclick="editChatRemark()">
                 <span>编辑备注</span>
+            </div>
+            <!-- 🌟 新增：绑定世界书 -->
+            <div class="chat-detail-item" onclick="openCharBookBindModal()">
+                <span>绑定世界书</span>
             </div>
             <div class="chat-detail-item" onclick="togglePinChat()">
                 <span>置顶聊天</span>
@@ -1308,8 +1296,10 @@
     // 🌟 2.7. Book App 逻辑
     // ==========================================
     let bookWorldBooks = safeParseJSON(localStorage.getItem('book_world_books'), []);
-    let currentBookActionId = null;
-    let currentBindTarget = '';
+    let currentEditingBookId = null;
+    let globalBookBindTargetId = null; // 用于记录当前是给哪个 Char 绑定或离线绑定的目标
+    let globalBookBindType = ''; // 'char' 或 'offline'
+    let selectedBookIds = []; // 弹窗中勾选的书籍ID集合
 
     function openBookApp() {
         openScreen('book-app-screen');
@@ -1344,7 +1334,7 @@
         bookWorldBooks.forEach(book => {
             const div = document.createElement('div');
             div.className = 'book-item';
-            div.onclick = () => openBookActionModal(book.id);
+            div.onclick = () => openBookEditScreen(book.id);
             
             // 绑定标签
             let bindLabel = '全局';
@@ -1405,7 +1395,7 @@
             id: 'book_' + Date.now(),
             title: title,
             content: content,
-            bindType: 'global',
+            bindType: 'local',
             boundCharId: null
         };
         bookWorldBooks.push(newBook);
@@ -1414,105 +1404,131 @@
         alert("上传成功，已加入书架！");
     }
 
-    function openBookActionModal(id) {
-        currentBookActionId = id;
-        document.getElementById('book-action-modal').classList.add('active');
-    }
-    function closeBookActionModal() {
-        document.getElementById('book-action-modal').classList.remove('active');
-    }
-
-    // 编辑世界书内容
-    function editBookContent() {
-        closeBookActionModal();
-        const book = bookWorldBooks.find(b => b.id === currentBookActionId);
+    // 全屏编辑书籍
+    function openBookEditScreen(id) {
+        currentEditingBookId = id;
+        const book = bookWorldBooks.find(b => b.id === id);
         if(!book) return;
-        document.getElementById('book-edit-textarea').value = book.content;
-        document.getElementById('book-edit-modal').classList.add('active');
+
+        document.getElementById('book-edit-title').value = book.title;
+        document.getElementById('book-edit-content').value = book.content;
+        openScreen('book-edit-screen');
     }
-    function closeBookEditModal() {
-        document.getElementById('book-edit-modal').classList.remove('active');
-    }
-    function saveBookContent() {
-        const book = bookWorldBooks.find(b => b.id === currentBookActionId);
+
+    function saveBookEdit() {
+        const book = bookWorldBooks.find(b => b.id === currentEditingBookId);
         if(book) {
-            book.content = document.getElementById('book-edit-textarea').value;
-            localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
-            alert("内容已保存");
-        }
-        closeBookEditModal();
-    }
-
-    // 绑定与运用设置
-    function openBindBookModal() {
-        closeBookActionModal();
-        const book = bookWorldBooks.find(b => b.id === currentBookActionId);
-        if(!book) return;
-        
-        const listContainer = document.getElementById('book-bind-list');
-        // 清除之前的Char项
-        Array.from(listContainer.children).forEach(child => {
-            if(child.dataset.type === 'char') child.remove();
-        });
-
-        // 设置当前选中的状态
-        currentBindTarget = book.bindType === 'char' ? book.boundCharId : book.bindType;
-        
-        document.querySelectorAll('#book-bind-list .modal-item').forEach(item => {
-            item.classList.remove('selected');
-            if(item.dataset.type === currentBindTarget) item.classList.add('selected');
-        });
-
-        // 渲染 Char 列表
-        contacts.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'modal-item';
-            div.dataset.type = 'char';
-            div.dataset.charId = c.id;
-            if(currentBindTarget === c.id) div.classList.add('selected');
-            div.innerHTML = `<span class="modal-item-name">绑定至: ${c.remark || c.name}</span><div class="modal-check"></div>`;
-            div.onclick = () => selectBindTarget(c.id, div);
-            listContainer.appendChild(div);
-        });
-
-        document.getElementById('book-bind-modal').classList.add('active');
-    }
-
-    function selectBindTarget(type, el) {
-        document.querySelectorAll('#book-bind-list .modal-item').forEach(item => item.classList.remove('selected'));
-        el.classList.add('selected');
-        currentBindTarget = type;
-    }
-
-    function closeBindBookModal() {
-        document.getElementById('book-bind-modal').classList.remove('active');
-    }
-
-    function saveBindTarget() {
-        const book = bookWorldBooks.find(b => b.id === currentBookActionId);
-        if(book) {
-            if(currentBindTarget === 'global' || currentBindTarget === 'local') {
-                book.bindType = currentBindTarget;
-                book.boundCharId = null;
-            } else {
-                book.bindType = 'char';
-                book.boundCharId = currentBindTarget;
-            }
+            book.title = document.getElementById('book-edit-title').value.trim() || '未命名世界书';
+            book.content = document.getElementById('book-edit-content').value;
             localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
             renderBookShelf();
-            alert("绑定设置已保存");
+            alert("世界书已保存");
         }
-        closeBindBookModal();
+        closeScreen('book-edit-screen');
     }
 
-    // 删除世界书
     function deleteBookItem() {
         if(confirm("确定要删除这本世界书吗？")) {
-            bookWorldBooks = bookWorldBooks.filter(b => b.id !== currentBookActionId);
+            bookWorldBooks = bookWorldBooks.filter(b => b.id !== currentEditingBookId);
             localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
             renderBookShelf();
-            closeBookActionModal();
+            closeScreen('book-edit-screen');
         }
+    }
+
+    // ==========================================
+    // 🌟 世界书通用绑定多选弹窗 (用于Chat局部绑定和线下绑定)
+    // ==========================================
+    function openGlobalBookBindModal(type, targetId, titleStr) {
+        globalBookBindType = type;
+        globalBookBindTargetId = targetId;
+        document.getElementById('book-bind-title').innerText = titleStr;
+
+        const listContainer = document.getElementById('book-bind-list-container');
+        listContainer.innerHTML = '';
+        selectedBookIds = [];
+
+        if(bookWorldBooks.length === 0) {
+            listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #999;">暂无世界书，请去 Book App 上传</div>';
+        } else {
+            bookWorldBooks.forEach(book => {
+                let isDisabled = false;
+                let isSelected = false;
+
+                if(type === 'char') {
+                    // Chat 局部绑定：不能选全局的，不能选其他char的
+                    if(book.bindType === 'global') isDisabled = true;
+                    else if(book.bindType === 'char' && book.boundCharId !== targetId) isDisabled = true;
+                    else if(book.bindType === 'char' && book.boundCharId === targetId) isSelected = true;
+                } else if(type === 'offline') {
+                    // 线下绑定：可以选所有非全局的
+                    if(book.bindType === 'global') isDisabled = true;
+                    
+                    // 线下书单存在 offline_worldbook 数组中
+                    const offlineBooks = safeParseJSON(localStorage.getItem('offline_worldbook'), []);
+                    if(offlineBooks.includes(book.id)) isSelected = true;
+                }
+
+                if(isSelected) selectedBookIds.push(book.id);
+
+                const div = document.createElement('div');
+                div.className = `modal-item ${isSelected ? 'selected' : ''}`;
+                if(isDisabled) {
+                    div.style.opacity = '0.5';
+                    div.style.pointerEvents = 'none';
+                } else {
+                    div.onclick = () => {
+                        if(selectedBookIds.includes(book.id)) {
+                            selectedBookIds = selectedBookIds.filter(id => id !== book.id);
+                            div.classList.remove('selected');
+                        } else {
+                            selectedBookIds.push(book.id);
+                            div.classList.add('selected');
+                        }
+                    };
+                }
+
+                div.innerHTML = `
+                    <span class="modal-item-name">${book.title} ${isDisabled ? '(不可用)' : ''}</span>
+                    <div class="modal-check"></div>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        document.getElementById('global-book-bind-modal').classList.add('active');
+    }
+
+    function closeGlobalBookBindModal() {
+        document.getElementById('global-book-bind-modal').classList.remove('active');
+    }
+
+    function saveGlobalBookBind() {
+        if(globalBookBindType === 'char') {
+            // 1. 先把当前绑给该 char 的书解绑 (变成 local)
+            bookWorldBooks.forEach(b => {
+                if(b.bindType === 'char' && b.boundCharId === globalBookBindTargetId) {
+                    b.bindType = 'local';
+                    b.boundCharId = null;
+                }
+            });
+            // 2. 再将选中的书绑定给该 char
+            selectedBookIds.forEach(id => {
+                const book = bookWorldBooks.find(b => b.id === id);
+                if(book) {
+                    book.bindType = 'char';
+                    book.boundCharId = globalBookBindTargetId;
+                }
+            });
+            localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
+            renderBookShelf(); // 如果书架开着，更新一下
+            alert("角色专属世界书已更新");
+        } else if (globalBookBindType === 'offline') {
+            // 保存选择的数组到 offline_worldbook
+            localStorage.setItem('offline_worldbook', JSON.stringify(selectedBookIds));
+            alert("线下专属世界书已更新");
+        }
+        closeGlobalBookBindModal();
     }
 
     // ==========================================
@@ -1786,10 +1802,9 @@
         }
     }
 
-    // 挂专属世界书
-    function editOfflineWorldBook() {
-        const book = prompt("填写专属世界书设定：", localStorage.getItem('offline_worldbook') || '');
-        if(book !== null) localStorage.setItem('offline_worldbook', book);
+    // 🌟 挂专属世界书 (多选)
+    function openOfflineBookBindModal() {
+        openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)');
     }
 
     // 管理预设
@@ -1805,7 +1820,8 @@
                     bg: document.getElementById('contact-offline-screen').style.backgroundImage,
                     css: localStorage.getItem('offline_custom_css') || '',
                     content: localStorage.getItem('offline_content') || '',
-                    style: localStorage.getItem('offline_style') || ''
+                    style: localStorage.getItem('offline_style') || '',
+                    books: localStorage.getItem('offline_worldbook') || '[]'
                 };
                 localStorage.setItem('offline_presets', JSON.stringify(presets));
                 alert("预设已保存！");
@@ -1818,6 +1834,7 @@
                 localStorage.setItem('offline_custom_css', p.css);
                 localStorage.setItem('offline_content', p.content);
                 localStorage.setItem('offline_style', p.style || '');
+                localStorage.setItem('offline_worldbook', p.books || '[]');
                 
                 let styleEl = document.getElementById('offline-custom-style');
                 if(!styleEl) {
@@ -2580,6 +2597,12 @@
             renderContactList();
             alert("备注修改成功！");
         }
+    }
+
+    // 🌟 新增：绑定局部世界书
+    function openCharBookBindModal() {
+        if (!currentChatCharId) return;
+        openGlobalBookBindModal('char', currentChatCharId, '绑定角色专属世界书');
     }
 
     // 1. 置顶开关
