@@ -580,6 +580,9 @@
 
     /* 弹窗的层级设置，确保在最上面 */
     .high-z-modal { z-index: 6000 !important; }
+    #chat-book-bind-modal { z-index: 5500 !important; } /* 聊天局部绑定最高层 */
+    #global-book-bind-modal { z-index: 4700 !important; } /* 线下绑定层 */
+    #offline-char-modal { z-index: 4700 !important; } /* 线下选char层 */
 </style>
 </head>
 <body>
@@ -762,7 +765,7 @@
 
 <!-- ==================== 🌟 新增的小弹窗区 ==================== -->
 
-<!-- 聊天绑定世界书弹窗 -->
+<!-- 聊天绑定世界书弹窗 (最高层) -->
 <div class="modal-overlay" id="chat-book-bind-modal">
     <div class="modal-content">
         <div class="modal-title">选择局部世界书</div>
@@ -1619,6 +1622,10 @@
 
     function openChatBookBindModal() {
         if (!currentChatCharId) return;
+        
+        // 先关掉详情弹窗，防止重叠遮挡
+        closeChatDetailModal(); 
+
         const listContainer = document.getElementById('chat-book-bind-list');
         listContainer.innerHTML = '';
         chatSelectedBookIds = [];
@@ -1870,6 +1877,9 @@
 
     // 🌟 弹窗：选择 Char 开启线下
     function openOfflineCharSelectModal() {
+        // 先关掉详情页，防止遮挡
+        closeScreen('offline-detail-screen');
+
         const listContainer = document.getElementById('offline-char-list');
         listContainer.innerHTML = '';
         
@@ -1930,7 +1940,6 @@
             document.getElementById('offline-title-text').innerText = char.remark || char.name || 'My Dashboard';
         }
         closeOfflineCharSelectModal();
-        closeScreen('offline-detail-screen'); // 确认后顺便关闭设置页
         alert("已成功绑定该 Char 进入线下！");
     }
 
@@ -2025,6 +2034,8 @@
 
     // 🌟 挂专属世界书 (多选)
     function openOfflineBookBindModal() {
+        // 先关掉详情页，防止遮挡
+        closeScreen('offline-detail-screen');
         openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)');
     }
 
