@@ -589,7 +589,6 @@
         overflow-y: auto;
     }
     
-    /* 顶栏优化 */
     .settings-header-bar {
         display: flex; align-items: center; justify-content: center;
         position: relative; padding: 15px 20px;
@@ -661,7 +660,6 @@
         flex-shrink: 0;
     }
     
-    /* 设置中的开关 */
     .settings-switch {
         width: 50px; height: 30px; background-color: #e5e5ea; border-radius: 15px;
         position: relative; transition: background-color 0.3s; flex-shrink: 0;
@@ -1154,7 +1152,8 @@
             <div class="chat-detail-item" onclick="openOfflineBookBindModal()">
                 <span>挂专属世界书</span>
             </div>
-            <div class="chat-detail-item" onclick="summarizeOffline()">
+            <!-- 增加参数 this 传递按钮对象 -->
+            <div class="chat-detail-item" onclick="summarizeOffline(this)">
                 <span>总结线下</span>
             </div>
         </div>
@@ -2059,8 +2058,7 @@
 
     function openChatBookBindModal() {
         if (!currentChatCharId) return;
-        closeChatDetailModal(); // 修复：先关闭弹窗防止遮挡
-
+        // 不关闭聊天详情弹窗，直接显示绑定弹窗
         const listContainer = document.getElementById('chat-book-bind-list');
         listContainer.innerHTML = '';
         chatSelectedBookIds = [];
@@ -2360,15 +2358,67 @@
         input.value = ''; renderOfflineContent();
     }
 
-    function summarizeOffline() {
-        closeScreen('offline-detail-screen');
+    // 🌟 自动总结线下内容（调用 API）
+    async function summarizeOffline(btnElement) {
         const savedContent = localStorage.getItem('offline_content') || '';
-        const summary = prompt("请编辑总结的线下内容（会自动同步记忆）：", savedContent);
-        if(summary !== null) { localStorage.setItem('offline_content', summary); renderOfflineContent(); alert("线下总结已更新并同步记忆。"); }
+        if (!savedContent) { alert("线下没有任何内容可以总结哦！"); return; }
+
+        const configStr = localStorage.getItem('settings_api_config');
+        if (!configStr) { alert("请先在 设置 -> API接口 中配置模型参数！"); return; }
+        const config = safeParseJSON(configStr, null);
+        if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
+
+        // 按钮加载状态
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "总结中...";
+        btnElement.style.pointerEvents = 'none';
+        btnElement.style.opacity = '0.5';
+
+        try {
+            const messages = [
+                { role: "system", content: "你是一个剧情记录总结助手。请将以下线下聊天记录提炼成一段精炼的总结（150字以内），提取关键事件和情感走向，作为后续角色记忆。" },
+                { role: "user", content: savedContent }
+            ];
+
+            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${config.key}`
+                },
+                body: JSON.stringify({
+                    model: config.model,
+                    messages: messages,
+                    temperature: 0.3
+                })
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            let summaryText = data.choices[0].message.content;
+
+            // 将总结追加到内容中
+            const newContent = savedContent + `\n\n【线下总结】\n${summaryText}`;
+            localStorage.setItem('offline_content', newContent);
+            
+            // 自动滚动到底部并渲染
+            renderOfflineContent();
+            const area = document.getElementById('offline-content-area');
+            area.scrollTop = area.scrollHeight;
+            
+            alert("总结完成！已自动添加到线下记录中。");
+
+        } catch (err) {
+            alert("总结失败: " + err.message);
+        } finally {
+            btnElement.innerText = originalText;
+            btnElement.style.pointerEvents = 'auto';
+            btnElement.style.opacity = '1';
+        }
     }
 
     function openOfflineBookBindModal() {
-        closeScreen('offline-detail-screen'); // 修复：先关详情页防遮挡
+        // 修复：直接在当前界面弹窗，不关闭详情页
         openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)');
     }
 
