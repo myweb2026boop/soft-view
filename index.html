@@ -550,9 +550,9 @@
     .lyrics-line.active { color: #000; font-weight: 700; font-size: 18px; transform: scale(1.05); }
     
     .playing-progress { margin-bottom: 30px; padding: 0 10px; }
-    .progress-bar-bg { width: 100%; height: 4px; background-color: #e5e5ea; border-radius: 2px; position: relative; }
-    .progress-bar-fill { width: 0%; height: 100%; background-color: #000; border-radius: 2px; position: absolute; top: 0; left: 0; }
-    .progress-bar-dot { width: 12px; height: 12px; background-color: #000; border-radius: 50%; position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%); }
+    .progress-bar-bg { width: 100%; height: 4px; background-color: #e5e5ea; border-radius: 2px; position: relative; cursor: pointer; padding: 10px 0; background-clip: content-box; }
+    .progress-bar-fill { width: 0%; height: 100%; background-color: #000; border-radius: 2px; position: absolute; top: 0; left: 0; pointer-events: none; }
+    .progress-bar-dot { width: 12px; height: 12px; background-color: #000; border-radius: 50%; position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%); pointer-events: none; }
     .progress-time { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 8px; }
     
     .playing-controls { display: flex; justify-content: space-around; align-items: center; padding: 0 20px 20px; }
@@ -651,8 +651,8 @@
 
         <div class="music-card">
             <div class="music-card-header">
-                <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicMainTitle(this.innerText)">Upcoming Trips</div>
-                <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
+                <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicMainTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Upcoming Trips</div>
+                <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicViewAll(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">View all</div>
             </div>
             
             <!-- 顶部三个装饰展示框 (横向滚动) -->
@@ -671,7 +671,7 @@
     <div id="music-playing-screen">
         <div class="playing-header">
             <svg viewBox="0 0 24 24" onclick="document.getElementById('music-playing-screen').classList.remove('active')"><path d="M6 9l6 6 6-6"></path></svg>
-            <div class="playing-title-main" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicPlayingTitle(this.innerText)">Now playing</div>
+            <div class="playing-title-main" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicPlayingTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Now playing</div>
             <!-- 歌词功能绑定在此 -->
             <svg viewBox="0 0 24 24" onclick="openPasteLyricsModal()" style="cursor: pointer; pointer-events: auto;"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </div>
@@ -681,8 +681,8 @@
         </div>
         
         <div class="playing-info">
-            <div class="playing-song-title" id="playing-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="savePlayingSongTitle(this.innerText)">未命名歌曲</div>
-            <div class="playing-song-artist" id="playing-artist" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="savePlayingSongArtist(this.innerText)">未知歌手</div>
+            <div class="playing-song-title" id="playing-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; savePlayingSongTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">未命名歌曲</div>
+            <div class="playing-song-artist" id="playing-artist" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; savePlayingSongArtist(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">未知歌手</div>
         </div>
         
         <div class="playing-lyrics-container" id="music-lyrics-container">
@@ -690,7 +690,7 @@
         </div>
         
         <div class="playing-progress">
-            <div class="progress-bar-bg" id="music-progress-bg">
+            <div class="progress-bar-bg" id="music-progress-bg" ontouchstart="handleSeekStart(event)" onmousedown="handleSeekStart(event)">
                 <div class="progress-bar-fill" id="music-progress-fill"></div>
                 <div class="progress-bar-dot" id="music-progress-dot"></div>
             </div>
@@ -1260,9 +1260,9 @@
 <input type="file" id="offline-font-upload" accept=".ttf,.otf,.woff,.woff2">
 <!-- 表情包文件上传 -->
 <input type="file" id="sticker-file-upload" accept=".json,.docx,.txt,image/*" multiple>
-<!-- 音乐 App 上传 (修复格式和后缀) -->
+<!-- 音乐 App 上传 (修复格式和后缀，新增 flac) -->
 <input type="file" id="music-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
-<input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, .mp3, .m4a">
+<input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, audio/flac, .mp3, .m4a, .flac">
 <input type="file" id="music-lyrics-upload" accept=".txt,.lrc">
 <input type="file" id="playing-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <input type="file" id="music-decoration-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
@@ -1821,6 +1821,7 @@
     let musicList = safeParseJSON(localStorage.getItem('music_list'), []);
     let currentPlayingSongId = null;
     let currentAudio = null;
+    let isSeeking = false;
     
     // 装饰图数据
     let musicDecorations = safeParseJSON(localStorage.getItem('music_decorations'), []);
@@ -1874,7 +1875,7 @@
             div.className = 'music-decoration-item';
             div.innerHTML = `
                 <div class="music-decoration-cover" style="${coverStyle}" onclick="uploadCoverForDecoration(${i})"></div>
-                <div class="music-decoration-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveDecorationTitle(${i}, this.innerText)">${d.text}</div>
+                <div class="music-decoration-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveDecorationTitle(${i}, this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">${d.text}</div>
             `;
             decoContainer.appendChild(div);
         }
@@ -1897,8 +1898,8 @@
                 <div class="music-song-item" ontouchstart="handleSongTouchStart(event, this)" ontouchmove="handleSongTouchMove(event, this)" ontouchend="handleSongTouchEnd(event, this)" onclick="handleSongClick(event, '${song.id}')">
                     <div class="music-song-cover" style="${coverStyle}" onclick="event.stopPropagation(); triggerUploadCover('${song.id}')"></div>
                     <div class="music-song-info">
-                        <div class="music-song-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongTitle('${song.id}', this.innerText)">${song.title}</div>
-                        <div class="music-song-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist || '未知歌手'}</div>
+                        <div class="music-song-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveSongTitle('${song.id}', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">${song.title}</div>
+                        <div class="music-song-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveSongArtist('${song.id}', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">${song.artist || '未知歌手'}</div>
                     </div>
                 </div>
             `;
@@ -2057,7 +2058,7 @@
         renderMusicAppData();
     }
 
-    // 上传 MP3
+    // 上传 MP3 (支持 flac)
     document.getElementById('music-audio-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -2073,7 +2074,7 @@
         musicList.push(newSong);
         localStorage.setItem('music_list', JSON.stringify(musicList));
         renderMusicAppData();
-        alert("MP3 上传成功，已加入列表！");
+        alert("歌曲上传成功，已加入列表！");
         this.value = '';
     });
 
@@ -2154,6 +2155,7 @@
     }
 
     async function openPlayingScreen(songId) {
+        const isSameSong = currentPlayingSongId === songId;
         currentPlayingSongId = songId;
         const song = musicList.find(s => s.id === songId);
         if(!song) return;
@@ -2165,21 +2167,37 @@
         document.getElementById('playing-cover').style.backgroundImage = cover ? `url(${cover})` : 'none';
         document.getElementById('playing-cover').innerText = cover ? '' : '点击上传封面';
         
-        // 加载音频
-        const audioBlob = await getImageFromDB(`music_audio_${songId}`);
-        if(currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio.src); }
-        if(audioBlob) {
-            currentAudio = new Audio(URL.createObjectURL(audioBlob));
-            currentAudio.addEventListener('timeupdate', updateMusicProgress);
-            currentAudio.addEventListener('ended', () => { document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; });
+        if (!isSameSong) {
+            // 加载音频
+            const audioBlob = await getImageFromDB(`music_audio_${songId}`);
+            if(currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio.src); }
+            if(audioBlob) {
+                currentAudio = new Audio(URL.createObjectURL(audioBlob));
+                currentAudio.addEventListener('timeupdate', updateMusicProgress);
+                currentAudio.addEventListener('ended', () => { 
+                    document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; 
+                });
+            } else {
+                currentAudio = null;
+                alert("未找到该歌曲的音频文件");
+            }
+            renderLyrics(song.lyrics);
+            document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; // 默认播放图标
+            document.getElementById('music-progress-fill').style.width = '0%';
+            document.getElementById('music-progress-dot').style.left = '0%';
+            document.getElementById('music-time-current').innerText = '00:00';
+            document.getElementById('music-time-total').innerText = '00:00';
         } else {
-            currentAudio = null;
-            alert("未找到该歌曲的音频文件");
+            // 同一首歌，不重新加载音频，保留当前播放状态，仅刷新进度条 UI
+            if (currentAudio) {
+                updateMusicProgress();
+                if(!currentAudio.paused) {
+                    document.getElementById('music-play-icon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                }
+            }
         }
         
-        renderLyrics(song.lyrics);
         document.getElementById('music-playing-screen').classList.add('active');
-        document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; // 默认播放图标
     }
 
     function renderLyrics(lyrics) {
@@ -2238,8 +2256,49 @@
         }
     });
 
+    // 进度条拖拽功能
+    function handleSeekStart(e) {
+        if (!currentAudio || isNaN(currentAudio.duration)) return;
+        isSeeking = true;
+        seekMusic(e);
+        document.addEventListener('mousemove', seekMusic);
+        document.addEventListener('touchmove', seekMusic, {passive: false});
+        document.addEventListener('mouseup', handleSeekEnd);
+        document.addEventListener('touchend', handleSeekEnd);
+    }
+
+    function seekMusic(e) {
+        if (!isSeeking || !currentAudio || isNaN(currentAudio.duration)) return;
+        if (e.type === 'touchmove') e.preventDefault(); 
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = document.getElementById('music-progress-bg').getBoundingClientRect();
+        let percent = (clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent));
+        
+        document.getElementById('music-progress-fill').style.width = (percent * 100) + '%';
+        document.getElementById('music-progress-dot').style.left = (percent * 100) + '%';
+        currentAudio.currentTime = percent * currentAudio.duration;
+        
+        const formatTime = (sec) => {
+            if(isNaN(sec)) return "00:00";
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(Math.floor(sec % 60)).padStart(2, '0');
+            return `${m}:${s}`;
+        };
+        document.getElementById('music-time-current').innerText = formatTime(currentAudio.currentTime);
+    }
+
+    function handleSeekEnd() {
+        isSeeking = false;
+        document.removeEventListener('mousemove', seekMusic);
+        document.removeEventListener('touchmove', seekMusic);
+        document.removeEventListener('mouseup', handleSeekEnd);
+        document.removeEventListener('touchend', handleSeekEnd);
+    }
+
     function updateMusicProgress() {
         if(!currentAudio) return;
+        if (isSeeking) return; // 拖动时暂停更新
         const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
         document.getElementById('music-progress-fill').style.width = percent + '%';
         document.getElementById('music-progress-dot').style.left = percent + '%';
@@ -3043,7 +3102,6 @@
         const msgRow = document.createElement('div'); msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
         let bubbleHtml = '';
         
-        // 🌟 修复表情包大小，这里不写内联宽高，由 CSS 统一控制为 120x120
         if (imageBase64) {
             bubbleHtml = `<img src="${imageBase64}" class="sticker-img" alt="${text}">`;
         } else {
