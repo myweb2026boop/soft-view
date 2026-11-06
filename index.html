@@ -20,7 +20,7 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
-    /* 彻底隐藏所有原生文件上传按钮 */
+    /* 彻底隐藏所有原生文件上传按钮，防止破坏排版 */
     input[type="file"] { display: none !important; }
 
     body {
@@ -612,11 +612,11 @@
         margin: 0 20px 20px;
         padding: 15px;
     }
-    .settings-account img {
-        width: 60px; height: 60px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 15px;
+    .settings-account-avatar-container {
+        width: 60px; height: 60px; border-radius: 50%;
+        background-color: #ccc; margin-right: 15px;
+        background-size: cover; background-position: center;
+        cursor: pointer; flex-shrink: 0;
     }
     .settings-account-info {
         flex-grow: 1;
@@ -673,27 +673,6 @@
     }
     .settings-switch.on { background-color: var(--green); }
     .settings-switch.on::after { transform: translateX(20px); }
-
-    /* 测试通知卡片 (仿图三) */
-    .test-notification-card {
-        background: #fff; border-radius: 16px; margin: 0 20px 20px; padding: 20px;
-        border: 1px solid #e5e5ea;
-    }
-    .test-notification-title {
-        display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: #000; margin-bottom: 15px;
-    }
-    .test-notification-title svg { width: 20px; height: 20px; fill: #000; }
-    .test-notification-row {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
-        font-size: 16px; color: #333;
-    }
-    .test-notification-btn {
-        width: 100%; padding: 12px; background: #f9f9f9; border: 1px solid #e5e5ea; border-radius: 10px;
-        font-size: 15px; color: #333; text-align: center; cursor: pointer; margin-bottom: 10px;
-    }
-    .test-notification-desc {
-        font-size: 13px; color: #888; line-height: 1.5;
-    }
 
     /* ==================================================== */
     /* 🌟 Ins 风 API 设置全屏界面 */
@@ -821,9 +800,9 @@
     
     <!-- 账户模块 -->
     <div class="settings-account">
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="avatar" style="background:#ccc;">
+        <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
         <div class="settings-account-info">
-            <div class="settings-account-name">shu in</div>
+            <div class="settings-account-name" id="settings-account-name" ondblclick="editAccountName()">默认昵称</div>
             <div class="settings-account-sub">Apple账户、iCloud 等</div>
         </div>
         <div class="settings-list-arrow"></div>
@@ -846,18 +825,10 @@
             <div class="settings-list-arrow"></div>
         </div>
 
-        <!-- 蓝牙 -> 后台保活 (这里只放开关，详细测试在下面) -->
-        <div class="settings-list-item" onclick="toggleBackgroundKeepAlive()">
-            <div class="settings-list-icon" style="background-color: #3478f6;"><svg viewBox="0 0 24 24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"></path></svg></div>
-            <div class="settings-list-text">后台保活通知</div>
-            <div class="settings-switch" id="toggle-bg-keepalive"></div>
-        </div>
-
         <!-- 蜂窝网络 -> 铃声 -->
         <div class="settings-list-item">
             <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
             <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
-            <div class="settings-list-value" id="ringtone-name" onclick="document.getElementById('ringtone-upload').click()">默认</div>
             <!-- 试听按钮 -->
             <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()">
                 <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg>
@@ -880,21 +851,17 @@
         </div>
     </div>
 
-    <!-- 测试消息卡片 (图3) -->
-    <div class="test-notification-card">
-        <div class="test-notification-title">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            消息弹窗与后台保活
+    <!-- 通知模块 (全部改为标准行) -->
+    <div class="settings-group-list" style="margin-top: 20px;">
+        <div class="settings-list-item" onclick="toggleBackgroundKeepAlive()">
+            <div class="settings-list-icon" style="background-color: #3478f6;"><svg viewBox="0 0 24 24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"></path></svg></div>
+            <div class="settings-list-text">后台保活通知</div>
+            <div class="settings-switch" id="toggle-bg-keepalive"></div>
         </div>
-        <div class="test-notification-row">
-            <span>开启系统弹窗通知</span>
-            <div class="settings-switch" id="toggle-bg-keepalive-2"></div> <!-- 与上面同步 -->
-        </div>
-        <div class="test-notification-btn" onclick="testNotification()">
-            点击测试弹窗
-        </div>
-        <div class="test-notification-desc">
-            开启并授权后，当您切出App（浏览器后台），角色发来新消息时，手机会弹出系统通知（类似微信消息通知）。点击测试按钮可验证效果。
+        <div class="settings-list-item" onclick="testNotification()">
+            <div class="settings-list-icon" style="background-color: #333;"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg></div>
+            <div class="settings-list-text">测试系统弹窗</div>
+            <div class="settings-list-arrow"></div>
         </div>
     </div>
 </div>
@@ -1463,6 +1430,7 @@
 <input type="file" id="offline-worldbook-upload" accept=".txt,.json,.docx">
 <input type="file" id="book-file-upload" accept=".docx,.json">
 <input type="file" id="ringtone-upload" accept="audio/mpeg,audio/mp3">
+<input type="file" id="settings-avatar-upload" accept="image/*">
 
 <script>
     // ==========================================
@@ -1601,7 +1569,7 @@
     // ==========================================
     // 🌟 设置 App (Settings)
     // ==========================================
-    function openSettingsApp() {
+    async function openSettingsApp() {
         openScreen('settings-screen');
         // 初始化 UI 状态
         const fsState = localStorage.getItem('settings_fullscreen') === 'true';
@@ -1609,21 +1577,59 @@
 
         const bgState = localStorage.getItem('settings_bg_keepalive') === 'true';
         document.getElementById('toggle-bg-keepalive').classList.toggle('on', bgState);
-        document.getElementById('toggle-bg-keepalive-2').classList.toggle('on', bgState);
 
         const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), null);
         if (apiConf && apiConf.model) {
             document.getElementById('api-status-text').innerText = '已配置';
         }
 
+        // 加载铃声状态
         const ringName = localStorage.getItem('settings_ringtone_name');
         if (ringName) {
-            document.getElementById('ringtone-name').innerText = ringName;
             document.getElementById('ringtone-play-btn').style.display = 'block';
         } else {
             document.getElementById('ringtone-play-btn').style.display = 'none';
         }
+
+        // 加载账户信息
+        const savedName = localStorage.getItem('settings_account_name');
+        document.getElementById('settings-account-name').innerText = savedName || '默认昵称';
+
+        const savedAvatar = await getImageFromDB('settings_account_avatar');
+        if(savedAvatar) {
+            document.getElementById('settings-avatar').style.backgroundImage = `url(${savedAvatar})`;
+            document.getElementById('settings-avatar').style.backgroundColor = 'transparent';
+        } else {
+            document.getElementById('settings-avatar').style.backgroundImage = 'none';
+            document.getElementById('settings-avatar').style.backgroundColor = '#ccc';
+        }
     }
+
+    // 账户改名
+    function editAccountName() {
+        const el = document.getElementById('settings-account-name');
+        const currentName = el.innerText;
+        const newName = prompt("请输入新昵称：", currentName);
+        if(newName && newName.trim() !== '') {
+            el.innerText = newName.trim();
+            localStorage.setItem('settings_account_name', newName.trim());
+        }
+    }
+
+    // 账户头像上传
+    document.getElementById('settings-avatar-upload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const base64Data = event.target.result;
+            await saveImageToDB('settings_account_avatar', base64Data);
+            document.getElementById('settings-avatar').style.backgroundImage = `url(${base64Data})`;
+            document.getElementById('settings-avatar').style.backgroundColor = 'transparent';
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+    });
 
     // 1. 全屏模式
     function toggleFullscreenMode() {
@@ -1733,26 +1739,25 @@
     // 3. 后台保活通知
     function toggleBackgroundKeepAlive() {
         const el = document.getElementById('toggle-bg-keepalive');
-        const el2 = document.getElementById('toggle-bg-keepalive-2');
         const isOn = el.classList.contains('on');
         if (!isOn) {
             if (!("Notification" in window)) { alert("当前浏览器不支持桌面通知！"); return; }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    el.classList.add('on'); el2.classList.add('on'); localStorage.setItem('settings_bg_keepalive', 'true');
+                    el.classList.add('on'); localStorage.setItem('settings_bg_keepalive', 'true');
                 } else { alert("你拒绝了通知权限！"); }
             });
         } else {
-            el.classList.remove('on'); el2.classList.remove('on'); localStorage.setItem('settings_bg_keepalive', 'false');
+            el.classList.remove('on'); localStorage.setItem('settings_bg_keepalive', 'false');
         }
     }
 
-    // 测试弹窗 (图3功能)
+    // 测试弹窗
     function testNotification() {
         if (Notification.permission === "granted") {
             new Notification("测试消息", { body: "这是一条来自梨汁机的测试通知，说明你的后台保活已成功开启！" });
         } else {
-            alert("请先在上方开启'后台保活通知'并授权！");
+            alert("请先开启'后台保活通知'并授权！");
         }
     }
 
@@ -1765,9 +1770,8 @@
         const reader = new FileReader();
         reader.onload = async function(event) {
             const base64Data = event.target.result;
-            await saveImageToDB('settings_ringtone', base64Data); // 借用图片DB保存音频
+            await saveImageToDB('settings_ringtone', base64Data);
             localStorage.setItem('settings_ringtone_name', file.name);
-            document.getElementById('ringtone-name').innerText = file.name;
             document.getElementById('ringtone-play-btn').style.display = 'block';
             alert("铃声上传成功！");
         };
@@ -1783,14 +1787,13 @@
         } else { alert('暂无自定义铃声'); }
     }
 
-    // 5. 导出数据 (修复无文件问题)
+    // 5. 导出数据
     async function exportGlobalData() {
         try {
             const lsData = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); lsData[key] = localStorage.getItem(key); }
             const dbData = await getAllImagesFromDB();
             const exportPayload = { version: 2.1, timestamp: Date.now(), localStorage: lsData, indexedDB: dbData };
             
-            // 使用 Blob 方式下载，完美兼容所有手机浏览器
             const blob = new Blob([JSON.stringify(exportPayload)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
