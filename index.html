@@ -376,14 +376,14 @@
     .preset-close-btn { margin-top: 8px; padding: 14px; background: #f2f2f7; border-radius: 12px; text-align: center; color: #1c1c1e; font-weight: 600; font-size: 16px; cursor: pointer; }
 
     /* ==================================================== */
-    /* 🌟 新版表情包管理全屏界面 (完全参考图1) */
+    /* 🌟 新版表情包管理全屏界面 (高度缩窄 & 修复Bug) */
     /* ==================================================== */
     #sticker-manage-screen { background-color: #f5f5f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow-y: auto; }
     .sticker-mgr-section { padding: 20px; background: #fff; margin-bottom: 10px; }
-    .sticker-mgr-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #333; }
-    .sticker-mgr-desc { font-size: 14px; color: #888; margin-bottom: 10px; line-height: 1.5; }
+    .sticker-mgr-title { font-size: 17px; font-weight: 600; margin-bottom: 15px; color: #333; }
+    .sticker-mgr-desc { font-size: 13px; color: #888; margin-bottom: 10px; line-height: 1.5; }
     .sticker-mgr-input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 14px; margin-bottom: 15px; outline: none; box-sizing: border-box; }
-    .sticker-mgr-textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 14px; margin-bottom: 15px; height: 120px; resize: none; outline: none; box-sizing: border-box; }
+    .sticker-mgr-textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 14px; margin-bottom: 15px; height: 120px; resize: none; outline: none; box-sizing: border-box; font-family: inherit; }
     .sticker-mgr-btn-row { display: flex; gap: 15px; }
     .sticker-mgr-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; color: #fff; }
     .sticker-mgr-btn.blue { background-color: #5a7bf6; }
@@ -391,12 +391,17 @@
     .sticker-mgr-btn.full { width: 100%; flex: none; }
     
     .sticker-pack-list { padding: 20px; }
-    .sticker-pack-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .sticker-pack-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; }
     .sticker-pack-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
     .sticker-pack-name { font-size: 16px; font-weight: 600; color: #333; }
     .sticker-pack-count { font-size: 13px; color: #999; }
-    .sticker-pack-delete { background: #feeceb; color: #e74c3c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .sticker-pack-delete { background: #feeceb; color: #e74c3c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-shrink: 0; }
     
+    .sticker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; }
+    .sticker-item { background: #fff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .sticker-item img { width: 100%; aspect-ratio: 1/1; object-fit: contain; margin-bottom: 8px; border-radius: 8px; background: #f5f5f7; }
+    .sticker-item .meaning { font-size: 12px; color: #666; text-align: center; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; width: 100%; }
+
     /* 聊天表情包选择面板 */
     #sticker-panel { position: fixed; bottom: 0; left: 0; width: 100vw; height: 280px; background: #ffffff; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 4001; display: none; flex-direction: column; transition: transform 0.3s ease-out; transform: translateY(100%); }
     #sticker-panel.active { display: flex; transform: translateY(0); }
@@ -552,7 +557,6 @@
 
 <!-- 讯言 App 首页 -->
 <div class="fullscreen-screen" id="xunyan-screen">
-    <!-- 保留齿轮，点击进入表情包管理 (新UI) -->
     <div class="xy-header">
         <svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
         <svg onclick="openStickerManage()" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -779,16 +783,17 @@
     </div>
 </div>
 
-<!-- 🌟 新版表情包管理全屏界面 (完全仿照图1) -->
-<div class="fullscreen-screen" id="sticker-manage-screen" style="background-color: #f5f5f7;">
-    <div class="ce-header" style="background-color: #f5f5f7; border-bottom: 1px solid #e5e5ea;">
-        <div class="ce-icon-btn" onclick="closeScreen('sticker-manage-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
-        <div style="font-size: 18px; font-weight: 600;">表情包管理</div>
-        <div style="width: 36px;"></div>
+<!-- 🌟 新版表情包管理全屏界面 -->
+<div class="fullscreen-screen" id="sticker-manage-screen" style="background-color: #f5f5f7; padding: 0;">
+    <!-- 顶栏缩窄 -->
+    <div style="padding: 12px 20px; background: #f5f5f7; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 1px solid #e5e5ea;">
+        <div class="ce-icon-btn" style="width: 32px; height: 32px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onclick="closeStickerManage()"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#000;stroke-width:2;fill:none;"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+        <div style="font-size: 17px; font-weight: 600; color: #000;" id="sticker-mgr-title">表情包管理</div>
+        <div style="width: 32px;"></div>
     </div>
     
-    <div class="ce-body" style="padding: 0;">
-        <!-- 新建表情合集（粘贴链接） -->
+    <!-- 主视图 (创建合集) -->
+    <div class="ce-body" style="padding: 0;" id="sticker-main-view">
         <div class="sticker-mgr-section">
             <div class="sticker-mgr-title">新建表情合集（粘贴链接）</div>
             <input type="text" id="new-pack-name" class="sticker-mgr-input" placeholder="合集名称（留空则自动命名）">
@@ -798,18 +803,25 @@
                 <button class="sticker-mgr-btn green" onclick="createBlankPack()">新建空白合集</button>
             </div>
         </div>
-
-        <!-- 上传文件 -->
         <div class="sticker-mgr-section">
             <div class="sticker-mgr-title">上传文件</div>
             <div class="sticker-mgr-desc">支持 docx / json / txt，上传后会自动创建一个表情合集（合集名 = 文件名）。</div>
-            <button class="sticker-mgr-btn green full" onclick="document.getElementById('sticker-file-upload').click()">选择文件</button>
+            <button class="sticker-mgr-btn green full" onclick="triggerUploadNewPack()">选择文件</button>
         </div>
-
-        <!-- 表情合集列表 -->
         <div class="sticker-pack-list">
             <div class="sticker-mgr-title" id="sticker-pack-count-title">表情合集 (0)</div>
             <div id="sticker-pack-container"></div>
+        </div>
+    </div>
+
+    <!-- 详情视图 (查看合集内表情) -->
+    <div class="ce-body" style="padding: 0; display: none;" id="sticker-detail-view">
+        <div style="padding: 15px 20px; background: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 16px; font-weight: 600;" id="sticker-detail-pack-name">合集名称</div>
+            <button class="sticker-mgr-btn green" style="width: auto; padding: 8px 16px;" onclick="triggerAddStickerToCurrentPack()">上传/添加图片</button>
+        </div>
+        <div class="sticker-grid" id="sticker-detail-grid">
+            <!-- 表情包内容 -->
         </div>
     </div>
 </div>
@@ -832,7 +844,6 @@
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
-            <!-- 🌟 新增：绑定表情包 -->
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
             <div class="chat-detail-item" onclick="togglePinChat()"><span>置顶聊天</span><div class="chat-detail-switch" id="pin-switch"></div></div>
             <div class="chat-detail-item" onclick="toggleChatSearch()"><span>搜索聊天记录</span></div>
@@ -845,7 +856,7 @@
     </div>
 </div>
 
-<!-- 🌟 绑定表情包弹窗 (在聊天详情里) -->
+<!-- 绑定表情包弹窗 -->
 <div class="modal-overlay" id="sticker-bind-modal">
     <div class="modal-content">
         <div class="modal-title">选择可用表情包</div>
@@ -947,7 +958,6 @@
     <div class="chat-input-bar">
         <button class="chat-input-icon-btn" onclick="triggerCharReply()"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
         <input type="text" class="chat-input-field" id="chat-input-field" placeholder="输入消息...">
-        <!-- 绑定表情包面板点击事件 -->
         <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
         <button class="chat-input-icon-btn"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
     </div>
@@ -1204,10 +1214,26 @@
     // ==========================================
     let stickerPacks = safeParseJSON(localStorage.getItem('sticker_packs'), []);
     let charStickerBindings = safeParseJSON(localStorage.getItem('char_sticker_bindings'), {});
+    let currentStickerPackId = null; 
+    let addingToPackId = null; // 用于判断是新建还是添加到已有合集
 
     function openStickerManage() {
         renderStickerPackList();
+        document.getElementById('sticker-main-view').style.display = 'block';
+        document.getElementById('sticker-detail-view').style.display = 'none';
+        document.getElementById('sticker-mgr-title').innerText = '表情包管理';
         openScreen('sticker-manage-screen');
+    }
+
+    function closeStickerManage() {
+        if(document.getElementById('sticker-detail-view').style.display === 'block') {
+            document.getElementById('sticker-main-view').style.display = 'block';
+            document.getElementById('sticker-detail-view').style.display = 'none';
+            document.getElementById('sticker-mgr-title').innerText = '表情包管理';
+            renderStickerPackList();
+        } else {
+            closeScreen('sticker-manage-screen');
+        }
     }
 
     // 解析链接并创建合集
@@ -1274,6 +1300,7 @@
         stickerPacks.forEach(pack => {
             const div = document.createElement('div');
             div.className = 'sticker-pack-item';
+            div.onclick = () => openStickerPackDetail(pack.id);
             div.innerHTML = `
                 <div class="sticker-pack-info">
                     <div class="sticker-pack-name">${pack.name}</div>
@@ -1294,6 +1321,54 @@
         }
     }
 
+    // 打开详情页
+    function openStickerPackDetail(packId) {
+        const pack = stickerPacks.find(p => p.id === packId);
+        if(!pack) return;
+        currentStickerPackId = packId;
+        document.getElementById('sticker-main-view').style.display = 'none';
+        document.getElementById('sticker-detail-view').style.display = 'block';
+        document.getElementById('sticker-mgr-title').innerText = pack.name;
+        renderStickerDetailGrid();
+    }
+
+    function renderStickerDetailGrid() {
+        const pack = stickerPacks.find(p => p.id === currentStickerPackId);
+        if(!pack) return;
+        const grid = document.getElementById('sticker-detail-grid');
+        grid.innerHTML = '';
+        if(pack.stickers.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 30px 0;">暂无表情包，请点击上方按钮上传</div>';
+            return;
+        }
+        pack.stickers.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'sticker-item';
+            div.innerHTML = `<img src="${s.image}" alt="sticker">
+                             <div class="meaning">${s.meaning || '双击修改'}</div>`;
+            // 双击修改含义
+            div.ondblclick = () => {
+                const newMeaning = prompt("请输入表情包含义（AI会以此理解图片）：", s.meaning);
+                if(newMeaning !== null && newMeaning.trim() !== '') {
+                    s.meaning = newMeaning.trim();
+                    localStorage.setItem('sticker_packs', JSON.stringify(stickerPacks));
+                    renderStickerDetailGrid();
+                }
+            };
+            grid.appendChild(div);
+        });
+    }
+
+    function triggerUploadNewPack() {
+        addingToPackId = null;
+        document.getElementById('sticker-file-upload').click();
+    }
+
+    function triggerAddStickerToCurrentPack() {
+        addingToPackId = currentStickerPackId;
+        document.getElementById('sticker-file-upload').click();
+    }
+
     // 上传文件解析
     document.getElementById('sticker-file-upload').addEventListener('change', function(e) {
         const files = e.target.files;
@@ -1305,10 +1380,27 @@
             const ext = fileName.split('.').pop().toLowerCase();
             const stickers = [];
 
-            const processAndSave = () => {
-                stickerPacks.push({ id: 'pack_' + Date.now() + Math.random(), name: title, stickers });
-                localStorage.setItem('sticker_packs', JSON.stringify(stickerPacks));
-                renderStickerPackList();
+            const processAndSave = (parsedStickers) => {
+                if(parsedStickers.length === 0) {
+                    alert(`解析文件 ${fileName} 失败：未找到有效的表情包链接或图片。`);
+                    return;
+                }
+
+                if(addingToPackId) {
+                    const pack = stickerPacks.find(p => p.id === addingToPackId);
+                    if(pack) {
+                        pack.stickers.push(...parsedStickers);
+                        localStorage.setItem('sticker_packs', JSON.stringify(stickerPacks));
+                        renderStickerDetailGrid();
+                        alert(`已成功添加 ${parsedStickers.length} 张表情包到当前合集。`);
+                    }
+                    addingToPackId = null;
+                } else {
+                    stickerPacks.push({ id: 'pack_' + Date.now() + Math.random(), name: title, stickers: parsedStickers });
+                    localStorage.setItem('sticker_packs', JSON.stringify(stickerPacks));
+                    renderStickerPackList();
+                    alert(`已成功创建合集：${title}，共 ${parsedStickers.length} 张`);
+                }
             };
 
             if (ext === 'docx') {
@@ -1320,9 +1412,9 @@
                             let parts = line.split('|');
                             let url = parts.length > 1 ? parts[1].trim() : parts[0].trim();
                             let meaning = parts.length > 2 ? parts[2].trim() : '未命名';
-                            if(url.startsWith('http')) stickers.push({ id: 'st_' + Date.now() + idx, image: url, meaning });
+                            if(url && (url.startsWith('http') || url.startsWith('data:image') || url.length > 10)) stickers.push({ id: 'st_' + Date.now() + idx, image: url, meaning });
                         });
-                        processAndSave();
+                        processAndSave(stickers);
                     });
                 };
                 reader.readAsArrayBuffer(file);
@@ -1334,9 +1426,9 @@
                         let parts = line.split('|');
                         let url = parts.length > 1 ? parts[1].trim() : parts[0].trim();
                         let meaning = parts.length > 2 ? parts[2].trim() : '未命名';
-                        if(url.startsWith('http')) stickers.push({ id: 'st_' + Date.now() + idx, image: url, meaning });
+                        if(url && (url.startsWith('http') || url.startsWith('data:image') || url.length > 10)) stickers.push({ id: 'st_' + Date.now() + idx, image: url, meaning });
                     });
-                    processAndSave();
+                    processAndSave(stickers);
                 };
                 reader.readAsText(file);
             } else if (ext === 'json') {
@@ -1350,16 +1442,16 @@
                                     stickers.push({ id: 'st_' + Date.now() + idx, image: item.image || item.url, meaning: item.meaning || item.name || '未命名' });
                                 }
                             });
-                            processAndSave();
+                            processAndSave(stickers);
                         }
-                    } catch(e) {}
+                    } catch(e) { alert("JSON 解析失败"); }
                 };
                 reader.readAsText(file);
             } else if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     stickers.push({ id: 'st_' + Date.now() + Math.random(), image: event.target.result, meaning: title });
-                    processAndSave();
+                    processAndSave(stickers);
                 };
                 reader.readAsDataURL(file);
             }
@@ -1367,16 +1459,14 @@
         this.value = '';
     });
 
-    // 🌟 绑定逻辑 (移到聊天详情)
+    // 🌟 绑定逻辑 (在聊天详情)
     let currentEditingStickerBinds = [];
     
     function openStickerBindModal() {
         if(!currentChatCharId) return;
-        // 不关闭聊天详情，直接弹窗
         const container = document.getElementById('sticker-bind-list-container');
         container.innerHTML = '';
         
-        // 深拷贝当前绑定状态
         currentEditingStickerBinds = [...(charStickerBindings[currentChatCharId] || [])];
 
         if(stickerPacks.length === 0) {
@@ -1453,7 +1543,6 @@
     // ==========================================
     // 4. 设置 App
     // ==========================================
-    // ... (与原代码一致，省略部分重复内容)
     async function openSettingsApp() {
         openScreen('settings-screen');
         const fsState = localStorage.getItem('settings_fullscreen') === 'true';
