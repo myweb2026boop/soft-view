@@ -19,6 +19,9 @@
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    /* 彻底隐藏所有原生文件上传按钮，防止破坏排版 */
+    input[type="file"] { display: none !important; }
 
     body {
         margin: 0; padding: 20px 12px;
@@ -226,9 +229,6 @@
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
     .modal-btn.cancel { background-color: #f2f2f7; color: #1c1c1e; }
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
-
-    /* 隐藏的文件输入 */
-    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-style-upload, #offline-worldbook-upload, #book-file-upload, #ringtone-upload { display: none; }
 
     /* ==================================================== */
     /* 🌟 聊天界面样式 */
@@ -706,7 +706,6 @@
     <div class="search-container"><div class="search-bar"><svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>搜索</div></div>
     <!-- Dock 区域 -->
     <div class="dock">
-        <!-- 第一个位置替换为设置（不带名字） -->
         <div class="dock-icon" id="home-dock-1" onclick="openSettingsApp()"></div>
         <div class="dock-icon" id="home-dock-2"></div>
     </div>
@@ -1334,7 +1333,7 @@
     </div>
 </div>
 
-<!-- 文件上传隐藏输入框 -->
+<!-- 文件上传隐藏输入框 (全局隐藏) -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
 <input type="file" id="import-data-file" accept=".json,application/json">
@@ -1344,17 +1343,13 @@
 <input type="file" id="blog-avatar-upload" accept="image/*">
 <input type="file" id="user-avatar-upload" accept="image/*">
 <input type="file" id="user-docx-upload" accept=".docx">
-<!-- 聊天详情专用的图片上传 -->
 <input type="file" id="chat-char-avatar-upload" accept="image/*">
 <input type="file" id="chat-user-avatar-upload" accept="image/*">
 <input type="file" id="chat-bg-upload" accept="image/*">
-<!-- 线下界面专用的文件上传 -->
 <input type="file" id="offline-bg-upload" accept="image/*">
 <input type="file" id="offline-style-upload" accept=".txt,.json,.docx">
 <input type="file" id="offline-worldbook-upload" accept=".txt,.json,.docx">
-<!-- Book App 文件上传 -->
 <input type="file" id="book-file-upload" accept=".docx,.json">
-<!-- 铃声上传 -->
 <input type="file" id="ringtone-upload" accept="audio/mpeg,audio/mp3">
 
 <script>
@@ -1409,7 +1404,6 @@
         }
         // Dock 1 强制改为设置图标
         document.getElementById('home-dock-1').style.backgroundColor = '#e5e5ea'; // 占位色
-        // 可以用 CSS 或者直接加 svg 背景，这里简单起见，让点击生效即可
     }
 
     function setupEditableText(elements) {
