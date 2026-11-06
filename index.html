@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>梨汁机</title>
-<!-- 引入 mammoth.js 用于解析 docx 文件 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
     :root {
@@ -229,7 +228,7 @@
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
 
     /* 隐藏的文件输入 */
-    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-style-upload, #offline-worldbook-upload, #book-file-upload { display: none; }
+    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-style-upload, #offline-worldbook-upload, #book-file-upload, #ringtone-upload { display: none; }
 
     /* ==================================================== */
     /* 🌟 聊天界面样式 */
@@ -270,21 +269,21 @@
     }
     
     /* 对方名字和气泡的容器 */
-    .chat-msg-content { display: flex; flex-direction: column; max-width: 75%; /* 缩小最大宽度限制 */ }
+    .chat-msg-content { display: flex; flex-direction: column; max-width: 65%; /* 进一步缩小气泡宽度 */ }
     .chat-msg-row.left .chat-msg-content { align-items: flex-start; }
     .chat-msg-row.right .chat-msg-content { align-items: flex-end; }
     
     /* 发送者名字 */
     .chat-sender-name { font-size: 12px; color: #999; margin-bottom: 4px; padding: 0 4px; }
 
-    /* 文本气泡 (缩小优化) */
+    /* 文本气泡 (进一步缩小) */
     .chat-bubble { 
-        padding: 10px 14px; /* 缩小 padding */
+        padding: 8px 12px; /* 缩小 padding */
         border-radius: 16px; 
-        font-size: 14px; /* 缩小字体 */
-        line-height: 1.5; 
+        font-size: 14px; /* 保持字体清晰但更紧凑 */
+        line-height: 1.4; 
         word-break: break-word; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .chat-msg-row.left .chat-bubble { 
         background-color: #ffffff; color: #333; 
@@ -354,7 +353,7 @@
     /* 🌟 图二：Contact 线下界面样式 */
     /* ==================================================== */
     #contact-offline-screen {
-        background-color: #f5f5f7; /* 浅灰背景，无黑边 */
+        background-color: #f5f5f7;
         z-index: 4500;
         padding: 0;
         position: fixed;
@@ -363,7 +362,7 @@
         background-position: center;
     }
     .dashboard-top-nav {
-        margin: 15px 20px; /* 悬浮于顶部 */
+        margin: 15px 20px;
         background-color: #ffffff;
         border-radius: 16px;
         padding: 15px 20px;
@@ -406,23 +405,21 @@
         padding-bottom: 20px;
     }
     
-    /* 线下界面底部的输入框 (已调高缩短) */
     .offline-input-bar {
         flex-shrink: 0; background-color: #ffffff; 
-        padding: 6px 12px; /* 调小 padding */
+        padding: 6px 12px;
         display: flex; align-items: center; gap: 10px; 
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border-radius: 24px; /* 缩小胶囊圆角 */
-        margin: 10px 20px 25px; /* 提高位置并缩短左右边距 */
+        border-radius: 24px;
+        margin: 10px 20px 25px;
     }
     .offline-input-field {
         flex-grow: 1; background-color: #f2f2f2; border: none; outline: none;
-        border-radius: 20px; padding: 8px 14px; /* 减小内边距 */
-        font-size: 14px; color: #333; /* 字体调小 */
+        border-radius: 20px; padding: 8px 14px;
+        font-size: 14px; color: #333;
     }
     .offline-input-field::placeholder { color: #aaa; }
 
-    /* 线下详情全屏界面 */
     #offline-detail-screen {
         background-color: #f5f5f7;
         z-index: 4600;
@@ -431,7 +428,6 @@
         top: 0; left: 0; width: 100vw; height: 100vh;
     }
     
-    /* 自定义文风 CSS 输入框样式 */
     .custom-css-input {
         width: 100%;
         height: 200px;
@@ -559,7 +555,6 @@
         overflow: hidden;
     }
 
-    /* 全屏编辑界面样式 */
     #book-edit-screen {
         background-color: #f5f5f7; 
         z-index: 5500; 
@@ -569,7 +564,6 @@
         width: 100vw; height: 100vh; 
     }
     
-    /* 自定义选择栏 */
     .custom-select-row {
         display: flex; justify-content: space-between; align-items: center;
         padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
@@ -578,11 +572,101 @@
     .custom-select-row:last-child { border-bottom: none; }
     .custom-select-value { color: var(--blue); }
 
-    /* 弹窗的层级设置，确保在最上面 */
     .high-z-modal { z-index: 6000 !important; }
-    #chat-book-bind-modal { z-index: 5500 !important; } /* 聊天局部绑定最高层 */
-    #global-book-bind-modal { z-index: 4700 !important; } /* 线下绑定层 */
-    #offline-char-modal { z-index: 4700 !important; } /* 线下选char层 */
+    #chat-book-bind-modal { z-index: 5500 !important; }
+    #global-book-bind-modal { z-index: 4700 !important; }
+    #offline-char-modal { z-index: 4700 !important; }
+
+    /* ==================================================== */
+    /* 🌟 设置 App 界面样式 (仿 iOS) */
+    /* ==================================================== */
+    #settings-screen {
+        background-color: #f2f2f7;
+        z-index: 5000; /* 最高层 */
+        padding: 0;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        overflow-y: auto;
+    }
+    .settings-header {
+        text-align: center;
+        padding: 20px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #000;
+    }
+    .settings-account {
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        border-radius: 12px;
+        margin: 0 20px 20px;
+        padding: 15px;
+    }
+    .settings-account img {
+        width: 60px; height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+    .settings-account-info {
+        flex-grow: 1;
+    }
+    .settings-account-name {
+        font-size: 20px; font-weight: 600; color: #000; margin-bottom: 4px;
+    }
+    .settings-account-sub {
+        font-size: 13px; color: #888;
+    }
+    .settings-group-list {
+        background-color: #ffffff;
+        border-radius: 12px;
+        margin: 0 20px 20px;
+        overflow: hidden;
+    }
+    .settings-list-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 16px;
+    }
+    .settings-list-item:last-child { border-bottom: none; }
+    .settings-list-icon {
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        display: flex; justify-content: center; align-items: center;
+        margin-right: 15px;
+    }
+    .settings-list-icon svg {
+        width: 18px; height: 18px; fill: #fff;
+    }
+    .settings-list-text { flex-grow: 1; color: #000; }
+    .settings-list-value { font-size: 15px; color: #888; margin-right: 10px; }
+    .settings-list-arrow {
+        width: 8px; height: 8px;
+        border-top: 2px solid #c7c7cc;
+        border-right: 2px solid #c7c7cc;
+        transform: rotate(45deg);
+    }
+    
+    /* 设置中的开关 */
+    .settings-switch {
+        width: 50px; height: 30px; background-color: #e5e5ea; border-radius: 15px;
+        position: relative; transition: background-color 0.3s;
+    }
+    .settings-switch::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px;
+        background-color: #fff; border-radius: 50%; transition: transform 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .settings-switch.on { background-color: var(--green); }
+    .settings-switch.on::after { transform: translateX(20px); }
+
+    /* 弹窗中确认框的样式 */
+    .api-row {
+        display: flex; justify-content: space-between; margin-bottom: 10px;
+    }
 </style>
 </head>
 <body>
@@ -620,7 +704,12 @@
         <div class="app-item" onclick="openManager()"><div class="app-icon" id="home-icon-4"></div><div class="app-name" id="home-name-4">桌面</div></div>
     </div>
     <div class="search-container"><div class="search-bar"><svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>搜索</div></div>
-    <div class="dock"><div class="dock-icon" id="home-dock-1"></div><div class="dock-icon" id="home-dock-2"></div></div>
+    <!-- Dock 区域 -->
+    <div class="dock">
+        <!-- 第一个位置替换为设置（不带名字） -->
+        <div class="dock-icon" id="home-dock-1" onclick="openSettingsApp()"></div>
+        <div class="dock-icon" id="home-dock-2"></div>
+    </div>
 </div>
 
 <!-- 桌面管理界面 -->
@@ -645,6 +734,107 @@
         <button class="setting-btn" id="btn-import"><svg style="width:18px;height:18px;fill:#ff9500;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>导入桌面美化</button>
         <button class="setting-btn danger" id="btn-reset-wallpaper"><svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>恢复默认桌面壁纸</button>
         <button class="setting-btn danger" id="btn-reset-apps"><svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>恢复默认图标与名称</button>
+    </div>
+</div>
+
+<!-- 设置 App (仿 iOS) -->
+<div class="fullscreen-screen" id="settings-screen">
+    <div class="settings-header">设置</div>
+    
+    <!-- 账户模块 -->
+    <div class="settings-account">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="avatar" style="background:#ccc;">
+        <div class="settings-account-info">
+            <div class="settings-account-name">shu in</div>
+            <div class="settings-account-sub">Apple账户、iCloud 等</div>
+        </div>
+        <div class="settings-list-arrow"></div>
+    </div>
+
+    <!-- 功能列表 -->
+    <div class="settings-group-list">
+        <!-- 飞行模式 -> 全屏 -->
+        <div class="settings-list-item" onclick="toggleFullscreenMode()">
+            <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
+            <div class="settings-list-text">全屏模式</div>
+            <div class="settings-switch" id="toggle-fullscreen"></div>
+        </div>
+        
+        <!-- WLAN -> API 设置 -->
+        <div class="settings-list-item" onclick="openApiSettingsModal()">
+            <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
+            <div class="settings-list-text">API 接口</div>
+            <div class="settings-list-value" id="api-status-text">未连接</div>
+            <div class="settings-list-arrow"></div>
+        </div>
+
+        <!-- 蓝牙 -> 后台保活 -->
+        <div class="settings-list-item" onclick="toggleBackgroundKeepAlive()">
+            <div class="settings-list-icon" style="background-color: #3478f6;"><svg viewBox="0 0 24 24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"></path></svg></div>
+            <div class="settings-list-text">后台保活通知</div>
+            <div class="settings-switch" id="toggle-bg-keepalive"></div>
+        </div>
+
+        <!-- 蜂窝网络 -> 铃声 -->
+        <div class="settings-list-item" onclick="document.getElementById('ringtone-upload').click()">
+            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <div class="settings-list-text">自定义新消息铃声</div>
+            <div class="settings-list-value" id="ringtone-name">默认</div>
+            <div class="settings-list-arrow"></div>
+        </div>
+
+        <!-- 个人热点 -> 导入数据 -->
+        <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
+            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
+            <div class="settings-list-text">导入全局数据</div>
+            <div class="settings-list-arrow"></div>
+        </div>
+
+        <!-- 电池 -> 导出数据 -->
+        <div class="settings-list-item" onclick="exportGlobalData()">
+            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
+            <div class="settings-list-text">导出全局数据</div>
+            <div class="settings-list-arrow"></div>
+        </div>
+    </div>
+    
+    <!-- 关闭按钮 -->
+    <div class="modal-actions" style="padding: 0 20px 40px;">
+        <button class="modal-btn cancel" onclick="closeScreen('settings-screen')">关闭设置</button>
+    </div>
+</div>
+
+<!-- API 设置弹窗 -->
+<div class="modal-overlay high-z-modal" id="api-settings-modal">
+    <div class="modal-content">
+        <div class="modal-title">API 配置</div>
+        <div class="modal-input-group">
+            <input type="text" id="api-url" placeholder="API URL (如: https://api.openai.com/v1)">
+            <input type="text" id="api-key" placeholder="API 密钥">
+            <div style="display:flex; gap:10px;">
+                <button class="modal-btn confirm" style="flex:1; padding: 8px; font-size: 14px;" onclick="fetchApiModels()">拉取模型</button>
+            </div>
+            <select id="api-model-select" style="width:100%; padding:10px; border:1px solid #e5e5ea; border-radius:8px; outline:none; font-family:inherit;">
+                <option value="">请先拉取模型或手动输入</option>
+            </select>
+            <input type="text" id="api-model-manual" placeholder="或手动输入模型名称 (如: gpt-3.5-turbo)">
+            
+            <div class="api-row">
+                <span style="font-size:14px; color:#555;">温度 (0.0 - 2.0)</span>
+                <input type="number" id="api-temp" value="0.7" step="0.1" min="0" max="2" style="width:60px; text-align:center; border:1px solid #e5e5ea; border-radius:6px;">
+            </div>
+            
+            <div class="api-row">
+                <button class="modal-btn confirm" style="padding:8px; font-size:14px; flex:1;" onclick="saveApiPreset()">保存当前配置为预设</button>
+            </div>
+            <select id="api-preset-select" style="width:100%; padding:10px; border:1px solid #e5e5ea; border-radius:8px; outline:none; font-family:inherit;" onchange="loadApiPreset()">
+                <option value="">选择预设...</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeApiSettingsModal()">取消</button>
+            <button class="modal-btn confirm" onclick="saveApiConfig()">保存应用</button>
+        </div>
     </div>
 </div>
 
@@ -739,7 +929,6 @@
         <div class="ce-icon-btn check-btn active" onclick="saveBookEdit()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg></div>
     </div>
     <div class="ce-body">
-        <!-- 编辑内容区 -->
         <div class="ce-card" style="padding: 16px;">
             <div class="ce-input-row" style="padding: 0 0 16px 0; border-bottom: 1px solid #f0f0f0;">
                 <input type="text" class="ce-input" id="book-edit-title" placeholder="世界书名称" style="font-weight: 600;">
@@ -747,7 +936,6 @@
             <textarea class="ce-textarea" id="book-edit-content" placeholder="输入世界书内容..." style="height: 400px; padding: 16px 0 0 0;"></textarea>
         </div>
 
-        <!-- 新增的设置区 -->
         <div class="ce-card">
             <div class="custom-select-row" onclick="openBookBindSettingModal()">
                 <span style="font-size: 16px; color: #1c1c1e;">运用方式</span>
@@ -769,9 +957,7 @@
 <div class="modal-overlay" id="chat-book-bind-modal">
     <div class="modal-content">
         <div class="modal-title">选择局部世界书</div>
-        <div class="modal-list" id="chat-book-bind-list">
-            <!-- 动态渲染局部书籍 -->
-        </div>
+        <div class="modal-list" id="chat-book-bind-list"></div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closeChatBookBindModal()">取消</button>
             <button class="modal-btn confirm" onclick="saveChatBookBind()">确定</button>
@@ -807,9 +993,7 @@
 <div class="modal-overlay high-z-modal" id="book-char-select-modal">
     <div class="modal-content">
         <div class="modal-title">选择绑定的 Char</div>
-        <div class="modal-list" id="book-char-select-list">
-            <!-- 动态渲染 Char 列表 -->
-        </div>
+        <div class="modal-list" id="book-char-select-list"></div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closeBookCharSelectModal()">取消</button>
         </div>
@@ -1153,6 +1337,7 @@
 <!-- 文件上传隐藏输入框 -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
+<input type="file" id="import-data-file" accept=".json,application/json">
 <input type="file" id="xy-file-upload" accept="image/*">
 <input type="file" id="ce-avatar-upload" accept="image/*">
 <input type="file" id="ce-docx-upload" accept=".docx">
@@ -1169,6 +1354,8 @@
 <input type="file" id="offline-worldbook-upload" accept=".txt,.json,.docx">
 <!-- Book App 文件上传 -->
 <input type="file" id="book-file-upload" accept=".docx,.json">
+<!-- 铃声上传 -->
+<input type="file" id="ringtone-upload" accept="audio/mpeg,audio/mp3">
 
 <script>
     // ==========================================
@@ -1220,6 +1407,9 @@
                 if (mgDockEl) { if (savedImg) mgDockEl.style.backgroundImage = `url(${savedImg})`; else mgDockEl.style.backgroundImage = 'none'; }
             }
         }
+        // Dock 1 强制改为设置图标
+        document.getElementById('home-dock-1').style.backgroundColor = '#e5e5ea'; // 占位色
+        // 可以用 CSS 或者直接加 svg 背景，这里简单起见，让点击生效即可
     }
 
     function setupEditableText(elements) {
@@ -1302,45 +1492,232 @@
         }
     });
 
-    // 导入/导出/恢复默认逻辑
-    document.getElementById('btn-export').addEventListener('click', async () => {
+    // ==========================================
+    // 🌟 设置 App (Settings)
+    // ==========================================
+    function openSettingsApp() {
+        openScreen('settings-screen');
+        // 初始化 UI 状态
+        const fsState = localStorage.getItem('settings_fullscreen') === 'true';
+        document.getElementById('toggle-fullscreen').classList.toggle('on', fsState);
+
+        const bgState = localStorage.getItem('settings_bg_keepalive') === 'true';
+        document.getElementById('toggle-bg-keepalive').classList.toggle('on', bgState);
+
+        const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), null);
+        if (apiConf && apiConf.model) {
+            document.getElementById('api-status-text').innerText = '已配置';
+        }
+
+        const ringName = localStorage.getItem('settings_ringtone_name');
+        if (ringName) document.getElementById('ringtone-name').innerText = ringName;
+    }
+
+    // 1. 全屏模式
+    function toggleFullscreenMode() {
+        const el = document.getElementById('toggle-fullscreen');
+        const isOn = el.classList.contains('on');
+        if (!isOn) {
+            // 开启
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen().catch(err => alert(`全屏失败: ${err.message}`));
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.msRequestFullscreen) {
+                docEl.msRequestFullscreen();
+            }
+            el.classList.add('on');
+            localStorage.setItem('settings_fullscreen', 'true');
+        } else {
+            // 关闭
+            if (document.exitFullscreen) document.exitFullscreen();
+            el.classList.remove('on');
+            localStorage.setItem('settings_fullscreen', 'false');
+        }
+    }
+
+    // 2. API 设置
+    function openApiSettingsModal() {
+        const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), {
+            url: '', key: '', model: '', temp: 0.7
+        });
+        document.getElementById('api-url').value = apiConf.url;
+        document.getElementById('api-key').value = apiConf.key;
+        document.getElementById('api-model-manual').value = apiConf.model;
+        document.getElementById('api-temp').value = apiConf.temp;
+        
+        // 加载预设
+        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
+        const sel = document.getElementById('api-preset-select');
+        sel.innerHTML = '<option value="">选择预设...</option>';
+        Object.keys(presets).forEach(k => {
+            sel.innerHTML += `<option value="${k}">${k}</option>`;
+        });
+
+        document.getElementById('api-settings-modal').classList.add('active');
+    }
+
+    function closeApiSettingsModal() {
+        document.getElementById('api-settings-modal').classList.remove('active');
+    }
+
+    async function fetchApiModels() {
+        const url = document.getElementById('api-url').value.trim().replace(/\/$/, '');
+        const key = document.getElementById('api-key').value.trim();
+        if (!url || !key) { alert("请填写 API URL 和 Key"); return; }
+
+        try {
+            const res = await fetch(`${url}/models`, {
+                headers: { 'Authorization': `Bearer ${key}` }
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            
+            const select = document.getElementById('api-model-select');
+            select.innerHTML = '';
+            if (data && data.data && Array.isArray(data.data)) {
+                data.data.forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.id}</option>`;
+                });
+            } else {
+                select.innerHTML = '<option value="">无法解析模型列表</option>';
+            }
+            alert("拉取成功！");
+        } catch (err) {
+            alert("拉取模型失败 (可能存在跨域问题，如果无法解决请在下方手动输入模型): " + err.message);
+        }
+    }
+
+    function saveApiConfig() {
+        const url = document.getElementById('api-url').value.trim();
+        const key = document.getElementById('api-key').value.trim();
+        let model = document.getElementById('api-model-select').value;
+        if (!model) model = document.getElementById('api-model-manual').value.trim();
+        const temp = parseFloat(document.getElementById('api-temp').value);
+
+        if (!url || !key || !model) { alert("URL, Key 和 模型 不能为空！"); return; }
+
+        const config = { url, key, model, temp };
+        localStorage.setItem('settings_api_config', JSON.stringify(config));
+        document.getElementById('api-status-text').innerText = '已配置';
+        closeApiSettingsModal();
+        alert("API 配置已保存并应用！");
+    }
+
+    function saveApiPreset() {
+        const name = prompt("请输入预设名称:");
+        if (!name) return;
+
+        const url = document.getElementById('api-url').value.trim();
+        const key = document.getElementById('api-key').value.trim();
+        let model = document.getElementById('api-model-select').value;
+        if (!model) model = document.getElementById('api-model-manual').value.trim();
+        const temp = parseFloat(document.getElementById('api-temp').value);
+
+        if (!url || !key || !model) { alert("URL, Key 和 模型 不能为空！"); return; }
+
+        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
+        presets[name] = { url, key, model, temp };
+        localStorage.setItem('settings_api_presets', JSON.stringify(presets));
+        
+        const sel = document.getElementById('api-preset-select');
+        sel.innerHTML += `<option value="${name}">${name}</option>`;
+        alert("预设保存成功！");
+    }
+
+    function loadApiPreset() {
+        const name = document.getElementById('api-preset-select').value;
+        if (!name) return;
+        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
+        const p = presets[name];
+        if (p) {
+            document.getElementById('api-url').value = p.url;
+            document.getElementById('api-key').value = p.key;
+            document.getElementById('api-model-manual').value = p.model;
+            document.getElementById('api-temp').value = p.temp;
+        }
+    }
+
+    // 3. 后台保活通知
+    function toggleBackgroundKeepAlive() {
+        const el = document.getElementById('toggle-bg-keepalive');
+        const isOn = el.classList.contains('on');
+        if (!isOn) {
+            if (!("Notification" in window)) {
+                alert("当前浏览器不支持桌面通知，无法开启后台保活！");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    el.classList.add('on');
+                    localStorage.setItem('settings_bg_keepalive', 'true');
+                } else {
+                    alert("你拒绝了通知权限，无法使用后台保活功能！");
+                }
+            });
+        } else {
+            el.classList.remove('on');
+            localStorage.setItem('settings_bg_keepalive', 'false');
+        }
+    }
+
+    // 4. 上传铃声
+    document.getElementById('ringtone-upload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.includes('audio')) { alert("请上传 MP3 音频文件！"); return; }
+
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const base64Data = event.target.result;
+            await saveImageToDB('settings_ringtone', base64Data); // 借用图片DB保存音频
+            localStorage.setItem('settings_ringtone_name', file.name);
+            document.getElementById('ringtone-name').innerText = file.name;
+            alert("铃声上传并应用成功！");
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+    });
+
+    // 播放铃声逻辑 (供消息触发使用)
+    async function playRingtone() {
+        if (localStorage.getItem('settings_bg_keepalive') !== 'true') return;
+        const audioData = await getImageFromDB('settings_ringtone');
+        if (audioData) {
+            const audio = new Audio(audioData);
+            audio.play().catch(e => console.log('音频播放被拦截', e));
+        }
+    }
+
+    // 5. 导出数据
+    async function exportGlobalData() {
         try {
             const lsData = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); lsData[key] = localStorage.getItem(key); }
             const dbData = await getAllImagesFromDB();
-            const exportPayload = { version: 1.0, timestamp: Date.now(), localStorage: lsData, indexedDB: dbData };
+            const exportPayload = { version: 2.0, timestamp: Date.now(), localStorage: lsData, indexedDB: dbData };
             const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload));
-            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `desktop_beautify_${new Date().getTime()}.json`);
+            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `global_data_${new Date().getTime()}.json`);
             document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); alert("导出成功！");
-        } catch (err) { alert("导出失败，请重试。"); }
-    });
-    const importFileInput = document.getElementById('import-file');
-    document.getElementById('btn-import').addEventListener('click', () => importFileInput.click());
-    importFileInput.addEventListener('change', function(e) {
+        } catch (err) { alert("导出失败: " + err.message); }
+    }
+
+    // 6. 导入数据
+    document.getElementById('import-data-file').addEventListener('change', function(e) {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = async function(event) {
             try {
                 const importedData = JSON.parse(event.target.result);
-                if (!importedData.localStorage || !importedData.indexedDB) throw new Error("无效格式");
+                if (!importedData.localStorage || !importedData.indexedDB) throw new Error("无效的数据格式");
                 await clearImageDB(); localStorage.clear();
                 for (const [key, value] of Object.entries(importedData.localStorage)) localStorage.setItem(key, value);
                 const imagePromises = []; for (const [key, base64] of Object.entries(importedData.indexedDB)) imagePromises.push(saveImageToDB(key, base64));
-                await Promise.all(imagePromises); alert("导入成功！刷新页面应用。"); location.reload();
-            } catch (err) { alert("导入失败。"); }
-            importFileInput.value = '';
+                await Promise.all(imagePromises); alert("导入成功！页面将刷新以应用新数据。"); location.reload();
+            } catch (err) { alert("导入失败: " + err.message); }
+            this.value = '';
         };
         reader.readAsText(file);
-    });
-    document.getElementById('btn-reset-wallpaper').addEventListener('click', async () => {
-        if(confirm("确定要恢复默认桌面壁纸吗？")) { await deleteImageFromDB('app_wallpaper'); localStorage.removeItem('wallpaper'); document.body.style.backgroundImage = 'none'; }
-    });
-    document.getElementById('btn-reset-apps').addEventListener('click', async () => {
-        if(confirm("确定要将所有App恢复默认吗？")) {
-            defaultApps.forEach(app => localStorage.removeItem(`app_name_${app.id}`));
-            const keysToDelete = ['app_img_1', 'app_img_2', 'app_img_3', 'app_img_4', 'app_img_d1', 'app_img_d2'];
-            for (let key of keysToDelete) await deleteImageFromDB(key);
-            await renderApps(); alert("已恢复默认！");
-        }
     });
 
     // ==========================================
@@ -1366,29 +1743,20 @@
     // ==========================================
     let bookWorldBooks = safeParseJSON(localStorage.getItem('book_world_books'), []);
     let currentEditingBookId = null;
-    let tempBindType = 'global'; // 用于编辑时的暂存
+    let tempBindType = 'global'; 
     let tempBoundCharId = null;
     let tempInsertPos = 'before';
 
     function openBookApp() {
         openScreen('book-app-screen');
         
-        // 初始化文字
         const mainText = document.getElementById('book-main-text');
         const savedQuote = localStorage.getItem('book_quote_text');
         if(savedQuote) mainText.innerHTML = savedQuote;
         
-        // 双击编辑逻辑
-        mainText.ondblclick = function() {
-            this.contentEditable = "true";
-            this.focus();
-        };
-        mainText.onblur = function() {
-            this.contentEditable = "false";
-            localStorage.setItem('book_quote_text', this.innerHTML);
-        };
+        mainText.ondblclick = function() { this.contentEditable = "true"; this.focus(); };
+        mainText.onblur = function() { this.contentEditable = "false"; localStorage.setItem('book_quote_text', this.innerHTML); };
 
-        // 渲染书架
         renderBookShelf();
     }
 
@@ -1405,7 +1773,6 @@
             div.className = 'book-item';
             div.onclick = () => openBookEditScreen(book.id);
             
-            // 绑定标签
             let bindLabel = '全局';
             if(book.bindType === 'local') bindLabel = '局部';
             else if(book.bindType === 'char' && book.boundCharId) {
@@ -1436,9 +1803,7 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 mammoth.extractRawText({arrayBuffer: event.target.result})
-                    .then(function(result){
-                        saveNewBook(title, result.value);
-                    })
+                    .then(function(result){ saveNewBook(title, result.value); })
                     .catch(function(err){ alert("解析失败：" + err.message); });
             };
             reader.readAsArrayBuffer(file);
@@ -1446,35 +1811,22 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 let content = event.target.result;
-                try {
-                    const json = JSON.parse(content);
-                    content = JSON.stringify(json, null, 2);
-                } catch(e) { /* ignore */ }
+                try { content = JSON.stringify(JSON.parse(content), null, 2); } catch(e) {}
                 saveNewBook(title, content);
             };
             reader.readAsText(file);
-        } else {
-            alert("仅支持 .docx 和 .json 文件");
-        }
+        } else { alert("仅支持 .docx 和 .json 文件"); }
         this.value = '';
     });
 
     function saveNewBook(title, content) {
-        const newBook = {
-            id: 'book_' + Date.now(),
-            title: title,
-            content: content,
-            bindType: 'local',
-            boundCharId: null,
-            insertPos: 'before' // 默认人设前
-        };
+        const newBook = { id: 'book_' + Date.now(), title, content, bindType: 'local', boundCharId: null, insertPos: 'before' };
         bookWorldBooks.push(newBook);
         localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
         renderBookShelf();
         alert("上传成功，已加入书架！");
     }
 
-    // 全屏编辑书籍
     function openBookEditScreen(id) {
         currentEditingBookId = id;
         const book = bookWorldBooks.find(b => b.id === id);
@@ -1491,7 +1843,6 @@
         openScreen('book-edit-screen');
     }
 
-    // 更新编辑页面的 UI 显示
     function updateBookSettingUI() {
         const typeDisplay = document.getElementById('book-bind-type-display');
         if(tempBindType === 'global') typeDisplay.innerText = '全局运用';
@@ -1532,17 +1883,11 @@
         }
     }
 
-    // 自定义下拉选择逻辑
-    function openBookBindSettingModal() {
-        document.getElementById('book-bind-setting-modal').classList.add('active');
-    }
-    function closeBookBindSettingModal() {
-        document.getElementById('book-bind-setting-modal').classList.remove('active');
-    }
+    function openBookBindSettingModal() { document.getElementById('book-bind-setting-modal').classList.add('active'); }
+    function closeBookBindSettingModal() { document.getElementById('book-bind-setting-modal').classList.remove('active'); }
     function setBookBindType(type) {
-        if(type === 'char') {
-            openCharSelectForBook();
-        } else {
+        if(type === 'char') { openCharSelectForBook(); } 
+        else {
             tempBindType = type;
             tempBoundCharId = null;
             updateBookSettingUI();
@@ -1550,24 +1895,18 @@
         }
     }
 
-    function openBookInsertSettingModal() {
-        document.getElementById('book-insert-setting-modal').classList.add('active');
-    }
-    function closeBookInsertSettingModal() {
-        document.getElementById('book-insert-setting-modal').classList.remove('active');
-    }
+    function openBookInsertSettingModal() { document.getElementById('book-insert-setting-modal').classList.add('active'); }
+    function closeBookInsertSettingModal() { document.getElementById('book-insert-setting-modal').classList.remove('active'); }
     function setBookInsertPos(pos) {
         tempInsertPos = pos;
         updateBookSettingUI();
         closeBookInsertSettingModal();
     }
 
-    // 选择绑定的 Char 弹窗
     function openCharSelectForBook() {
         closeBookBindSettingModal();
         const listContainer = document.getElementById('book-char-select-list');
         listContainer.innerHTML = '';
-
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
         
         if(validIds.length === 0) {
@@ -1593,17 +1932,11 @@
                         closeBookCharSelectModal();
                     };
                     listContainer.appendChild(div);
-
-                    // 异步加载头像
                     getImageFromDB(`contact_avatar_${c.id}`).then(img => {
                         const avatarEl = document.getElementById(`book-char-avatar-${c.id}`);
                         if(avatarEl) {
                             if(img) avatarEl.style.backgroundImage = `url(${img})`;
-                            else {
-                                avatarEl.style.backgroundColor = '#a4b4e0';
-                                avatarEl.style.color = '#fff';
-                                avatarEl.innerText = displayName.charAt(0);
-                            }
+                            else { avatarEl.style.backgroundColor = '#a4b4e0'; avatarEl.style.color = '#fff'; avatarEl.innerText = displayName.charAt(0); }
                         }
                     });
                 }
@@ -1611,9 +1944,7 @@
         }
         document.getElementById('book-char-select-modal').classList.add('active');
     }
-    function closeBookCharSelectModal() {
-        document.getElementById('book-char-select-modal').classList.remove('active');
-    }
+    function closeBookCharSelectModal() { document.getElementById('book-char-select-modal').classList.remove('active'); }
 
     // ==========================================
     // 🌟 聊天详情里的绑定局部世界书弹窗
@@ -1622,15 +1953,12 @@
 
     function openChatBookBindModal() {
         if (!currentChatCharId) return;
-        
-        // 先关掉详情弹窗，防止重叠遮挡
-        closeChatDetailModal(); 
+        closeChatDetailModal(); // 修复：先关闭弹窗防止遮挡
 
         const listContainer = document.getElementById('chat-book-bind-list');
         listContainer.innerHTML = '';
         chatSelectedBookIds = [];
 
-        // 获取所有属于 local 的书，或者已经绑定给当前char的书
         const availableBooks = bookWorldBooks.filter(b => b.bindType === 'local' || (b.bindType === 'char' && b.boundCharId === currentChatCharId));
 
         if(availableBooks.length === 0) {
@@ -1651,37 +1979,25 @@
                         div.classList.add('selected');
                     }
                 };
-                div.innerHTML = `
-                    <span class="modal-item-name">${book.title}</span>
-                    <div class="modal-check"></div>
-                `;
+                div.innerHTML = `<span class="modal-item-name">${book.title}</span><div class="modal-check"></div>`;
                 listContainer.appendChild(div);
             });
         }
         document.getElementById('chat-book-bind-modal').classList.add('active');
     }
 
-    function closeChatBookBindModal() {
-        document.getElementById('chat-book-bind-modal').classList.remove('active');
-    }
+    function closeChatBookBindModal() { document.getElementById('chat-book-bind-modal').classList.remove('active'); }
 
     function saveChatBookBind() {
         if (!currentChatCharId) return;
-        
-        // 先把当前绑给该 char 的书解绑 (变成 local)
         bookWorldBooks.forEach(b => {
             if(b.bindType === 'char' && b.boundCharId === currentChatCharId) {
-                b.bindType = 'local';
-                b.boundCharId = null;
+                b.bindType = 'local'; b.boundCharId = null;
             }
         });
-        // 再将选中的书绑定给该 char
         chatSelectedBookIds.forEach(id => {
             const book = bookWorldBooks.find(b => b.id === id);
-            if(book) {
-                book.bindType = 'char';
-                book.boundCharId = currentChatCharId;
-            }
+            if(book) { book.bindType = 'char'; book.boundCharId = currentChatCharId; }
         });
         localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
         renderBookShelf();
@@ -1709,9 +2025,7 @@
                 let isSelected = false;
 
                 if(type === 'offline') {
-                    // 线下绑定：可以选所有非全局的
                     if(book.bindType === 'global') isDisabled = true;
-                    
                     const offlineBooks = safeParseJSON(localStorage.getItem('offline_worldbook'), []);
                     if(offlineBooks.includes(book.id)) isSelected = true;
                 }
@@ -1720,39 +2034,28 @@
 
                 const div = document.createElement('div');
                 div.className = `modal-item ${isSelected ? 'selected' : ''}`;
-                if(isDisabled) {
-                    div.style.opacity = '0.5';
-                    div.style.pointerEvents = 'none';
-                } else {
+                if(isDisabled) { div.style.opacity = '0.5'; div.style.pointerEvents = 'none'; } 
+                else {
                     div.onclick = () => {
                         if(selectedBookIds.includes(book.id)) {
-                            selectedBookIds = selectedBookIds.filter(id => id !== book.id);
-                            div.classList.remove('selected');
+                            selectedBookIds = selectedBookIds.filter(id => id !== book.id); div.classList.remove('selected');
                         } else {
-                            selectedBookIds.push(book.id);
-                            div.classList.add('selected');
+                            selectedBookIds.push(book.id); div.classList.add('selected');
                         }
                     };
                 }
 
-                div.innerHTML = `
-                    <span class="modal-item-name">${book.title} ${isDisabled ? '(全局不可用)' : ''}</span>
-                    <div class="modal-check"></div>
-                `;
+                div.innerHTML = `<span class="modal-item-name">${book.title} ${isDisabled ? '(全局不可用)' : ''}</span><div class="modal-check"></div>`;
                 listContainer.appendChild(div);
             });
         }
-
         document.getElementById('global-book-bind-modal').classList.add('active');
     }
 
-    function closeGlobalBookBindModal() {
-        document.getElementById('global-book-bind-modal').classList.remove('active');
-    }
+    function closeGlobalBookBindModal() { document.getElementById('global-book-bind-modal').classList.remove('active'); }
 
     function saveGlobalBookBind() {
         if (globalBookBindType === 'offline') {
-            // 保存选择的数组到 offline_worldbook
             localStorage.setItem('offline_worldbook', JSON.stringify(selectedBookIds));
             alert("线下专属世界书已更新");
         }
@@ -1802,50 +2105,33 @@
     function openContactOffline() {
         openScreen('contact-offline-screen');
         
-        // 加载保存的背景图
         getImageFromDB('offline_bg').then(img => {
             if(img) document.getElementById('contact-offline-screen').style.backgroundImage = `url(${img})`;
             else document.getElementById('contact-offline-screen').style.backgroundImage = 'none';
         });
 
-        // 加载保存的CSS (如果没有保存过，就显示默认CSS)
         const savedCss = localStorage.getItem('offline_custom_css');
         let cssToUse = savedCss || DEFAULT_CSS;
         
         let styleEl = document.getElementById('offline-custom-style');
-        if(!styleEl) {
-            styleEl = document.createElement('style');
-            styleEl.id = 'offline-custom-style';
-            document.head.appendChild(styleEl);
-        }
+        if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); }
         styleEl.innerHTML = cssToUse;
 
-        // 把CSS放回编辑框
         document.getElementById('offline-css-textarea').value = cssToUse;
 
-        // 更新顶栏绑定的角色名字
         const savedCharId = localStorage.getItem('offline_bound_char_id');
         if(savedCharId) {
             const char = contacts.find(c => c.id === savedCharId);
             if (char) document.getElementById('offline-title-text').innerText = char.remark || char.name || 'My Dashboard';
             else document.getElementById('offline-title-text').innerText = 'My Dashboard';
-        } else {
-            document.getElementById('offline-title-text').innerText = 'My Dashboard';
-        }
+        } else { document.getElementById('offline-title-text').innerText = 'My Dashboard'; }
 
-        // 加载文风到文本框
         document.getElementById('offline-style-textarea').value = localStorage.getItem('offline_style') || '';
-
-        // 渲染线下内容
         renderOfflineContent();
     }
 
-    // 打开全屏的详情设置页
-    function openOfflineDetailScreen() {
-        openScreen('offline-detail-screen');
-    }
+    function openOfflineDetailScreen() { openScreen('offline-detail-screen'); }
 
-    // 上传线下背景
     document.getElementById('offline-bg-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if(file) {
@@ -1861,29 +2147,19 @@
         this.value = '';
     });
 
-    // 从文本框保存 CSS
     function saveOfflineCSS() {
         const cssContent = document.getElementById('offline-css-textarea').value;
         localStorage.setItem('offline_custom_css', cssContent);
         let styleEl = document.getElementById('offline-custom-style');
-        if(!styleEl) {
-            styleEl = document.createElement('style');
-            styleEl.id = 'offline-custom-style';
-            document.head.appendChild(styleEl);
-        }
+        if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); }
         styleEl.innerHTML = cssContent;
         alert("自定义 CSS 已保存并生效！");
     }
 
-    // 🌟 弹窗：选择 Char 开启线下
     function openOfflineCharSelectModal() {
-        // 先关掉详情页，防止遮挡
-        closeScreen('offline-detail-screen');
-
+        closeScreen('offline-detail-screen'); // 修复：先关闭详情页防遮挡
         const listContainer = document.getElementById('offline-char-list');
         listContainer.innerHTML = '';
-        
-        // 获取已添加到 Messages 的 Char
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
         
         if(validIds.length === 0) {
@@ -1904,142 +2180,92 @@
                     `;
                     div.onclick = () => {
                         document.querySelectorAll('#offline-char-list .modal-item').forEach(item => item.classList.remove('selected'));
-                        div.classList.add('selected');
-                        currentOfflineCharId = c.id;
+                        div.classList.add('selected'); currentOfflineCharId = c.id;
                     };
                     listContainer.appendChild(div);
 
-                    // 异步加载头像
                     getImageFromDB(`contact_avatar_${c.id}`).then(img => {
                         const avatarEl = document.getElementById(`offline-char-avatar-${c.id}`);
                         if(avatarEl) {
                             if(img) avatarEl.style.backgroundImage = `url(${img})`;
-                            else {
-                                avatarEl.style.backgroundColor = '#a4b4e0';
-                                avatarEl.style.color = '#fff';
-                                avatarEl.innerText = displayName.charAt(0);
-                            }
+                            else { avatarEl.style.backgroundColor = '#a4b4e0'; avatarEl.style.color = '#fff'; avatarEl.innerText = displayName.charAt(0); }
                         }
                     });
                 }
             });
         }
-        
         document.getElementById('offline-char-modal').classList.add('active');
     }
 
-    function closeOfflineCharSelectModal() {
-        document.getElementById('offline-char-modal').classList.remove('active');
-    }
+    function closeOfflineCharSelectModal() { document.getElementById('offline-char-modal').classList.remove('active'); }
 
     function confirmOfflineChar() {
         if(!currentOfflineCharId) { alert("请选择一个 Char"); return; }
         localStorage.setItem('offline_bound_char_id', currentOfflineCharId);
         const char = contacts.find(c => c.id === currentOfflineCharId);
-        if(char) {
-            document.getElementById('offline-title-text').innerText = char.remark || char.name || 'My Dashboard';
-        }
+        if(char) { document.getElementById('offline-title-text').innerText = char.remark || char.name || 'My Dashboard'; }
         closeOfflineCharSelectModal();
         alert("已成功绑定该 Char 进入线下！");
     }
 
-    // 🌟 上传文风文件 (.txt, .json, .docx)
     document.getElementById('offline-style-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        
+        const file = e.target.files[0]; if(!file) return;
         const fileName = file.name.toLowerCase();
-        
         if (fileName.endsWith('.docx')) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 mammoth.extractRawText({arrayBuffer: event.target.result})
-                    .then(function(result){
-                        document.getElementById('offline-style-textarea').value = result.value;
-                        alert("docx 文风解析成功！请点击保存。");
-                    })
+                    .then(function(result){ document.getElementById('offline-style-textarea').value = result.value; alert("docx 文风解析成功！请点击保存。"); })
                     .catch(function(err){ alert("解析失败：" + err.message); });
             };
             reader.readAsArrayBuffer(file);
         } else {
-            // .txt 或 .json 当做纯文本读取
             const reader = new FileReader();
             reader.onload = function(event) {
                 let content = event.target.result;
-                if (fileName.endsWith('.json')) {
-                    try {
-                        const json = JSON.parse(content);
-                        content = JSON.stringify(json, null, 2);
-                    } catch(e) { /* 解析失败就用原文本 */ }
-                }
-                document.getElementById('offline-style-textarea').value = content;
-                alert("文件读取成功！请点击保存。");
+                if (fileName.endsWith('.json')) { try { content = JSON.stringify(JSON.parse(content), null, 2); } catch(e) {} }
+                document.getElementById('offline-style-textarea').value = content; alert("文件读取成功！请点击保存。");
             };
             reader.readAsText(file);
         }
         this.value = '';
     });
 
-    // 保存手动编辑的文风
-    function saveOfflineStyle() {
-        const val = document.getElementById('offline-style-textarea').value;
-        localStorage.setItem('offline_style', val);
-        alert("文风已保存！");
-    }
+    function saveOfflineStyle() { const val = document.getElementById('offline-style-textarea').value; localStorage.setItem('offline_style', val); alert("文风已保存！"); }
 
-    // 渲染线下内容
     function renderOfflineContent() {
         const container = document.getElementById('offline-content-area');
         const savedContent = localStorage.getItem('offline_content') || '';
         container.innerHTML = '';
         if(savedContent) {
             const div = document.createElement('div');
-            div.style.backgroundColor = 'rgba(255,255,255,0.8)';
-            div.style.padding = '15px';
-            div.style.borderRadius = '12px';
-            div.style.fontSize = '15px';
-            div.style.lineHeight = '1.6';
-            div.style.whiteSpace = 'pre-wrap';
-            div.innerText = savedContent;
+            div.style.backgroundColor = 'rgba(255,255,255,0.8)'; div.style.padding = '15px'; div.style.borderRadius = '12px';
+            div.style.fontSize = '15px'; div.style.lineHeight = '1.6'; div.style.whiteSpace = 'pre-wrap'; div.innerText = savedContent;
             container.appendChild(div);
         }
     }
 
-    // 发送线下输入
     function sendOfflineMessage() {
         const input = document.getElementById('offline-input-field');
-        const text = input.value.trim();
-        if(!text) return;
-        
+        const text = input.value.trim(); if(!text) return;
         let savedContent = localStorage.getItem('offline_content') || '';
         if(savedContent) savedContent += '\n\n';
-        savedContent += text;
-        localStorage.setItem('offline_content', savedContent);
-        
-        input.value = '';
-        renderOfflineContent();
+        savedContent += text; localStorage.setItem('offline_content', savedContent);
+        input.value = ''; renderOfflineContent();
     }
 
-    // 总结线下
     function summarizeOffline() {
         closeScreen('offline-detail-screen');
         const savedContent = localStorage.getItem('offline_content') || '';
         const summary = prompt("请编辑总结的线下内容（会自动同步记忆）：", savedContent);
-        if(summary !== null) {
-            localStorage.setItem('offline_content', summary);
-            renderOfflineContent();
-            alert("线下总结已更新并同步记忆。");
-        }
+        if(summary !== null) { localStorage.setItem('offline_content', summary); renderOfflineContent(); alert("线下总结已更新并同步记忆。"); }
     }
 
-    // 🌟 挂专属世界书 (多选)
     function openOfflineBookBindModal() {
-        // 先关掉详情页，防止遮挡
-        closeScreen('offline-detail-screen');
+        closeScreen('offline-detail-screen'); // 修复：先关详情页防遮挡
         openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)');
     }
 
-    // 管理预设
     function manageOfflinePresets() {
         closeScreen('offline-detail-screen');
         const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
@@ -2049,44 +2275,28 @@
             const name = prompt("预设名称：");
             if(name) {
                 presets[name] = {
-                    bg: document.getElementById('contact-offline-screen').style.backgroundImage,
-                    css: localStorage.getItem('offline_custom_css') || '',
-                    content: localStorage.getItem('offline_content') || '',
-                    style: localStorage.getItem('offline_style') || '',
-                    books: localStorage.getItem('offline_worldbook') || '[]'
+                    bg: document.getElementById('contact-offline-screen').style.backgroundImage, css: localStorage.getItem('offline_custom_css') || '',
+                    content: localStorage.getItem('offline_content') || '', style: localStorage.getItem('offline_style') || '', books: localStorage.getItem('offline_worldbook') || '[]'
                 };
-                localStorage.setItem('offline_presets', JSON.stringify(presets));
-                alert("预设已保存！");
+                localStorage.setItem('offline_presets', JSON.stringify(presets)); alert("预设已保存！");
             }
         } else if(action === '2') {
             const name = prompt("要切换的预设名：");
             if(name && presets[name]) {
                 const p = presets[name];
                 document.getElementById('contact-offline-screen').style.backgroundImage = p.bg;
-                localStorage.setItem('offline_custom_css', p.css);
-                localStorage.setItem('offline_content', p.content);
-                localStorage.setItem('offline_style', p.style || '');
-                localStorage.setItem('offline_worldbook', p.books || '[]');
-                
+                localStorage.setItem('offline_custom_css', p.css); localStorage.setItem('offline_content', p.content);
+                localStorage.setItem('offline_style', p.style || ''); localStorage.setItem('offline_worldbook', p.books || '[]');
                 let styleEl = document.getElementById('offline-custom-style');
-                if(!styleEl) {
-                    styleEl = document.createElement('style');
-                    styleEl.id = 'offline-custom-style';
-                    document.head.appendChild(styleEl);
-                }
+                if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); }
                 styleEl.innerHTML = p.css;
                 document.getElementById('offline-style-textarea').value = p.style || '';
                 document.getElementById('offline-css-textarea').value = p.css || '';
-                renderOfflineContent();
-                alert("预设已切换！");
+                renderOfflineContent(); alert("预设已切换！");
             } else { alert("预设不存在！"); }
         } else if(action === '3') {
             const name = prompt("要删除的预设名：");
-            if(name && presets[name]) {
-                delete presets[name];
-                localStorage.setItem('offline_presets', JSON.stringify(presets));
-                alert("预设已删除！");
-            }
+            if(name && presets[name]) { delete presets[name]; localStorage.setItem('offline_presets', JSON.stringify(presets)); alert("预设已删除！"); }
         }
     }
 
@@ -2099,53 +2309,36 @@
 
     if (!Array.isArray(userPersonas) || userPersonas.length === 0) {
         const defaultId = 'u_' + Date.now();
-        userPersonas = [{
-            id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '0', followers: '0', following: '0', relations: []
-        }];
+        userPersonas = [{ id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '0', followers: '0', following: '0', relations: [] }];
         localStorage.setItem('user_personas', JSON.stringify(userPersonas));
-        activeUserPersonaId = defaultId;
-        localStorage.setItem('active_user_persona_id', defaultId);
+        activeUserPersonaId = defaultId; localStorage.setItem('active_user_persona_id', defaultId);
     } else if (!activeUserPersonaId || !userPersonas.find(p => p.id === activeUserPersonaId)) {
-        activeUserPersonaId = userPersonas[0].id;
-        localStorage.setItem('active_user_persona_id', activeUserPersonaId);
+        activeUserPersonaId = userPersonas[0].id; localStorage.setItem('active_user_persona_id', activeUserPersonaId);
     }
 
-    // 渲染 Blog 页面
     async function renderBlogPage() {
         const p = userPersonas.find(x => x.id === activeUserPersonaId);
         if (!p) return;
-
         document.querySelector('[data-key="blog_name"]').innerHTML = p.remark || p.name || '未命名用户';
         document.querySelector('[data-key="blog_role"]').innerHTML = p.identity || '暂无身份';
         document.querySelector('[data-key="blog_signature"]').innerHTML = p.signature || '双击修改个性签名';
         document.querySelector('[data-key="blog_posts"]').innerHTML = p.posts || '0';
         document.querySelector('[data-key="blog_followers"]').innerHTML = p.followers || '0';
         document.querySelector('[data-key="blog_following"]').innerHTML = p.following || '0';
-
         const avatarEl = document.getElementById('blog-avatar');
         const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
-        if (savedImg) {
-            avatarEl.style.backgroundImage = `url(${savedImg})`;
-            avatarEl.style.borderColor = 'transparent';
-        } else {
-            avatarEl.style.backgroundImage = 'none';
-            avatarEl.style.borderColor = '#e5e5ea';
-        }
+        if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.style.borderColor = 'transparent'; } 
+        else { avatarEl.style.backgroundImage = 'none'; avatarEl.style.borderColor = '#e5e5ea'; }
     }
 
-    function openBlog() {
-        renderBlogPage();
-        openScreen('blog-screen');
-    }
+    function openBlog() { renderBlogPage(); openScreen('blog-screen'); }
 
-    // Blog 头像点击上传
     document.getElementById('blog-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && activeUserPersonaId) {
             const reader = new FileReader();
             reader.onload = async function(event) {
-                const base64Data = event.target.result;
-                await saveImageToDB(`user_avatar_${activeUserPersonaId}`, base64Data);
+                await saveImageToDB(`user_avatar_${activeUserPersonaId}`, event.target.result);
                 renderBlogPage();
             };
             reader.readAsDataURL(file);
@@ -2153,11 +2346,7 @@
         this.value = '';
     });
 
-    // 用户人设列表渲染
-    function openUserPersonaList() {
-        openScreen('user-persona-list-screen');
-        renderUserPersonaList();
-    }
+    function openUserPersonaList() { openScreen('user-persona-list-screen'); renderUserPersonaList(); }
 
     async function renderUserPersonaList() {
         try {
@@ -2171,17 +2360,14 @@
                 div.className = 'cl-item';
                 
                 div.onclick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation(); 
-                    activeUserPersonaId = p.id;
-                    localStorage.setItem('active_user_persona_id', p.id);
+                    e.preventDefault(); e.stopPropagation(); 
+                    activeUserPersonaId = p.id; localStorage.setItem('active_user_persona_id', p.id);
                     openUserPersonaEdit(p.id); 
                 };
 
                 let avatarStyle = '';
                 const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
                 if (savedImg) avatarStyle = `background-image: url(${savedImg}); color: transparent;`;
-                
                 const isApplied = p.id === activeUserPersonaId;
 
                 div.innerHTML = `
@@ -2190,14 +2376,12 @@
                         <div class="cl-remark">${displayName} ${isApplied ? '<span style="font-size:12px; color:#007aff; margin-left:6px;">(当前展示)</span>' : ''}</div>
                         <div class="cl-sub">↗ ${p.identity || '无身份'}</div>
                     </div>
-                    <div class="cl-call-icon" style="background:none;"><svg viewBox="0 0 24 24" style="fill:#ccc;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
                 `;
                 container.appendChild(div);
             }
         } catch (err) { console.error(err); }
     }
 
-    // 编辑用户人设
     async function openUserPersonaEdit(id = null) {
         currentUserEditId = id;
         const p = id ? userPersonas.find(x => x.id === id) : null;
@@ -2217,21 +2401,16 @@
             const savedImg = await getImageFromDB(`user_avatar_${id}`);
             if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; }
         }
-
-        checkUserSaveBtnState(); 
-        openScreen('user-persona-edit-screen');
+        checkUserSaveBtnState(); openScreen('user-persona-edit-screen');
     }
 
-    // 检查用户人设保存按钮：网名必填才变蓝
     function checkUserSaveBtnState() {
         const remark = document.getElementById('user-remark').value.trim();
         const saveBtn = document.getElementById('user-save-btn');
-        if (remark) saveBtn.classList.add('active');
-        else saveBtn.classList.remove('active');
+        if (remark) saveBtn.classList.add('active'); else saveBtn.classList.remove('active');
     }
     document.getElementById('user-remark').addEventListener('input', checkUserSaveBtnState);
 
-    // 用户头像上传
     document.getElementById('user-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -2239,34 +2418,24 @@
             reader.onload = function(event) {
                 const base64Data = event.target.result;
                 const avatarEl = document.getElementById('user-avatar');
-                avatarEl.style.backgroundImage = `url(${base64Data})`;
-                avatarEl.innerText = '';
-                
+                avatarEl.style.backgroundImage = `url(${base64Data})`; avatarEl.innerText = '';
                 let tempId = currentUserEditId || 'temp_u_' + Date.now();
-                saveImageToDB(`user_avatar_${tempId}`, base64Data).then(() => {
-                    if (!currentUserEditId) window.tempUserAvatarId = tempId;
-                });
+                saveImageToDB(`user_avatar_${tempId}`, base64Data).then(() => { if (!currentUserEditId) window.tempUserAvatarId = tempId; });
             };
             reader.readAsDataURL(file);
         }
         this.value = '';
     });
 
-    // 用户 docx 上传
     document.getElementById('user-docx-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = function(event) {
             mammoth.extractRawText({arrayBuffer: event.target.result})
-                .then(function(result){
-                    document.getElementById('user-bio').value = result.value;
-                    alert("文件解析成功！文字已导入生平框。");
-                })
+                .then(function(result){ document.getElementById('user-bio').value = result.value; alert("文件解析成功！文字已导入生平框。"); })
                 .catch(function(err){ alert("解析失败：" + err.message); });
         };
-        reader.readAsArrayBuffer(file);
-        this.value = ''; 
+        reader.readAsArrayBuffer(file); this.value = ''; 
     });
 
     async function saveUserPersona() {
@@ -2275,7 +2444,6 @@
         const identity = document.getElementById('user-identity').value.trim();
         const signature = document.getElementById('user-signature').value.trim().replace(/\n/g, '<br>');
         const bio = document.getElementById('user-bio').value.trim().replace(/\n/g, '<br>');
-
         if (!remark) { alert("请填写网名！"); return; }
 
         let id = currentUserEditId;
@@ -2287,20 +2455,13 @@
                 window.tempUserAvatarId = null;
             }
             userPersonas.push({ id, remark, name, identity, signature, bio, posts: '0', followers: '0', following: '0', relations: [] });
-            activeUserPersonaId = id;
-            localStorage.setItem('active_user_persona_id', id);
+            activeUserPersonaId = id; localStorage.setItem('active_user_persona_id', id);
         } else {
             const index = userPersonas.findIndex(x => x.id === id);
-            if (index > -1) {
-                userPersonas[index] = { ...userPersonas[index], remark, name, identity, signature, bio };
-            }
+            if (index > -1) { userPersonas[index] = { ...userPersonas[index], remark, name, identity, signature, bio }; }
         }
-
         localStorage.setItem('user_personas', JSON.stringify(userPersonas));
-        alert("保存成功！");
-        closeScreen('user-persona-edit-screen');
-        renderUserPersonaList();
-        if(activeUserPersonaId === id) renderBlogPage();
+        alert("保存成功！"); closeScreen('user-persona-edit-screen'); renderUserPersonaList(); if(activeUserPersonaId === id) renderBlogPage();
     }
 
     async function deleteUserPersona() {
@@ -2310,14 +2471,10 @@
             userPersonas = userPersonas.filter(x => x.id !== currentUserEditId);
             localStorage.setItem('user_personas', JSON.stringify(userPersonas));
             await deleteImageFromDB(`user_avatar_${currentUserEditId}`);
-            
             if (activeUserPersonaId === currentUserEditId) {
-                activeUserPersonaId = userPersonas[0].id;
-                localStorage.setItem('active_user_persona_id', activeUserPersonaId);
+                activeUserPersonaId = userPersonas[0].id; localStorage.setItem('active_user_persona_id', activeUserPersonaId);
             }
-            closeScreen('user-persona-edit-screen');
-            renderUserPersonaList();
-            renderBlogPage();
+            closeScreen('user-persona-edit-screen'); renderUserPersonaList(); renderBlogPage();
         }
     }
 
@@ -2331,9 +2488,8 @@
     function openBout() {
         const container = document.getElementById('bout-list-container');
         container.innerHTML = '';
-        if (contacts.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding: 20px; color: #999;">暂无已上传的人设</div>';
-        } else {
+        if (contacts.length === 0) { container.innerHTML = '<div style="text-align:center; padding: 20px; color: #999;">暂无已上传的人设</div>'; } 
+        else {
             contacts.forEach(c => {
                 const displayName = c.remark || c.name || '未命名';
                 const div = document.createElement('div');
@@ -2350,41 +2506,24 @@
     }
 
     function closeBoutModal() { document.getElementById('bout-modal').classList.remove('active'); }
-    function confirmBout() {
-        localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
-        closeBoutModal(); renderXunyanMessages();
-    }
+    function confirmBout() { localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds)); closeBoutModal(); renderXunyanMessages(); }
 
     async function renderXunyanMessages() {
         const container = document.getElementById('xy-msg-list');
         container.innerHTML = '';
-        
-        // 获取置顶名单
         const pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
-
-        // 过滤掉已被删除的联系人
         const validIds = selectedBoutIds.filter(id => contacts.some(c => c.id === id));
-        if(validIds.length !== selectedBoutIds.length) {
-            selectedBoutIds = validIds; localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds));
-        }
+        if(validIds.length !== selectedBoutIds.length) { selectedBoutIds = validIds; localStorage.setItem('xy_selected_chars', JSON.stringify(selectedBoutIds)); }
 
-        // 构建用于排序的数据列表
         const sortedList = validIds.map(id => {
             const char = contacts.find(c => c.id === id);
-            // 获取最后一条聊天记录的时间
             const history = safeParseJSON(localStorage.getItem(`chat_history_${id}`), []);
             const lastTime = history.length > 0 ? history[history.length - 1].time : 0;
             return { char, lastTime, isPinned: pinnedIds.includes(id) };
         });
 
-        // 核心排序逻辑：先按置顶排，置顶中按时间排；未置顶按时间倒序排
-        sortedList.sort((a, b) => {
-            if (a.isPinned && !b.isPinned) return -1;
-            if (!a.isPinned && b.isPinned) return 1;
-            return b.lastTime - a.lastTime; 
-        });
+        sortedList.sort((a, b) => { if (a.isPinned && !b.isPinned) return -1; if (!a.isPinned && b.isPinned) return 1; return b.lastTime - a.lastTime; });
 
-        // 渲染列表
         for (const item of sortedList) {
             const c = item.char;
             if (c) {
@@ -2395,24 +2534,15 @@
                 else avatarStyle = `background-color:#a4b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:20px;`;
                 const initial = displayName.charAt(0);
                 
-                // 时间显示格式化
                 let timeDisplay = "";
-                if (item.lastTime > 0) {
-                    const date = new Date(item.lastTime);
-                    timeDisplay = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                }
+                if (item.lastTime > 0) { timeDisplay = new Date(item.lastTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
 
                 const div = document.createElement('div');
                 div.className = 'xy-msg-item';
                 div.onclick = () => openChatScreen(c.id);
                 div.innerHTML = `
                     <div class="xy-msg-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
-                    <div class="xy-msg-info">
-                        <div class="xy-msg-name">
-                            ${displayName} 
-                            ${item.isPinned ? '<span class="pin-badge">置顶</span>' : ''}
-                        </div>
-                    </div>
+                    <div class="xy-msg-info"><div class="xy-msg-name">${displayName} ${item.isPinned ? '<span class="pin-badge">置顶</span>' : ''}</div></div>
                     <div class="xy-msg-meta"><div class="xy-msg-time">${timeDisplay}</div></div>
                 `;
                 container.appendChild(div);
@@ -2431,10 +2561,7 @@
     async function renderContactList() {
         const container = document.getElementById('contact-list-container');
         container.innerHTML = '';
-        if (contacts.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:#999; margin-top:50px;">暂无联系人</div>';
-            return;
-        }
+        if (contacts.length === 0) { container.innerHTML = '<div style="text-align:center; color:#999; margin-top:50px;">暂无联系人</div>'; return; }
         for (let i = 0; i < contacts.length; i++) {
             const c = contacts[i];
             const displayName = c.remark || c.name || '未命名';
@@ -2447,12 +2574,7 @@
             if (savedImg) avatarStyle = `background-image: url(${savedImg}); color: transparent;`;
             div.innerHTML = `
                 <div class="cl-avatar" style="${avatarStyle}">${savedImg ? '' : initial}</div>
-                <div class="cl-info">
-                    <div class="cl-remark">${displayName}</div>
-                    <div class="cl-sub">↗ ${c.identity || c.name || '未知'}</div>
-                </div>
-                <div class="cl-time">${i === 0 ? '刚刚' : '昨天'}</div>
-                <div class="cl-call-icon"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
+                <div class="cl-info"><div class="cl-remark">${displayName}</div><div class="cl-sub">↗ ${c.identity || c.name || '未知'}</div></div>
             `;
             container.appendChild(div);
         }
@@ -2465,19 +2587,11 @@
             display.style.display = 'block';
             currentRelations.forEach((rel, index) => {
                 const tag = document.createElement('span');
-                tag.className = 'relation-tag';
-                tag.innerText = `${rel.targetName} (${rel.relationDesc})`;
-                tag.onclick = () => {
-                    if(confirm(`确定删除与 ${rel.targetName} 的关联吗？`)) {
-                        currentRelations.splice(index, 1);
-                        renderRelationTags();
-                    }
-                };
+                tag.className = 'relation-tag'; tag.innerText = `${rel.targetName} (${rel.relationDesc})`;
+                tag.onclick = () => { if(confirm(`确定删除与 ${rel.targetName} 的关联吗？`)) { currentRelations.splice(index, 1); renderRelationTags(); } };
                 display.appendChild(tag);
             });
-        } else {
-            display.style.display = 'none';
-        }
+        } else { display.style.display = 'none'; }
     }
 
     async function openContactEdit(id = null) {
@@ -2489,7 +2603,6 @@
         document.getElementById('ce-bio').value = '';
         avatarEl.style.backgroundImage = 'none'; avatarEl.innerText = '?'; avatarEl.style.color = '#fff';
         document.getElementById('ce-delete-btn').style.display = id ? 'block' : 'none';
-        
         currentRelations = []; 
 
         if (id) {
@@ -2500,29 +2613,23 @@
                 document.getElementById('ce-identity').value = c.identity || '';
                 document.getElementById('ce-bio').value = c.bio || '';
                 currentRelations = c.relations || [];
-                
                 const initial = (c.remark || c.name || '?').charAt(0); avatarEl.innerText = initial;
                 const savedImg = await getImageFromDB(`contact_avatar_${id}`);
                 if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; }
             }
         }
-        
-        renderRelationTags();
-        checkSaveBtnState();
-        openScreen('contact-edit-screen');
+        renderRelationTags(); checkSaveBtnState(); openScreen('contact-edit-screen');
     }
 
     function checkSaveBtnState() {
         const name = document.getElementById('ce-name').value.trim();
         const bio = document.getElementById('ce-bio').value.trim();
         const saveBtn = document.getElementById('ce-save-btn');
-        if (name && bio) saveBtn.classList.add('active');
-        else saveBtn.classList.remove('active');
+        if (name && bio) saveBtn.classList.add('active'); else saveBtn.classList.remove('active');
     }
     document.getElementById('ce-name').addEventListener('input', checkSaveBtnState);
     document.getElementById('ce-bio').addEventListener('input', checkSaveBtnState);
 
-    // 关联人弹窗基础逻辑
     function openRelationModalBase(mode) {
         currentModalMode = mode;
         const listContainer = document.getElementById('relation-target-list');
@@ -2532,9 +2639,7 @@
 
         if (mode === 'char') {
             const userItem = document.createElement('div');
-            userItem.className = 'modal-item';
-            userItem.dataset.id = 'user_self';
-            userItem.dataset.name = '用户';
+            userItem.className = 'modal-item'; userItem.dataset.id = 'user_self'; userItem.dataset.name = '用户';
             userItem.innerHTML = `<span class="modal-item-name">用户 (User)</span><div class="modal-check"></div>`;
             userItem.onclick = () => selectModalTarget('user_self', '用户', userItem);
             listContainer.appendChild(userItem);
@@ -2544,15 +2649,12 @@
             if (mode === 'char' && c.id !== currentEditId) {
                 const displayName = c.remark || c.name || '未命名';
                 const charItem = document.createElement('div');
-                charItem.className = 'modal-item';
-                charItem.dataset.id = c.id;
-                charItem.dataset.name = displayName;
+                charItem.className = 'modal-item'; charItem.dataset.id = c.id; charItem.dataset.name = displayName;
                 charItem.innerHTML = `<span class="modal-item-name">${displayName}</span><div class="modal-check"></div>`;
                 charItem.onclick = () => selectModalTarget(c.id, displayName, charItem);
                 listContainer.appendChild(charItem);
             }
         });
-
         document.getElementById('relation-modal').classList.add('active');
     }
 
@@ -2562,9 +2664,7 @@
     let selectedModalTargetName = '';
     function selectModalTarget(id, name, el) {
         document.querySelectorAll('#relation-target-list .modal-item').forEach(item => item.classList.remove('selected'));
-        el.classList.add('selected');
-        selectedModalTargetId = id;
-        selectedModalTargetName = name;
+        el.classList.add('selected'); selectedModalTargetId = id; selectedModalTargetName = name;
         document.getElementById('relation-input-group').style.display = 'block';
         document.getElementById('relation-text-input').focus();
     }
@@ -2575,26 +2675,18 @@
         if (!selectedModalTargetId) { alert("请先选择一个关联对象"); return; }
         const relText = document.getElementById('relation-text-input').value.trim();
         if (!relText) { alert("请输入你们之间的关系（如：朋友）"); return; }
-
         const exists = currentRelations.find(r => r.targetId === selectedModalTargetId);
         if (exists) exists.relationDesc = relText; 
         else currentRelations.push({ targetId: selectedModalTargetId, targetName: selectedModalTargetName, relationDesc: relText });
-
-        renderRelationTags();
-        closeRelationModal();
+        renderRelationTags(); closeRelationModal();
     }
 
-    // docx 解析与头像上传 (Char)
     document.getElementById('ce-docx-upload').addEventListener('change', function(e) {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = function(event) {
             mammoth.extractRawText({arrayBuffer: event.target.result})
-                .then(function(result){
-                    document.getElementById('ce-bio').value = result.value;
-                    checkSaveBtnState();
-                    alert("人设文件解析成功！文字已导入下方【生平】框中。");
-                })
+                .then(function(result){ document.getElementById('ce-bio').value = result.value; checkSaveBtnState(); alert("人设文件解析成功！文字已导入下方【生平】框中。"); })
                 .catch(function(err){ alert("文件解析失败：" + err.message); });
         };
         reader.readAsArrayBuffer(file); this.value = ''; 
@@ -2620,7 +2712,6 @@
         const name = document.getElementById('ce-name').value.trim();
         const identity = document.getElementById('ce-identity').value.trim();
         const bio = document.getElementById('ce-bio').value.trim();
-
         if (!name || !bio) { alert("【名字】和【生平】是必填项！"); return; }
 
         let id = currentEditId;
@@ -2636,11 +2727,8 @@
             const index = contacts.findIndex(x => x.id === id);
             if (index > -1) contacts[index] = { id, remark, name, identity, bio, relations: currentRelations };
         }
-
         localStorage.setItem('contacts_data', JSON.stringify(contacts));
-        alert("保存成功！");
-        closeScreen('contact-edit-screen');
-        renderContactList();
+        alert("保存成功！"); closeScreen('contact-edit-screen'); renderContactList();
     }
 
     async function deleteContact() {
@@ -2649,13 +2737,12 @@
             contacts = contacts.filter(x => x.id !== currentEditId);
             localStorage.setItem('contacts_data', JSON.stringify(contacts));
             await deleteImageFromDB(`contact_avatar_${currentEditId}`);
-            closeScreen('contact-edit-screen');
-            renderContactList();
+            closeScreen('contact-edit-screen'); renderContactList();
         }
     }
 
     // ==========================================
-    // 🌟 7. 聊天界面逻辑
+    // 🌟 7. 聊天界面逻辑 (核心 API 接入)
     // ==========================================
     let currentChatCharId = null;
 
@@ -2663,50 +2750,35 @@
         currentChatCharId = charId;
         const char = contacts.find(c => c.id === charId);
         if (!char) return;
-
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
         
         const container = document.getElementById('chat-container');
-        container.innerHTML = ''; // 清空
+        container.innerHTML = ''; 
 
-        // 加载聊天背景
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
         const chatScreen = document.getElementById('chat-screen');
-        if (customBg) {
-            chatScreen.style.backgroundImage = `url(${customBg})`;
-        } else {
-            chatScreen.style.backgroundImage = 'none';
-        }
+        if (customBg) { chatScreen.style.backgroundImage = `url(${customBg})`; } 
+        else { chatScreen.style.backgroundImage = 'none'; }
 
-        // 加载聊天记录
         const hasHistory = localStorage.getItem(`chat_history_${charId}`);
         if(hasHistory) {
             const history = safeParseJSON(hasHistory, []);
-            for (const msg of history) {
-                await renderChatMessage(msg.text, msg.isSelf, false);
-            }
+            for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false); }
         }
-
         container.scrollTop = container.scrollHeight;
-
         openScreen('chat-screen');
     }
 
-    // 渲染单条消息
     async function renderChatMessage(text, isSelf, scroll = true) {
         const container = document.getElementById('chat-container');
-        
-        let avatarHtml = '';
-        let nameHtml = '';
+        let avatarHtml = ''; let nameHtml = '';
 
         if (isSelf) {
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
             const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
-            // 聊天专属用户头像
             const chatUserImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
             const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
             const finalImg = chatUserImg || globalUserImg;
-            
             let style = `background-color:#d8b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`;
             if(finalImg) style = `background-image:url(${finalImg}); background-size:cover;`;
             avatarHtml = `<div class="chat-msg-avatar" style="${style}">${finalImg ? '' : name.charAt(0)}</div>`;
@@ -2723,34 +2795,19 @@
 
         const msgRow = document.createElement('div');
         msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
-        
-        // 处理普通气泡 or 颜文字气泡
         let bubbleHtml = `<div class="chat-bubble">${text}</div>`;
-        if(text.includes('( ') || text.includes('₍')) {
-            bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`;
-        }
+        if(text.includes('( ') || text.includes('₍')) { bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`; }
 
-        msgRow.innerHTML = `
-            ${avatarHtml}
-            <div class="chat-msg-content">
-                ${nameHtml}
-                ${bubbleHtml}
-            </div>
-        `;
+        msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`;
         container.appendChild(msgRow);
-
         if (scroll) container.scrollTop = container.scrollHeight;
     }
 
-    // 发送消息逻辑
     document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim();
             this.value = '';
-            
             await renderChatMessage(msgText, true, true);
-
-            // 保存聊天记录
             if(currentChatCharId) {
                 const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
                 history.push({ text: msgText, isSelf: true, time: Date.now() });
@@ -2759,108 +2816,171 @@
         }
     });
 
-    // 🌟 麦克风触发 Char 回复的接口
-    function triggerCharReply() {
+    // 🌟 真实 API 调用触发
+    async function triggerCharReply() {
         if (!currentChatCharId) return;
-        // 这里留作后续接入 API 的接口
-        alert("API 尚未接入！\n\n请稍后在此函数中填入 fetch 请求，\n将全局提示词、聊天记录及角色生平发送至大模型，\n并将返回结果通过 renderChatMessage 渲染出来即可。");
+        const configStr = localStorage.getItem('settings_api_config');
+        if (!configStr) { alert("请先在 设置 -> API接口 中配置并保存模型参数！"); return; }
+        const config = safeParseJSON(configStr, null);
+        if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
+
+        // 获取角色信息
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
+        
+        // 构建 Prompt (人设 + 世界书 + 聊天记录)
+        let systemPrompt = localStorage.getItem('global_system_prompt') || "你是一个真实的聊天对象。";
+        
+        let charPersona = `【角色设定】\n名字: ${char.remark || char.name || '未命名'}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
+        let userPersona = activeP ? `【用户设定】\n名字: ${activeP.remark || activeP.name || '我'}\n身份: ${activeP.identity || '未知'}\n` : '';
+
+        // 拼装世界书
+        let booksContext = '';
+        bookWorldBooks.forEach(b => {
+            if(b.bindType === 'global' || (b.bindType === 'char' && b.boundCharId === char.id)) {
+                let content = b.content;
+                if(b.insertPos === 'before') systemPrompt = content + '\n' + systemPrompt;
+                else if(b.insertPos === 'after') systemPrompt = systemPrompt + '\n' + content;
+                else systemPrompt = systemPrompt + '\n' + content + '\n'; // 简易中间插入
+            }
+        });
+
+        systemPrompt = systemPrompt + '\n' + charPersona + userPersona;
+
+        // 获取历史记录
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${char.id}`), []);
+        const messages = [{ role: "system", content: systemPrompt }];
+        
+        // 限制历史条数防止超出 Token 限制
+        const recentHistory = history.slice(-15);
+        recentHistory.forEach(msg => {
+            messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text });
+        });
+
+        // 显示加载中
+        const container = document.getElementById('chat-container');
+        const loadingRow = document.createElement('div');
+        loadingRow.className = `chat-msg-row left`;
+        loadingRow.id = 'loading-msg';
+        const charImg = await getImageFromDB(`contact_avatar_${char.id}`);
+        let style = charImg ? `background-image:url(${charImg}); background-size:cover;` : `background-color:#a4b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`;
+        loadingRow.innerHTML = `<div class="chat-msg-avatar" style="${style}">${charImg ? '' : (char.remark||char.name||'?').charAt(0)}</div><div class="chat-msg-content"><div class="chat-bubble" style="color:#888;">正在输入...</div></div>`;
+        container.appendChild(loadingRow);
+        container.scrollTop = container.scrollHeight;
+
+        try {
+            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${config.key}`
+                },
+                body: JSON.stringify({
+                    model: config.model,
+                    messages: messages,
+                    temperature: config.temp
+                })
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const replyText = data.choices[0].message.content;
+
+            // 移除加载中
+            container.removeChild(loadingRow);
+
+            // 渲染真实回复
+            await renderChatMessage(replyText, false, true);
+
+            // 保存记录
+            history.push({ text: replyText, isSelf: false, time: Date.now() });
+            localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history));
+
+            // 触发铃声/弹窗通知
+            if (document.visibilityState === 'hidden') {
+                playRingtone();
+                if (localStorage.getItem('settings_bg_keepalive') === 'true' && Notification.permission === 'granted') {
+                    new Notification(`${char.remark || char.name || '新消息'}`, { body: replyText });
+                }
+            }
+
+        } catch (err) {
+            container.removeChild(loadingRow);
+            alert("请求大模型失败 (请检查网络或跨域问题): " + err.message);
+        }
     }
+
+    // 页面切回前台时，若开启了后台保活，顺手播放一下声音 (作为补充)
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === 'visible') {
+            // 可在此处清理未读角标等
+        }
+    });
 
     // ==========================================
     // 🌟 8. 聊天详情页逻辑
     // ==========================================
     function openChatDetailModal() {
         if (!currentChatCharId) return;
-        
-        // 设置开关状态
         const pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
         const pinSwitch = document.getElementById('pin-switch');
-        if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on');
-        else pinSwitch.classList.remove('on');
-
-        // 加载头像预览
+        if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on'); else pinSwitch.classList.remove('on');
         loadDetailAvatars();
-
         document.getElementById('chat-detail-modal').classList.add('active');
     }
 
     function closeChatDetailModal() {
         document.getElementById('chat-detail-modal').classList.remove('active');
-        document.getElementById('chat-search-bar').style.display = 'none'; // 关闭详情时隐藏搜索框
+        document.getElementById('chat-search-bar').style.display = 'none'; 
     }
 
-    // 加载详情页的头像
     async function loadDetailAvatars() {
         const char = contacts.find(c => c.id === currentChatCharId);
         const charAvatarEl = document.getElementById('chat-detail-char-avatar');
         if (char) {
             const img = await getImageFromDB(`contact_avatar_${char.id}`);
-            if (img) { charAvatarEl.style.backgroundImage = `url(${img})`; charAvatarEl.innerText = ''; }
+            if (img) { charAvatarEl.style.backgroundImage = `url(${img})`; charAvatarEl.innerText = ''; } 
             else { charAvatarEl.style.backgroundImage = 'none'; charAvatarEl.innerText = (char.remark||char.name||'?').charAt(0); }
         }
-
         const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
         const userAvatarEl = document.getElementById('chat-detail-user-avatar');
         const chatUserImg = await getImageFromDB(`chat_user_avatar_${currentChatCharId}`);
         const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
         const finalImg = chatUserImg || globalUserImg;
-        if (finalImg) { userAvatarEl.style.backgroundImage = `url(${finalImg})`; userAvatarEl.innerText = ''; }
+        if (finalImg) { userAvatarEl.style.backgroundImage = `url(${finalImg})`; userAvatarEl.innerText = ''; } 
         else { userAvatarEl.style.backgroundImage = 'none'; userAvatarEl.innerText = activeP ? (activeP.remark||activeP.name||'我').charAt(0) : '我'; }
     }
 
-    // 🌟 新增：编辑备注
     function editChatRemark() {
         if (!currentChatCharId) return;
         const char = contacts.find(c => c.id === currentChatCharId);
         if (!char) return;
-
         const currentRemark = char.remark || char.name || '';
         const newRemark = prompt("请输入对该角色的备注：", currentRemark);
         if (newRemark !== null && newRemark.trim() !== '') {
             char.remark = newRemark.trim();
             localStorage.setItem('contacts_data', JSON.stringify(contacts));
-            
-            // 更新聊天界面标题
             document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'} <span class="chat-title-sub">⋆｡°✩</span>`;
-            
-            // 同步更新首页讯言列表
-            renderXunyanMessages();
-            // 同步更新通讯录列表
-            renderContactList();
-            alert("备注修改成功！");
+            renderXunyanMessages(); renderContactList();
         }
     }
 
-    // 1. 置顶开关
     function togglePinChat() {
         if (!currentChatCharId) return;
         let pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
         const index = pinnedIds.indexOf(currentChatCharId);
         const pinSwitch = document.getElementById('pin-switch');
-        
-        if (index > -1) {
-            pinnedIds.splice(index, 1);
-            pinSwitch.classList.remove('on');
-        } else {
-            pinnedIds.push(currentChatCharId);
-            pinSwitch.classList.add('on');
-        }
+        if (index > -1) { pinnedIds.splice(index, 1); pinSwitch.classList.remove('on'); } 
+        else { pinnedIds.push(currentChatCharId); pinSwitch.classList.add('on'); }
         localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
-        renderXunyanMessages(); // 更新首页
+        renderXunyanMessages();
     }
 
-    // 2. 搜索聊天记录
     function toggleChatSearch() {
         const searchBar = document.getElementById('chat-search-bar');
-        if (searchBar.style.display === 'none' || !searchBar.style.display) {
-            searchBar.style.display = 'block';
-            document.getElementById('chat-search-input').focus();
-        } else {
-            searchBar.style.display = 'none';
-            document.getElementById('chat-search-input').value = '';
-            filterChatMessages();
-        }
-        closeChatDetailModal(); // 关闭详情弹窗以露出搜索框
+        if (searchBar.style.display === 'none' || !searchBar.style.display) { searchBar.style.display = 'block'; document.getElementById('chat-search-input').focus(); } 
+        else { searchBar.style.display = 'none'; document.getElementById('chat-search-input').value = ''; filterChatMessages(); }
+        closeChatDetailModal();
     }
 
     function filterChatMessages() {
@@ -2868,12 +2988,10 @@
         const rows = document.querySelectorAll('#chat-container .chat-msg-row');
         rows.forEach(row => {
             const text = row.querySelector('.chat-bubble, .chat-bubble-plain')?.innerText.toLowerCase() || '';
-            if (!keyword || text.includes(keyword)) row.style.display = 'flex';
-            else row.style.display = 'none';
+            if (!keyword || text.includes(keyword)) row.style.display = 'flex'; else row.style.display = 'none';
         });
     }
 
-    // 3. 清空聊天记录
     function clearChatHistory() {
         if(confirm("确定要清空该聊天的所有记录吗？此操作不可恢复！")) {
             localStorage.removeItem(`chat_history_${currentChatCharId}`);
@@ -2882,68 +3000,45 @@
         }
     }
 
-    // 4. 删除聊天会话 (不删除通讯录)
     function deleteChatSession() {
         if(confirm("仅删除与该角色的聊天界面，通讯录不受影响。重新添加可通过 Bout 列表。")) {
-            // 从 xy_selected_chars 中移除
             let boutIds = safeParseJSON(localStorage.getItem('xy_selected_chars'), []);
-            boutIds = boutIds.filter(id => id !== currentChatCharId);
-            localStorage.setItem('xy_selected_chars', JSON.stringify(boutIds));
-            
-            // 移除置顶标记
+            boutIds = boutIds.filter(id => id !== currentChatCharId); localStorage.setItem('xy_selected_chars', JSON.stringify(boutIds));
             let pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
-            pinnedIds = pinnedIds.filter(id => id !== currentChatCharId);
-            localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
-
-            // 清空聊天记录
+            pinnedIds = pinnedIds.filter(id => id !== currentChatCharId); localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
             localStorage.removeItem(`chat_history_${currentChatCharId}`);
-
-            // 关闭聊天界面
-            closeScreen('chat-screen');
-            closeChatDetailModal();
-            
-            // 更新首页列表
-            selectedBoutIds = boutIds;
-            renderXunyanMessages();
+            closeScreen('chat-screen'); closeChatDetailModal();
+            selectedBoutIds = boutIds; renderXunyanMessages();
         }
     }
 
-    // 5. 更换 Char 头像
     document.getElementById('chat-char-avatar-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file && currentChatCharId) {
             const reader = new FileReader();
             reader.onload = async function(event) {
                 const base64Data = event.target.result;
-                // 1. 更新全局通讯录头像
                 await saveImageToDB(`contact_avatar_${currentChatCharId}`, base64Data);
-                // 2. 更新详情页预览
-                loadDetailAvatars();
-                // 3. 重绘聊天记录中的头像
-                reRenderChatHistory();
+                loadDetailAvatars(); reRenderChatHistory();
             };
             reader.readAsDataURL(file);
         }
         this.value = '';
     });
 
-    // 6. 更换用户头像 (仅本聊天)
     document.getElementById('chat-user-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentChatCharId) {
             const reader = new FileReader();
             reader.onload = async function(event) {
-                const base64Data = event.target.result;
-                await saveImageToDB(`chat_user_avatar_${currentChatCharId}`, base64Data);
-                loadDetailAvatars();
-                reRenderChatHistory();
+                await saveImageToDB(`chat_user_avatar_${currentChatCharId}`, event.target.result);
+                loadDetailAvatars(); reRenderChatHistory();
             };
             reader.readAsDataURL(file);
         }
         this.value = '';
     });
 
-    // 7. 更换聊天背景
     document.getElementById('chat-bg-upload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && currentChatCharId) {
@@ -2959,28 +3054,20 @@
         this.value = '';
     });
 
-    // 🌟 8. 清空聊天背景
     async function clearChatBackground() {
         if(!currentChatCharId) return;
         if(confirm("确定要清空聊天背景，恢复为纯白吗？")) {
             await deleteImageFromDB(`chat_bg_${currentChatCharId}`);
             document.getElementById('chat-screen').style.backgroundImage = 'none';
-            alert("聊天背景已清空！");
             closeChatDetailModal();
         }
     }
 
-    // 重绘历史聊天记录
     async function reRenderChatHistory() {
         const container = document.getElementById('chat-container');
         container.innerHTML = '';
         const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
-        if(hasHistory) {
-            const history = safeParseJSON(hasHistory, []);
-            for(const msg of history) {
-                await renderChatMessage(msg.text, msg.isSelf, false);
-            }
-        }
+        if(hasHistory) { const history = safeParseJSON(hasHistory, []); for(const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false); } }
         container.scrollTop = container.scrollHeight;
     }
 
@@ -2989,17 +3076,13 @@
     // ==========================================
     async function initApp() {
         await renderApps();
-        
         const wallpaperImg = await getImageFromDB('app_wallpaper');
         if (wallpaperImg) document.body.style.backgroundImage = `url(${wallpaperImg})`;
 
         const avatarImg = await getImageFromDB('other_img_avatar-img');
         if (avatarImg) document.getElementById('avatar-img').style.backgroundImage = `url(${avatarImg})`;
 
-        for (let i = 1; i <= 3; i++) {
-            const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`);
-            if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`;
-        }
+        for (let i = 1; i <= 3; i++) { const widgetImg = await getImageFromDB(`other_img_widget-img-${i}`); if (widgetImg) document.getElementById(`widget-img-${i}`).style.backgroundImage = `url(${widgetImg})`; }
 
         const xyAvatarImg = await getImageFromDB('xunyan_avatar');
         if (xyAvatarImg) document.getElementById('xy-avatar').style.backgroundImage = `url(${xyAvatarImg})`;
@@ -3007,9 +3090,7 @@
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
         
-        renderContactList();
-        renderXunyanMessages();
-        renderBlogPage();
+        renderContactList(); renderXunyanMessages(); renderBlogPage();
     }
 
     initApp();
