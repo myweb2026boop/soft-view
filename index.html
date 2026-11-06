@@ -485,18 +485,46 @@
     /* 真实歌曲列表 (垂直仿图三) */
     .music-song-list { display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto; padding-top: 10px; -webkit-overflow-scrolling: touch; }
     
-    /* 修复：给外层容器加白底，遮挡红色，解决边缘透色问题 */
+    /* 彻底修复右侧漏红边：白底容器 + 遮盖阴影 */
     .music-song-swipe-wrapper { 
         position: relative; 
         overflow: hidden; 
         border-radius: 16px; 
         margin-bottom: 12px; 
         flex-shrink: 0; 
-        background-color: #ffffff; /* 关键，防止透出红色 */
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03); /* 阴影移到外层 */
+        background-color: #ffffff; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
     }
-    .music-song-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: #ff3b30; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 600; z-index: 1; cursor: pointer; }
-    .music-song-item { display: flex; align-items: center; background: #fff; padding: 10px; border-radius: 16px; cursor: pointer; position: relative; z-index: 2; margin-bottom: 0; width: 100%; box-sizing: border-box; transition: transform 0.2s ease; }
+    .music-song-delete-btn { 
+        position: absolute; 
+        right: 0; 
+        top: 0; 
+        bottom: 0; 
+        width: 80px; 
+        background: #ff3b30; 
+        color: #fff; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        font-weight: 600; 
+        z-index: 1; 
+        cursor: pointer; 
+    }
+    .music-song-item { 
+        display: flex; 
+        align-items: center; 
+        background: #ffffff; 
+        padding: 10px; 
+        border-radius: 16px; 
+        cursor: pointer; 
+        position: relative; 
+        z-index: 2; 
+        width: 100%; 
+        box-sizing: border-box; 
+        transition: transform 0.2s ease; 
+        /* 关键：用白色覆盖住右下角可能产生的抗锯齿缝隙 */
+        box-shadow: 1px 0 0 0 #ffffff, -1px 0 0 0 #ffffff; 
+    }
     .music-song-cover { width: 60px; height: 60px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-right: 15px; }
     .music-song-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
     .music-song-title { font-size: 16px; font-weight: 800; color: #000; outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -644,7 +672,7 @@
         <div class="playing-header">
             <svg viewBox="0 0 24 24" onclick="document.getElementById('music-playing-screen').classList.remove('active')"><path d="M6 9l6 6 6-6"></path></svg>
             <div class="playing-title-main" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicPlayingTitle(this.innerText)">Now playing</div>
-            <!-- 这里绑定 openPasteLyricsModal -->
+            <!-- 歌词功能绑定在此 -->
             <svg viewBox="0 0 24 24" onclick="openPasteLyricsModal()" style="cursor: pointer; pointer-events: auto;"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </div>
         
