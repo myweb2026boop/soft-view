@@ -391,8 +391,9 @@
     
     .sticker-pack-list { padding: 20px; }
     .sticker-pack-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; }
-    .sticker-pack-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; /* 修复截断 */ }
-    .sticker-pack-name { font-size: 16px; font-weight: 600; color: #333; word-break: break-all; white-space: normal; line-height: 1.4; }
+    .sticker-pack-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; }
+    /* 彻底修复名称截断问题 */
+    .sticker-pack-name { font-size: 16px; font-weight: 600; color: #333; word-break: break-all; white-space: normal; line-height: 1.4; padding-right: 10px; }
     .sticker-pack-count { font-size: 13px; color: #999; }
     .sticker-pack-delete { background: #feeceb; color: #e74c3c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-shrink: 0; }
     
@@ -401,21 +402,17 @@
     .sticker-item img { width: 100%; aspect-ratio: 1/1; object-fit: contain; margin-bottom: 8px; border-radius: 8px; background: #f5f5f7; }
     .sticker-item .meaning { font-size: 12px; color: #666; text-align: center; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; width: 100%; }
 
-    /* 详情页顶栏修正 */
     .sticker-detail-header { padding: 10px 20px; background: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
-    .sticker-detail-header .title { font-size: 16px; font-weight: 600; max-width: 60%; word-break: break-all; white-space: normal; line-height: 1.2; }
+    .sticker-detail-header .title { font-size: 16px; font-weight: 600; max-width: 70%; word-break: break-all; white-space: normal; line-height: 1.2; padding-right: 10px; }
     .sticker-detail-header .upload-btn { background-color: #34c759; color: #fff; padding: 6px 16px; font-size: 14px; border-radius: 20px; border: none; cursor: pointer; font-weight: 600; flex-shrink: 0; }
     
-    /* 单个表情包删除按钮 */
     .sticker-delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 14px; cursor: pointer; z-index: 10; }
 
-    /* 聊天表情包选择面板 */
     #sticker-panel { position: fixed; bottom: 0; left: 0; width: 100vw; height: 320px; background: #ffffff; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 4001; display: none; flex-direction: column; transition: transform 0.3s ease-out; transform: translateY(100%); }
     #sticker-panel.active { display: flex; transform: translateY(0); }
     .sticker-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px 10px; }
     .sticker-panel-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
     
-    /* Tabs 分类 (修复显示不全的问题) */
     .sticker-tabs-container { display: flex; overflow-x: auto; padding: 0 20px 10px; gap: 10px; border-bottom: 1px solid #f0f0f0; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     .sticker-tabs-container::-webkit-scrollbar { display: none; }
     .sticker-tab { padding: 6px 12px; background: #f2f2f7; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
@@ -424,7 +421,6 @@
     .sticker-panel-content { flex-grow: 1; overflow-y: auto; display: flex; flex-wrap: wrap; padding: 15px; gap: 10px; align-content: flex-start; }
     .sticker-panel-content img { width: 60px; height: 60px; object-fit: contain; cursor: pointer; border-radius: 8px; padding: 4px; background: #f5f5f7; }
 
-    /* 提升绑定弹窗层级 */
     #sticker-bind-modal { z-index: 6000 !important; }
 
     /* ==================================================== */
@@ -548,6 +544,69 @@
         </div>
     </div>
 </div>
+
+<!-- 🌟 音乐 App 完整界面 -->
+<div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
+    <!-- 主界面 -->
+    <div class="music-main-view" id="music-main-view">
+        <div class="music-trips-card">
+            <div class="music-card-header">
+                <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicTitle(this.innerText)">暂无文本</div>
+                <div class="music-card-viewall">View all</div>
+            </div>
+            <div class="music-cover-placeholder" id="music-main-cover" onclick="document.getElementById('music-cover-upload').click()">
+                点击上传封面
+            </div>
+            <div class="music-action-row">
+                <div class="music-action-btn" onclick="document.getElementById('music-audio-upload').click()">上传 MP3</div>
+                <div class="music-action-btn" onclick="document.getElementById('music-lyrics-upload').click()">上传歌词</div>
+            </div>
+            <!-- 隐藏的音频/歌词上传 -->
+        </div>
+    </div>
+
+    <!-- 播放界面 -->
+    <div id="music-playing-screen">
+        <div class="playing-header">
+            <svg viewBox="0 0 24 24" onclick="document.getElementById('music-playing-screen').classList.remove('active')"><path d="M6 9l6 6 6-6"></path></svg>
+            <div class="playing-title-main" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicTitle(this.innerText)">暂无文本</div>
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </div>
+        
+        <div class="playing-cover-container">
+            <div class="playing-cover" id="music-playing-cover" onclick="document.getElementById('playing-cover-upload').click()"></div>
+        </div>
+        
+        <div class="playing-info">
+            <div class="playing-song-title">YOU MAKE ME SAD</div>
+            <div class="playing-song-artist">LOVELY BOMB</div>
+        </div>
+        
+        <div class="playing-lyrics-container" id="music-lyrics-container">
+            <!-- 歌词动态渲染 -->
+        </div>
+        
+        <div class="playing-progress">
+            <div class="progress-bar-bg" id="music-progress-bg">
+                <div class="progress-bar-fill" id="music-progress-fill"></div>
+                <div class="progress-bar-dot" id="music-progress-dot"></div>
+            </div>
+            <div class="progress-time">
+                <span id="music-time-current">00:00</span>
+                <span id="music-time-total">00:00</span>
+            </div>
+        </div>
+        
+        <div class="playing-controls">
+            <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+            <div class="playing-play-btn" id="music-play-btn">
+                <svg id="music-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <svg viewBox="0 0 24 24"><path d="M13 6v12l8.5-6-8.5-6zm-.5 6l-8.5 6V6l8.5 6z"/></svg>
+        </div>
+    </div>
+</div>
+
 
 <!-- 设置 App (仿 iOS) -->
 <div class="fullscreen-screen" id="settings-screen">
@@ -848,14 +907,12 @@
 
 <!-- 🌟 新版表情包管理全屏界面 -->
 <div class="fullscreen-screen" id="sticker-manage-screen" style="background-color: #f5f5f7; padding: 0;">
-    <!-- 顶栏缩窄 -->
     <div style="padding: 12px 20px; background: #f5f5f7; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 1px solid #e5e5ea;">
         <div class="ce-icon-btn" style="width: 32px; height: 32px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onclick="closeStickerManage()"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#000;stroke-width:2;fill:none;"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
         <div style="font-size: 17px; font-weight: 600; color: #000;" id="sticker-mgr-title">表情包管理</div>
         <div style="width: 32px;"></div>
     </div>
     
-    <!-- 主视图 (创建合集) -->
     <div class="ce-body" style="padding: 0;" id="sticker-main-view">
         <div class="sticker-mgr-section">
             <div class="sticker-mgr-title">新建表情合集（粘贴链接）</div>
@@ -877,15 +934,12 @@
         </div>
     </div>
 
-    <!-- 详情视图 (查看合集内表情) -->
     <div class="ce-body" style="padding: 0; display: none;" id="sticker-detail-view">
         <div class="sticker-detail-header">
             <div class="title" id="sticker-detail-pack-name">合集名称</div>
             <button class="upload-btn" onclick="triggerAddStickerToCurrentPack()">上传</button>
         </div>
-        <div class="sticker-grid" id="sticker-detail-grid">
-            <!-- 表情包内容 -->
-        </div>
+        <div class="sticker-grid" id="sticker-detail-grid"></div>
     </div>
 </div>
 
@@ -937,9 +991,7 @@
         <h3>选择表情包</h3>
         <span style="color: var(--blue); cursor: pointer; font-size: 14px;" onclick="closeStickerPanel()">关闭</span>
     </div>
-    <!-- 分类 Tabs -->
     <div class="sticker-tabs-container" id="sticker-panel-tabs"></div>
-    
     <div class="sticker-panel-content" id="sticker-panel-content"></div>
 </div>
 
@@ -1281,7 +1333,7 @@
     }
 
     // ==========================================
-    // 🌟 3. 表情包系统 (解析引擎彻底重写，修复名称截断)
+    // 🌟 3. 表情包系统 (彻底修复名称截断 & 解析引擎重写)
     // ==========================================
     let stickerPacks = safeParseJSON(localStorage.getItem('sticker_packs'), []);
     let charStickerBindings = safeParseJSON(localStorage.getItem('char_sticker_bindings'), {});
@@ -1308,36 +1360,29 @@
         }
     }
 
-    // 全新解析引擎：不管什么标点、空格，只要遇到 http 必然提取
+    // 绝对强悍的提取引擎
     function extractStickersFromText(text) {
         let stickers = [];
-        // 1. 统一换行
         text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        text = text.replace(/!\[(.*?)\]\((https?:\/\/[^\)]+)\)/g, "$1：$2");
         
-        // 2. 处理 Markdown ![名称](链接)
-        text = text.replace(/!\[(.*?)\]\((https?:\/\/[^\)]+)\)/g, "$1|$2");
-        
-        // 3. 按行提取
         const lines = text.split('\n');
         lines.forEach((line, idx) => {
             line = line.trim();
             if (!line) return;
             
-            // 找当前行的所有 http 链接
-            const urlRegex = /https?:\/\/[^\s]+/gi;
-            let match;
-            
-            while ((match = urlRegex.exec(line)) !== null) {
-                let rawUrl = match[0];
-                // 去除网址中的所有空格
+            const httpIndex = line.search(/https?:\/\//i);
+            if (httpIndex !== -1) {
+                let rawUrl = line.substring(httpIndex).trim();
+                // 去除所有空格和可能被意外包含的换行
                 let cleanUrl = rawUrl.replace(/\s/g, '');
-                // 去除尾部可能带的中文标点或特殊符号
+                // 去除尾部标点
                 cleanUrl = cleanUrl.replace(/[`'"，。！？、\]【（]+$/, '');
                 
-                // 处理含义：将原行里的网址删掉，剩下的就是名字
-                let meaning = line.replace(rawUrl, '').trim();
+                // 名字就是 URL 前面的内容
+                let meaning = line.substring(0, httpIndex).trim();
                 
-                // 如果删掉网址后是空的，检查上一行
+                // 如果名字是空的，尝试从上一行找
                 if (!meaning && idx > 0) {
                     let prev = lines[idx - 1].trim();
                     if (prev && !prev.includes('http') && !prev.startsWith('=====')) {
@@ -1345,21 +1390,20 @@
                     }
                 }
 
-                // 清理名字前后的冒号、竖线、空格、反斜杠
+                // 清理标点、空格、多余的冒号
                 meaning = meaning.replace(/^[`'"|\s:：\-\\]+/, '').replace(/[`'"|\s:：\-\\]+$/, '');
                 
-                // 如果是无效名字，替换为未命名
-                if (!meaning || meaning === '图源小红书，表情描述可改。' || meaning.startsWith('[file')) {
+                // 过滤无效名称
+                if (!meaning || meaning.includes('=====') || meaning.includes('[file') || meaning === '图源小红书，表情描述可改。') {
                     meaning = '未命名';
                 }
 
-                // 去重加入数组
+                // 去重加入
                 if (cleanUrl.startsWith('http') && !stickers.find(s => s.image === cleanUrl)) {
                     stickers.push({ id: 'st_' + Date.now() + Math.random(), image: cleanUrl, meaning: meaning });
                 }
             }
         });
-        
         return stickers;
     }
 
@@ -1405,7 +1449,6 @@
             const div = document.createElement('div');
             div.className = 'sticker-pack-item';
             div.onclick = () => openStickerPackDetail(pack.id);
-            // CSS已修复截断，此处结构不变
             div.innerHTML = `
                 <div class="sticker-pack-info">
                     <div class="sticker-pack-name">${pack.name}</div>
@@ -1493,7 +1536,7 @@
 
             const processAndSave = (parsedStickers) => {
                 if(parsedStickers.length === 0) {
-                    alert(`解析文件 ${fileName} 失败：未找到有效的表情包链接或图片。`);
+                    alert(`解析文件 ${fileName} 失败：未找到有效的表情包链接。`);
                     return;
                 }
 
@@ -1691,7 +1734,6 @@
             playingCoverEl.innerText = '';
         }
         
-        // 加载音频和歌词
         const audioBlob = await getImageFromDB('music_audio');
         if (audioBlob) {
             if (currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio.src); }
@@ -1706,23 +1748,17 @@
         }
     }
 
-    // 修改主界面文字 (双击)
-    document.querySelector('.music-card-title').addEventListener('blur', function() {
-        const val = this.innerText.trim() || '暂无文本';
-        this.innerText = val;
-        localStorage.setItem('music_title', val);
-        document.querySelector('.playing-title-main').innerText = val;
-    });
-
-    // 修改播放页标题
-    document.querySelector('.playing-title-main').addEventListener('blur', function() {
-        const val = this.innerText.trim() || '暂无文本';
-        this.innerText = val;
-        localStorage.setItem('music_title', val);
+    function saveMusicTitle(val) {
+        val = val.trim() || '暂无文本';
         document.querySelector('.music-card-title').innerText = val;
+        document.querySelector('.playing-title-main').innerText = val;
+        localStorage.setItem('music_title', val);
+    }
+
+    document.querySelector('.playing-title-main').addEventListener('blur', function() {
+        saveMusicTitle(this.innerText);
     });
 
-    // 图片上传
     document.getElementById('music-cover-upload').addEventListener('change', function(e) {
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader();
@@ -1751,7 +1787,6 @@
         this.value = '';
     });
 
-    // 音频上传
     document.getElementById('music-audio-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0]; if(!file) return;
         await saveImageToDB('music_audio', file);
@@ -1763,7 +1798,6 @@
         this.value = '';
     });
 
-    // 歌词上传 (解析 LRC 或纯文本)
     document.getElementById('music-lyrics-upload').addEventListener('change', function(e) {
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader();
@@ -1790,10 +1824,9 @@
                 });
                 lyrics.sort((a, b) => a.time - b.time);
             } else {
-                // 如果是纯文本，平均分配时间（假设总共 3 分钟）
                 const validLines = lines.map(l => l.trim()).filter(l => l);
                 validLines.forEach((text, i) => {
-                    lyrics.push({ time: i * 5, text: text }); // 假装每句 5 秒
+                    lyrics.push({ time: i * 5, text: text }); 
                 });
             }
             
@@ -1822,34 +1855,30 @@
         });
     }
 
-    // 播放页跳转
     document.getElementById('music-main-cover').addEventListener('click', () => {
         if(!currentAudio) { alert("请先上传MP3音频！"); return; }
         document.getElementById('music-playing-screen').classList.add('active');
         renderLyrics();
     });
 
-    // 控制播放
     document.getElementById('music-play-btn').addEventListener('click', () => {
         if(!currentAudio) return;
         const icon = document.getElementById('music-play-icon');
         if(currentAudio.paused) {
             currentAudio.play();
-            icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // 暂停图标
+            icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
         } else {
             currentAudio.pause();
-            icon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // 播放图标
+            icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
         }
     });
 
-    // 进度更新
     function updateMusicProgress() {
         if(!currentAudio) return;
         const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
         document.getElementById('music-progress-fill').style.width = percent + '%';
         document.getElementById('music-progress-dot').style.left = percent + '%';
         
-        // 格式化时间
         const formatTime = (sec) => {
             if(isNaN(sec)) return "00:00";
             const m = String(Math.floor(sec / 60)).padStart(2, '0');
@@ -1859,7 +1888,6 @@
         document.getElementById('music-time-current').innerText = formatTime(currentAudio.currentTime);
         document.getElementById('music-time-total').innerText = formatTime(currentAudio.duration);
 
-        // 歌词滚动
         if(musicData.lyrics.length > 0) {
             const ct = currentAudio.currentTime;
             let activeIndex = -1;
@@ -1875,7 +1903,6 @@
                 const activeEl = document.getElementById('lyric-line-' + activeIndex);
                 if(activeEl) {
                     activeEl.classList.add('active');
-                    // 自动滚动到中间
                     const container = document.getElementById('music-lyrics-container');
                     const offset = activeEl.offsetTop - container.offsetHeight / 2 + activeEl.offsetHeight / 2;
                     container.scrollTo({ top: offset, behavior: 'smooth' });
@@ -1887,9 +1914,6 @@
     // ==========================================
     // 5. 设置 App 及其他原有逻辑
     // ==========================================
-    // 以下原封不动保留之前的功能 (省略具体代码展示，因为都需要包含在内)
-    // 由于长度限制，请确保把原逻辑粘贴回来，这里直接完整替换即可。
-    
     async function openSettingsApp() {
         openScreen('settings-screen');
         const fsState = localStorage.getItem('settings_fullscreen') === 'true';
@@ -2835,7 +2859,7 @@
 
     async function clearChatBackground() {
         if(!currentChatCharId) return;
-        if(confirm("确定要清空聊天背景吗？")) { await deleteImageFromDB(`chat_bg_${currentChatCharId}`); document.getElementById('chat-screen').style.backgroundImage = 'none'; closeChatDetailModal(); }
+        if(confirm("确定要清空聊天背景，恢复为纯白吗？")) { await deleteImageFromDB(`chat_bg_${currentChatCharId}`); document.getElementById('chat-screen').style.backgroundImage = 'none'; closeChatDetailModal(); }
     }
 
     async function reRenderChatHistory() {
