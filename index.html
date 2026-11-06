@@ -21,7 +21,13 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
-    input[type="file"] { display: none !important; }
+    /* 🌟 修复隐藏输入框在某些手机端无法唤起的问题 */
+    input[type="file"] { 
+        position: absolute;
+        width: 0; height: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
 
     body {
         margin: 0; padding: 20px 12px;
@@ -453,14 +459,18 @@
     #music-app-screen { background-color: #f2f2f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #music-app-screen.active { display: flex; }
     
-    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 0; overflow-y: hidden; }
+    /* 顶部导航栏 */
+    .music-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-shrink: 0; }
+    .music-top-actions { display: flex; gap: 15px; }
+    .music-action-btn { font-size: 15px; font-weight: 600; color: #000; cursor: pointer; outline: none; background: none; border: none; padding: 0; }
+
+    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 0 0 20px 0; overflow-y: hidden; }
     
     /* 图二白板卡片 */
     .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; border-radius: 24px; margin: 0 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow: hidden; }
     .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .music-card-title { font-size: 22px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
-    .music-card-actions { display: flex; align-items: center; gap: 15px; }
-    .music-action-btn { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; background: none; border: none; padding: 0; }
+    .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
     
     /* 横向滚动列表 */
     .music-list { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 10px; flex-grow: 1; align-items: flex-start; -webkit-overflow-scrolling: touch; }
@@ -583,18 +593,19 @@
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
-        <!-- 返回键 -->
-        <div style="padding: 0 20px; display: flex; align-items: center; margin-bottom: 10px;">
+        <!-- 顶部操作栏：返回键 + MP3 + 歌词 -->
+        <div class="music-top-bar">
             <svg onclick="closeScreen('music-app-screen')" style="width: 28px; height: 28px; stroke: #000; stroke-width: 2; fill: none; cursor: pointer;" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+            <div class="music-top-actions">
+                <button class="music-action-btn" onclick="document.getElementById('music-audio-upload').click()">+ MP3</button>
+                <button class="music-action-btn" onclick="openPasteLyricsModal()">+ 歌词</button>
+            </div>
         </div>
+
         <div class="music-card">
             <div class="music-card-header">
                 <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicMainTitle(this.innerText)">Upcoming Trips</div>
-                <div class="music-card-actions">
-                    <button class="music-action-btn" onclick="document.getElementById('music-audio-upload').click()">+ MP3</button>
-                    <button class="music-action-btn" onclick="openPasteLyricsModal()">+ 歌词</button>
-                    <div class="music-action-btn" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
-                </div>
+                <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
             </div>
             <div id="music-list-container" class="music-list">
                 <!-- 动态渲染歌曲列表或灰色占位框 -->
@@ -1194,11 +1205,11 @@
 <input type="file" id="offline-font-upload" accept=".ttf,.otf,.woff,.woff2">
 <!-- 表情包文件上传 -->
 <input type="file" id="sticker-file-upload" accept=".json,.docx,.txt,image/*" multiple>
-<!-- 音乐 App 上传 -->
-<input type="file" id="music-cover-upload" accept="image/*">
-<input type="file" id="music-audio-upload" accept="audio/*">
+<!-- 音乐 App 上传 (修复格式和后缀) -->
+<input type="file" id="music-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+<input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, .mp3, .m4a">
 <input type="file" id="music-lyrics-upload" accept=".txt,.lrc">
-<input type="file" id="playing-cover-upload" accept="image/*">
+<input type="file" id="playing-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 
 
 <script>
@@ -1755,6 +1766,7 @@
     let currentPlayingSongId = null;
     let currentAudio = null;
     let lyricsInterval = null;
+    let currentUploadingSlotIndex = -1;
 
     async function openMusicApp() {
         openScreen('music-app-screen');
@@ -1764,7 +1776,7 @@
         const savedTitle = localStorage.getItem('music_main_title');
         if(savedTitle) document.querySelector('.music-card-title').innerText = savedTitle;
         const savedViewAll = localStorage.getItem('music_view_all');
-        if(savedViewAll) document.querySelector('[onblur="saveMusicViewAll(this.innerText)"]').innerText = savedViewAll;
+        if(savedViewAll) document.querySelector('.music-card-viewall').innerText = savedViewAll;
 
         await renderMusicList();
     }
@@ -1776,7 +1788,7 @@
     }
     function saveMusicViewAll(val) {
         val = val.trim() || 'View all';
-        document.querySelector('[onblur="saveMusicViewAll(this.innerText)"]').innerText = val;
+        document.querySelector('.music-card-viewall').innerText = val;
         localStorage.setItem('music_view_all', val);
     }
     function saveMusicPlayingTitle(val) {
@@ -1810,14 +1822,15 @@
 
         // 2. 若歌曲不足三个，补齐三个灰色占位框
         if (musicList.length < 3) {
+            const placeholders = safeParseJSON(localStorage.getItem('music_placeholders'), ['待添加', '待添加', '待添加']);
             for (let i = musicList.length; i < 3; i++) {
+                const title = placeholders[i] || '待添加';
                 const div = document.createElement('div');
                 div.className = 'music-item';
-                div.onclick = () => document.getElementById('music-audio-upload').click();
                 div.innerHTML = `
-                    <div class="music-item-cover" style="background-color: #e5e5ea;"></div>
+                    <div class="music-item-cover" style="background-color: #e5e5ea;" onclick="uploadCoverForEmptySlot(${i})"></div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
-                        <div class="music-item-title">待添加</div>
+                        <div class="music-item-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="savePlaceholderTitle(${i}, this.innerText)">${title}</div>
                         <div class="music-item-more" onclick="event.stopPropagation();">...</div>
                     </div>
                 `;
@@ -1826,23 +1839,57 @@
         }
     }
 
+    function savePlaceholderTitle(index, text) {
+        let placeholders = safeParseJSON(localStorage.getItem('music_placeholders'), ['待添加', '待添加', '待添加']);
+        placeholders[index] = text.trim() || '待添加';
+        localStorage.setItem('music_placeholders', JSON.stringify(placeholders));
+    }
+
+    function uploadCoverForEmptySlot(index) {
+        currentUploadingSlotIndex = index;
+        document.getElementById('music-cover-upload').click();
+    }
+
     function triggerUploadCover(songId) {
+        currentUploadingSlotIndex = -1;
         document.getElementById('music-cover-upload').dataset.songId = songId;
         document.getElementById('music-cover-upload').click();
     }
 
     document.getElementById('music-cover-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
-        const songId = this.dataset.songId;
-        if(!file || !songId) return;
+        if(!file) return;
+        
         const reader = new FileReader();
-        reader.onload = async function(event) {
-            await saveImageToDB(`music_cover_${songId}`, event.target.result);
-            await renderMusicList();
-            if (currentPlayingSongId === songId) {
-                document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
-            }
-        };
+        
+        if (currentUploadingSlotIndex > -1) {
+            // 为占位符创建新歌曲并上传图片
+            const songId = 'song_' + Date.now();
+            const titleEl = document.querySelectorAll('.music-item-title')[currentUploadingSlotIndex];
+            const title = titleEl ? titleEl.innerText : '待添加';
+            
+            const newSong = { id: songId, title: title, artist: '', lyrics: [] };
+            musicList.push(newSong);
+            localStorage.setItem('music_list', JSON.stringify(musicList));
+            
+            reader.onload = async function(event) {
+                await saveImageToDB(`music_cover_${songId}`, event.target.result);
+                currentUploadingSlotIndex = -1;
+                renderMusicList();
+            };
+        } else {
+            // 更换已有歌曲封面
+            const songId = this.dataset.songId;
+            if (!songId) return;
+            reader.onload = async function(event) {
+                await saveImageToDB(`music_cover_${songId}`, event.target.result);
+                await renderMusicList();
+                if (currentPlayingSongId === songId) {
+                    document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
+                }
+            };
+        }
+        
         reader.readAsDataURL(file);
         this.value = '';
     });
