@@ -21,7 +21,7 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
-    /* 🌟 修复隐藏输入框在某些手机端无法唤起的问题 */
+    /* 隐藏输入框 */
     input[type="file"] { 
         position: absolute;
         width: 0; height: 0;
@@ -221,6 +221,9 @@
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
     .modal-btn.cancel { background-color: #f2f2f7; color: #1c1c1e; }
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
+
+    /* 提升歌词弹窗层级 */
+    #paste-lyrics-modal { z-index: 6000 !important; }
 
     /* ==================================================== */
     /* 🌟 聊天界面样式 */
@@ -454,7 +457,7 @@
     #sticker-bind-modal { z-index: 6000 !important; }
 
     /* ==================================================== */
-    /* 🌟 全新音乐 App (完美仿图2，包含三个灰框) */
+    /* 🌟 全新音乐 App (歌曲列表复刻图三) */
     /* ==================================================== */
     #music-app-screen { background-color: #f2f2f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #music-app-screen.active { display: flex; }
@@ -472,15 +475,20 @@
     .music-card-title { font-size: 22px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
     .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
     
-    /* 横向滚动列表 */
-    .music-list { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 10px; flex-grow: 1; align-items: flex-start; -webkit-overflow-scrolling: touch; }
-    .music-list::-webkit-scrollbar { display: none; }
-    
-    .music-item { display: flex; flex-direction: column; min-width: 130px; width: 130px; cursor: pointer; }
-    .music-item-cover { width: 130px; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; }
-    .music-item-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; flex: 1; line-height: 1.2; }
-    .music-item-artist { font-size: 13px; color: #888; outline: none; margin-top: 4px; word-break: break-all; }
-    .music-item-more { font-size: 20px; font-weight: 800; color: #000; line-height: 1; cursor: pointer; margin-left: 5px; position: relative; top: -2px; }
+    /* 顶部三个装饰展示框 (横向滚动) */
+    .music-decorations-row { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 15px; flex-shrink: 0; -webkit-overflow-scrolling: touch; }
+    .music-decorations-row::-webkit-scrollbar { display: none; }
+    .music-decoration-item { display: flex; flex-direction: column; min-width: 130px; width: 130px; }
+    .music-decoration-cover { width: 130px; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; cursor: pointer; }
+    .music-decoration-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; line-height: 1.2; }
+
+    /* 真实歌曲列表 (垂直仿图三) */
+    .music-song-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; padding-top: 10px; -webkit-overflow-scrolling: touch; }
+    .music-song-item { display: flex; align-items: center; background: #fff; padding: 10px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); cursor: pointer; position: relative; }
+    .music-song-cover { width: 60px; height: 60px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-right: 15px; }
+    .music-song-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .music-song-title { font-size: 16px; font-weight: 800; color: #000; outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .music-song-artist { font-size: 13px; color: #999; outline: none; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* 播放界面 (图五) */
     #music-playing-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 10; display: none; flex-direction: column; padding: 20px; }
@@ -589,7 +597,7 @@
     </div>
 </div>
 
-<!-- 🌟 全新音乐 App 结构 (完美仿图二，含返回键及三个灰框) -->
+<!-- 🌟 全新音乐 App 结构 (歌曲列表复刻图三) -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
@@ -607,8 +615,15 @@
                 <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicMainTitle(this.innerText)">Upcoming Trips</div>
                 <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
             </div>
-            <div id="music-list-container" class="music-list">
-                <!-- 动态渲染歌曲列表或灰色占位框 -->
+            
+            <!-- 顶部三个装饰展示框 (横向滚动) -->
+            <div id="music-decorations-container" class="music-decorations-row">
+                <!-- 动态渲染3个装饰框 -->
+            </div>
+
+            <!-- 真实歌曲列表 (垂直仿图三) -->
+            <div id="music-song-list-container" class="music-song-list">
+                <!-- 动态渲染歌曲 -->
             </div>
         </div>
     </div>
@@ -1210,6 +1225,7 @@
 <input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, .mp3, .m4a">
 <input type="file" id="music-lyrics-upload" accept=".txt,.lrc">
 <input type="file" id="playing-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+<input type="file" id="music-decoration-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 
 
 <script>
@@ -1760,13 +1776,23 @@
     }
 
     // ==========================================
-    // 🌟 4. 全新音乐 App 逻辑 (横向仿图二，三个灰框)
+    // 🌟 4. 全新音乐 App 逻辑 (UI 完美复刻)
     // ==========================================
     let musicList = safeParseJSON(localStorage.getItem('music_list'), []);
     let currentPlayingSongId = null;
     let currentAudio = null;
-    let lyricsInterval = null;
-    let currentUploadingSlotIndex = -1;
+    
+    // 装饰图数据
+    let musicDecorations = safeParseJSON(localStorage.getItem('music_decorations'), []);
+    if (musicDecorations.length === 0) {
+        musicDecorations = [
+            { id: 'd1', text: '待添加', img: '' },
+            { id: 'd2', text: '待添加', img: '' },
+            { id: 'd3', text: '待添加', img: '' }
+        ];
+        localStorage.setItem('music_decorations', JSON.stringify(musicDecorations));
+    }
+    let currentUploadingDecoIndex = -1;
 
     async function openMusicApp() {
         openScreen('music-app-screen');
@@ -1778,7 +1804,7 @@
         const savedViewAll = localStorage.getItem('music_view_all');
         if(savedViewAll) document.querySelector('.music-card-viewall').innerText = savedViewAll;
 
-        await renderMusicList();
+        await renderMusicAppData();
     }
 
     function saveMusicMainTitle(val) {
@@ -1796,100 +1822,91 @@
         document.querySelector('.playing-title-main').innerText = val;
     }
 
-    async function renderMusicList() {
-        const container = document.getElementById('music-list-container');
-        container.innerHTML = '';
-        
-        // 1. 渲染真实的歌曲
+    async function renderMusicAppData() {
+        // 渲染装饰框
+        const decoContainer = document.getElementById('music-decorations-container');
+        decoContainer.innerHTML = '';
+        for (let i = 0; i < musicDecorations.length; i++) {
+            const d = musicDecorations[i];
+            const cover = await getImageFromDB(`music_deco_${d.id}`);
+            const coverStyle = cover ? `background-image: url(${cover});` : '';
+            const div = document.createElement('div');
+            div.className = 'music-decoration-item';
+            div.innerHTML = `
+                <div class="music-decoration-cover" style="${coverStyle}" onclick="uploadCoverForDecoration(${i})"></div>
+                <div class="music-decoration-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveDecorationTitle(${i}, this.innerText)">${d.text}</div>
+            `;
+            decoContainer.appendChild(div);
+        }
+
+        // 渲染真实歌曲列表 (图三样式)
+        const songContainer = document.getElementById('music-song-list-container');
+        songContainer.innerHTML = '';
+        if (musicList.length === 0) {
+            songContainer.innerHTML = '<div style="text-align: center; color: #999; margin-top: 20px;">暂无歌曲，点击右上角 +MP3 上传</div>';
+            return;
+        }
         for (const song of musicList) {
             const cover = await getImageFromDB(`music_cover_${song.id}`);
             const coverStyle = cover ? `background-image: url(${cover});` : '';
             
             const div = document.createElement('div');
-            div.className = 'music-item';
+            div.className = 'music-song-item';
             div.onclick = () => openPlayingScreen(song.id);
             
             div.innerHTML = `
-                <div class="music-item-cover" style="${coverStyle}" onclick="event.stopPropagation(); triggerUploadCover('${song.id}')"></div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
-                    <div class="music-item-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongTitle('${song.id}', this.innerText)">${song.title}</div>
-                    <div class="music-item-more" onclick="event.stopPropagation(); showSongMenu('${song.id}')">...</div>
+                <div class="music-song-cover" style="${coverStyle}" onclick="event.stopPropagation(); triggerUploadCover('${song.id}')"></div>
+                <div class="music-song-info">
+                    <div class="music-song-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongTitle('${song.id}', this.innerText)">${song.title}</div>
+                    <div class="music-song-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist || '未知歌手'}</div>
                 </div>
-                <div class="music-item-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist}</div>
             `;
-            container.appendChild(div);
-        }
-
-        // 2. 若歌曲不足三个，补齐三个灰色占位框
-        if (musicList.length < 3) {
-            const placeholders = safeParseJSON(localStorage.getItem('music_placeholders'), ['待添加', '待添加', '待添加']);
-            for (let i = musicList.length; i < 3; i++) {
-                const title = placeholders[i] || '待添加';
-                const div = document.createElement('div');
-                div.className = 'music-item';
-                div.innerHTML = `
-                    <div class="music-item-cover" style="background-color: #e5e5ea;" onclick="uploadCoverForEmptySlot(${i})"></div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
-                        <div class="music-item-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="savePlaceholderTitle(${i}, this.innerText)">${title}</div>
-                        <div class="music-item-more" onclick="event.stopPropagation();">...</div>
-                    </div>
-                `;
-                container.appendChild(div);
-            }
+            songContainer.appendChild(div);
         }
     }
 
-    function savePlaceholderTitle(index, text) {
-        let placeholders = safeParseJSON(localStorage.getItem('music_placeholders'), ['待添加', '待添加', '待添加']);
-        placeholders[index] = text.trim() || '待添加';
-        localStorage.setItem('music_placeholders', JSON.stringify(placeholders));
+    function saveDecorationTitle(index, text) {
+        musicDecorations[index].text = text.trim() || '待添加';
+        localStorage.setItem('music_decorations', JSON.stringify(musicDecorations));
     }
 
-    function uploadCoverForEmptySlot(index) {
-        currentUploadingSlotIndex = index;
-        document.getElementById('music-cover-upload').click();
+    function uploadCoverForDecoration(index) {
+        currentUploadingDecoIndex = index;
+        document.getElementById('music-decoration-upload').click();
     }
+
+    document.getElementById('music-decoration-upload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if(!file || currentUploadingDecoIndex === -1) return;
+        
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const d = musicDecorations[currentUploadingDecoIndex];
+            await saveImageToDB(`music_deco_${d.id}`, event.target.result);
+            currentUploadingDecoIndex = -1;
+            renderMusicAppData();
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+    });
 
     function triggerUploadCover(songId) {
-        currentUploadingSlotIndex = -1;
         document.getElementById('music-cover-upload').dataset.songId = songId;
         document.getElementById('music-cover-upload').click();
     }
 
     document.getElementById('music-cover-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
-        if(!file) return;
-        
+        const songId = this.dataset.songId;
+        if(!file || !songId) return;
         const reader = new FileReader();
-        
-        if (currentUploadingSlotIndex > -1) {
-            // 为占位符创建新歌曲并上传图片
-            const songId = 'song_' + Date.now();
-            const titleEl = document.querySelectorAll('.music-item-title')[currentUploadingSlotIndex];
-            const title = titleEl ? titleEl.innerText : '待添加';
-            
-            const newSong = { id: songId, title: title, artist: '', lyrics: [] };
-            musicList.push(newSong);
-            localStorage.setItem('music_list', JSON.stringify(musicList));
-            
-            reader.onload = async function(event) {
-                await saveImageToDB(`music_cover_${songId}`, event.target.result);
-                currentUploadingSlotIndex = -1;
-                renderMusicList();
-            };
-        } else {
-            // 更换已有歌曲封面
-            const songId = this.dataset.songId;
-            if (!songId) return;
-            reader.onload = async function(event) {
-                await saveImageToDB(`music_cover_${songId}`, event.target.result);
-                await renderMusicList();
-                if (currentPlayingSongId === songId) {
-                    document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
-                }
-            };
-        }
-        
+        reader.onload = async function(event) {
+            await saveImageToDB(`music_cover_${songId}`, event.target.result);
+            await renderMusicAppData();
+            if (currentPlayingSongId === songId) {
+                document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
+            }
+        };
         reader.readAsDataURL(file);
         this.value = '';
     });
@@ -1901,7 +1918,7 @@
         if (currentPlayingSongId === songId) {
             document.getElementById('playing-title').innerText = newTitle;
         }
-        renderMusicList();
+        renderMusicAppData();
     }
 
     function saveSongArtist(songId, newArtist) {
@@ -1911,23 +1928,7 @@
         if (currentPlayingSongId === songId) {
             document.getElementById('playing-artist').innerText = newArtist;
         }
-        renderMusicList();
-    }
-
-    function showSongMenu(songId) {
-        const song = musicList.find(s => s.id === songId);
-        if(!song) return;
-        const action = prompt("操作（输入 1 删除该歌曲，输入 0 取消）：", "0");
-        if(action === '1') {
-            musicList = musicList.filter(s => s.id !== songId);
-            localStorage.setItem('music_list', JSON.stringify(musicList));
-            renderMusicList();
-            if(currentPlayingSongId === songId) {
-                if(currentAudio) { currentAudio.pause(); currentAudio = null; }
-                document.getElementById('music-playing-screen').classList.remove('active');
-                currentPlayingSongId = null;
-            }
-        }
+        renderMusicAppData();
     }
 
     // 上传 MP3
@@ -1940,12 +1941,12 @@
         const newSong = {
             id: songId,
             title: file.name.replace(/\.[^/.]+$/, ""),
-            artist: 'May 18 - May 25', // 仿照图二的初始日期
+            artist: 'May 18 - May 25', // 仿照图三的默认歌手样式
             lyrics: []
         };
         musicList.push(newSong);
         localStorage.setItem('music_list', JSON.stringify(musicList));
-        renderMusicList();
+        renderMusicAppData();
         alert("MP3 上传成功，已加入列表！");
         this.value = '';
     });
@@ -1986,7 +1987,6 @@
         const file = e.target.files[0];
         if(!file) return;
         if (musicList.length === 0) { alert("请先上传MP3创建歌曲！"); this.value=''; return; }
-        const targetId = currentPlayingSongId || musicList[musicList.length-1].id;
         
         const reader = new FileReader();
         reader.onload = function(event) {
@@ -2080,7 +2080,7 @@
             await saveImageToDB(`music_cover_${currentPlayingSongId}`, event.target.result);
             document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
             document.getElementById('playing-cover').innerText = '';
-            renderMusicList();
+            renderMusicAppData();
         };
         reader.readAsDataURL(file);
         this.value = '';
@@ -2090,14 +2090,14 @@
         val = val.trim() || '未命名歌曲';
         document.getElementById('playing-title').innerText = val;
         const song = musicList.find(s => s.id === currentPlayingSongId);
-        if(song) { song.title = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicList(); }
+        if(song) { song.title = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); }
     }
 
     function savePlayingSongArtist(val) {
         val = val.trim() || '未知歌手';
         document.getElementById('playing-artist').innerText = val;
         const song = musicList.find(s => s.id === currentPlayingSongId);
-        if(song) { song.artist = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicList(); }
+        if(song) { song.artist = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); }
     }
 
     document.getElementById('music-play-btn').addEventListener('click', () => {
