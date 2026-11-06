@@ -229,7 +229,7 @@
     .modal-btn.confirm { background-color: var(--blue); color: white; font-weight: 600; }
 
     /* 隐藏的文件输入 */
-    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-css-upload, #offline-style-upload, #offline-worldbook-upload { display: none; }
+    #file-upload, #import-file, #xy-file-upload, #ce-avatar-upload, #ce-docx-upload, #blog-avatar-upload, #user-avatar-upload, #user-docx-upload, #chat-char-avatar-upload, #chat-user-avatar-upload, #chat-bg-upload, #offline-bg-upload, #offline-style-upload, #offline-worldbook-upload { display: none; }
 
     /* ==================================================== */
     /* 🌟 聊天界面样式 */
@@ -434,15 +434,16 @@
     /* 自定义文风 CSS 输入框样式 */
     .custom-css-input {
         width: 100%;
-        height: 120px;
+        height: 200px;
         border: 1px solid var(--border-color);
         border-radius: 12px;
         padding: 12px;
-        font-size: 14px;
+        font-size: 13px;
         font-family: monospace;
         outline: none;
         resize: none;
         background-color: #f9f9f9;
+        line-height: 1.5;
     }
 </style>
 </head>
@@ -623,21 +624,18 @@
             <div class="chat-detail-item" onclick="document.getElementById('offline-bg-upload').click()">
                 <span>上传线下背景图</span>
             </div>
-            <div class="chat-detail-item" onclick="document.getElementById('offline-css-upload').click()">
-                <span>上传线下美化CSS</span>
-            </div>
             <div class="chat-detail-item" onclick="openOfflineCharSelectModal()">
                 <span>选择 Char 开启线下</span>
             </div>
         </div>
 
-        <!-- 美化 CSS 代码编辑区 -->
+        <!-- 美化 CSS 代码编辑区 (已移除上传按钮，直接提供代码) -->
         <div class="ce-card" style="padding: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <span style="font-size: 16px; font-weight: 600;">美化 CSS 代码</span>
                 <button onclick="saveOfflineCSS()" style="background: #007aff; color: #fff; border: none; padding: 4px 12px; border-radius: 12px; font-size: 13px; cursor: pointer;">保存 CSS</button>
             </div>
-            <textarea class="custom-css-input" id="offline-css-textarea" placeholder="在此输入自定义 CSS 代码，例如：&#10;.dashboard-top-nav { background-color: #333; color: #fff; }"></textarea>
+            <textarea class="custom-css-input" id="offline-css-textarea" placeholder="在此输入自定义 CSS 代码..."></textarea>
         </div>
 
         <!-- 第二模块：文风设置 -->
@@ -917,7 +915,6 @@
 <input type="file" id="chat-bg-upload" accept="image/*">
 <!-- 线下界面专用的文件上传 -->
 <input type="file" id="offline-bg-upload" accept="image/*">
-<input type="file" id="offline-css-upload" accept=".css,text/css">
 <input type="file" id="offline-style-upload" accept=".txt,.json,.docx">
 <input type="file" id="offline-worldbook-upload" accept=".txt,.json,.docx">
 
@@ -1116,6 +1113,41 @@
     // 🌟 2.6. Contact 线下界面逻辑
     // ==========================================
     let currentOfflineCharId = null;
+    const DEFAULT_CSS = `/* 顶栏卡片样式 */
+.dashboard-top-nav {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 15px 20px;
+    margin: 15px 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 左侧文字颜色和大小 */
+.dashboard-nav-left {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+/* 右侧图标样式 */
+.dashboard-icon-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: #333;
+    stroke-width: 2;
+}
+
+/* 底部输入框背景 */
+.offline-input-bar {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 6px 12px;
+    margin: 10px 20px 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}`;
 
     function openContactOffline() {
         openScreen('contact-offline-screen');
@@ -1126,15 +1158,20 @@
             else document.getElementById('contact-offline-screen').style.backgroundImage = 'none';
         });
 
-        // 加载保存的CSS
-        const savedCss = localStorage.getItem('offline_custom_css') || '';
+        // 加载保存的CSS (如果没有保存过，就显示默认CSS)
+        const savedCss = localStorage.getItem('offline_custom_css');
+        let cssToUse = savedCss || DEFAULT_CSS;
+        
         let styleEl = document.getElementById('offline-custom-style');
         if(!styleEl) {
             styleEl = document.createElement('style');
             styleEl.id = 'offline-custom-style';
             document.head.appendChild(styleEl);
         }
-        styleEl.innerHTML = savedCss;
+        styleEl.innerHTML = cssToUse;
+
+        // 把CSS放回编辑框
+        document.getElementById('offline-css-textarea').value = cssToUse;
 
         // 更新顶栏绑定的角色名字
         const savedCharId = localStorage.getItem('offline_bound_char_id');
@@ -1148,8 +1185,6 @@
 
         // 加载文风到文本框
         document.getElementById('offline-style-textarea').value = localStorage.getItem('offline_style') || '';
-        // 加载CSS到代码框
-        document.getElementById('offline-css-textarea').value = savedCss;
 
         // 渲染线下内容
         renderOfflineContent();
@@ -1176,30 +1211,9 @@
         this.value = '';
     });
 
-    // 上传线下 CSS 文件
-    document.getElementById('offline-css-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const cssContent = event.target.result;
-                document.getElementById('offline-css-textarea').value = cssContent;
-                applyAndSaveCSS(cssContent);
-                alert("美化 CSS 文件已读取并应用！");
-            };
-            reader.readAsText(file);
-        }
-        this.value = '';
-    });
-
     // 从文本框保存 CSS
     function saveOfflineCSS() {
         const cssContent = document.getElementById('offline-css-textarea').value;
-        applyAndSaveCSS(cssContent);
-        alert("自定义 CSS 已保存并生效！");
-    }
-
-    function applyAndSaveCSS(cssContent) {
         localStorage.setItem('offline_custom_css', cssContent);
         let styleEl = document.getElementById('offline-custom-style');
         if(!styleEl) {
@@ -1208,6 +1222,7 @@
             document.head.appendChild(styleEl);
         }
         styleEl.innerHTML = cssContent;
+        alert("自定义 CSS 已保存并生效！");
     }
 
     // 🌟 弹窗：选择 Char 开启线下
@@ -1227,7 +1242,6 @@
                     const displayName = c.remark || c.name || '未命名';
                     const div = document.createElement('div');
                     div.className = `modal-item ${currentOfflineCharId === c.id ? 'selected' : ''}`;
-                    // 因为头像是异步获取的，先放文字，后面通过 Promise 替换
                     div.innerHTML = `
                         <div style="display:flex; align-items:center; gap:10px;">
                             <div class="cl-avatar" id="offline-char-avatar-${c.id}" style="width:36px; height:36px; font-size:16px; margin-right:0;"></div>
