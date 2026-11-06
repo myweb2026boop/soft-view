@@ -2,7 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- 强制全屏必备 Meta 标签 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>App</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
@@ -24,14 +28,16 @@
     
     input[type="file"] { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
 
-    body {
-        margin: 0; padding: 20px 12px;
+    html, body {
+        margin: 0; padding: 0;
+        width: 100vw; height: 100vh;
+        overflow: hidden; /* 防止底部出现额外的滚动 */
         background-color: var(--bg-color); background-image: none; background-size: cover; background-position: center; background-attachment: fixed;
         font-family: var(--global-font);
-        color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: background-image 0.3s ease;
+        color: var(--text-main); display: flex; justify-content: center; transition: background-image 0.3s ease;
     }
 
-    .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; }
+    .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; padding: 20px 12px; overflow-y: auto; }
     .widget-row { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; margin-bottom: 20px; padding: 0 10px; }
     .widget-item { display: flex; flex-direction: column; align-items: center; }
     .widget-box { width: 80px; height: 80px; background-color: var(--placeholder-bg); border-radius: 16px; cursor: pointer; background-size: cover; background-position: center; flex-shrink: 0; }
@@ -82,7 +88,7 @@
     .pill-btn svg { fill: #000000; }
 
     /* 🌟 图1 黑色卡片 */
-    .custom-black-card { background: #000; border-radius: 24px; margin: 10px; padding: 20px; display: flex; flex-direction: column; gap: 20px; position: relative; }
+    .custom-black-card { background: #000; border-radius: 24px; margin: 10px 0; padding: 20px; display: flex; flex-direction: column; gap: 20px; position: relative; }
     .cbc-top { display: flex; align-items: center; gap: 20px; }
     .cbc-icon { width: 70px; height: 70px; background: #999; border-radius: 20px; cursor: pointer; background-size: cover; background-position: center; flex-shrink: 0; }
     .cbc-title { color: #fff; font-size: 22px; font-weight: 500; outline: none; }
@@ -121,7 +127,7 @@
     .xy-msg-time { font-size: 13px; color: #8e8e93; }
     .pin-badge { background-color: #e5e5ea; color: #666; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: normal; }
 
-    #blog-screen { background-color: #ffffff; z-index: 2000; padding: 15px 20px 0 20px; color: #1c1c1e; }
+    #blog-screen { background-color: #ffffff; z-index: 2000; padding: 15px 20px 0 20px; color: #1c1c1e; overflow-y: auto; }
     .blog-header { display: flex; justify-content: space-between; align-items: center; padding-top: 0px; }
     .blog-header svg { width: 28px; height: 28px; stroke: #1c1c1e; stroke-width: 2; fill: none; cursor: pointer; }
     .blog-header .bell-icon { position: relative; cursor: pointer; z-index: 10; }
@@ -137,7 +143,7 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 图9 便利贴 */
+    /* 🌟 图8 便利贴 */
     .sticky-note { background: #fef9c3; border-radius: 8px; padding: 15px; margin: 0 20px 20px; box-shadow: 2px 4px 10px rgba(0,0,0,0.05); position: relative; }
     .sticky-note::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 40px; height: 20px; background: rgba(0,0,0,0.1); border-radius: 4px; }
     .sticky-note h4 { margin: 0 0 10px; font-size: 14px; color: #333; }
@@ -258,7 +264,7 @@
     .chat-input-field::placeholder { color: #aaa; }
 
     /* 🌟 扩展面板 */
-    #chat-extend-panel { position: fixed; bottom: 0; left: 0; width: 100vw; background: #f7f7f7; display: none; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; border-radius: 20px 20px 0 0; z-index: 15; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+    #chat-extend-panel { position: fixed; bottom: 0; left: 0; width: 100vw; background: #f7f7f7; display: none; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px 20px 40px 20px; border-radius: 20px 20px 0 0; z-index: 15; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
     #chat-extend-panel.active { display: grid; }
     .extend-item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: #666; cursor: pointer; }
     .extend-icon { width: 50px; height: 50px; background: #fff; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -289,7 +295,7 @@
     .call-invite-btn.reject { background: #000; color: #fff; }
     .call-invite-btn.accept { background: #000; color: #fff; }
 
-    /* 🌟 图6 通话界面 (去黑框版) */
+    /* 🌟 图6 通话界面 */
     #call-screen { background-color: #ffffff; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; }
     #call-screen.active { display: flex; }
     .call-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; }
@@ -332,7 +338,8 @@
     .pay-bottom { padding: 10px 15px; background: rgba(0,0,0,0.05); font-size: 12px; opacity: 0.8; }
     
     /* 图2 API 界面 */
-    #api-screen { background: #e5e5ea; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+    #api-screen { background: #e5e5ea; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow-y: auto; display: none; flex-direction: column; align-items: center; }
+    #api-screen.active { display: flex; }
     .api-login-card { width: 100%; max-width: 400px; min-height: 100vh; background: #fff; display: flex; flex-direction: column; position: relative; }
     .api-header { background: #1c1c1e; padding: 50px 20px 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; position: relative; }
     .api-back { position: absolute; left: 20px; bottom: 25px; color: #fff; font-size: 15px; cursor: pointer; z-index: 10; }
@@ -665,7 +672,7 @@
             <div class="blog-stat-item"><div class="blog-stat-num xy-editable" data-key="blog_following">0</div><div class="blog-stat-label">Following</div></div>
         </div>
     </div>
-    <!-- 需求9: 便利贴美化 -->
+    <!-- 需求8: 便利贴美化 -->
     <div class="sticky-note">
         <h4>聊天界面美化代码 (CSS)</h4>
         <textarea id="beautify-code-editor" placeholder="在此修改聊天界面的CSS代码..."></textarea>
@@ -900,7 +907,7 @@
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
-            <!-- 需求9 美化入口 -->
+            <!-- 需求8 美化入口 -->
             <div class="chat-detail-item" onclick="openChatBeautifySelectModal()"><span>专属美化</span><span id="chat-beautify-status" style="font-size:12px; color:#999;"></span></div>
             <div class="chat-detail-item" onclick="togglePinChat()"><span>置顶聊天</span><div class="chat-detail-switch" id="pin-switch"></div></div>
             <div class="chat-detail-item" onclick="toggleChatSearch()"><span>搜索聊天记录</span></div>
@@ -1286,8 +1293,12 @@
     function updateLiveTime() { const now = new Date(); const hours = String(now.getHours()).padStart(2, '0'); const minutes = String(now.getMinutes()).padStart(2, '0'); document.getElementById('live-time').innerText = `${hours}:${minutes}`; }
     setInterval(updateLiveTime, 1000); updateLiveTime();
 
-    function openScreen(id) { document.getElementById(id).classList.add('active'); }
-    function closeScreen(id) { document.getElementById(id).classList.remove('active'); }
+    function openScreen(id) { 
+        document.getElementById(id).classList.add('active'); 
+    }
+    function closeScreen(id) { 
+        document.getElementById(id).classList.remove('active'); 
+    }
     function openManager() { openScreen('manager-screen'); }
     function openXunyan() { renderXunyanMessages(); openScreen('xunyan-screen'); }
     function openContactList() { renderContactList(); openScreen('contact-list-screen'); }
@@ -1313,7 +1324,7 @@
         }
         document.getElementById('home-dock-1').style.backgroundColor = '#e5e5ea';
 
-        // 需求1: 加载自定义卡片
+        // 加载自定义卡片
         const customIcon = await getImageFromDB('custom_app_icon');
         if(customIcon) document.getElementById('custom-app-icon').style.backgroundImage = `url(${customIcon})`;
         const customTitle = localStorage.getItem('custom_app_title');
@@ -1574,7 +1585,7 @@
             const div = document.createElement('div');
             div.className = 'sticker-pack-item';
             div.onclick = () => openStickerPackDetail(pack.id);
-            // 需求4: 双击修改表情包名字
+            // 双击修改表情包名字
             div.innerHTML = `
                 <div class="sticker-pack-info">
                     <div class="sticker-pack-name" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; updateStickerPackName('${pack.id}', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">${pack.name}</div>
@@ -1831,7 +1842,7 @@
         await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image);
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
+            history.push({ text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now(), type: 'text' });
             localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
         }
     }
@@ -2190,7 +2201,7 @@
             document.getElementById('music-time-current').innerText = '00:00';
             document.getElementById('music-time-total').innerText = '00:00';
         } else {
-            // 需求10: 继续正常播放，不重新加载
+            // 继续正常播放，不重新加载
             if (currentAudio) {
                 updateMusicProgress();
                 if(!currentAudio.paused) {
@@ -2258,7 +2269,7 @@
         }
     });
 
-    // 需求10: 进度条手动拉
+    // 进度条手动拉
     function handleSeekStart(e) {
         if (!currentAudio || isNaN(currentAudio.duration)) return;
         isSeeking = true;
@@ -2382,7 +2393,7 @@
         }
     }
 
-    // 需求2: API界面逻辑
+    // API界面逻辑
     function openApiScreen() {
         openScreen('api-screen');
         const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), { url: '', key: '', model: '', temp: 0.7 });
@@ -2428,7 +2439,6 @@
         const key = document.getElementById('api-key').value.trim();
         if (!url || !key) { alert("请填写 API URL 和 Key"); return; }
         try {
-            // 修复请求失败问题：增加错误捕获和兼容性
             const res = await fetch(`${url}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
             if (!res.ok) throw new Error(`HTTP ${res.status} - 可能是不支持跨域或密钥错误`);
             const data = await res.json();
@@ -2890,7 +2900,7 @@
     function openBlog() { 
         renderBlogPage(); 
         openScreen('blog-screen'); 
-        // 需求9: 初始化便利贴
+        // 初始化便利贴
         initBeautifyEditor();
     }
     document.getElementById('blog-avatar-upload').addEventListener('change', function(e) {
@@ -2964,7 +2974,7 @@
     }
     function openUserRelationModal() { openRelationModalBase('user'); }
 
-    // 需求9: 聊天美化逻辑
+    // 聊天美化逻辑
     const DEFAULT_CHAT_CSS = `/* 默认聊天样式，可在此修改 */`;
     function initBeautifyEditor() {
         const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
@@ -3398,7 +3408,7 @@
     let callHistory = [];
     let callInviteModal = document.getElementById('call-invite-modal');
     
-    function startCall(initiator) {
+    async function startCall(initiator) {
         if(!currentChatCharId) return;
         toggleExtendPanel();
         const char = contacts.find(c => c.id === currentChatCharId);
@@ -3406,29 +3416,13 @@
         const inviteId = 'call_' + Date.now();
         
         if(initiator === 'user') {
-            // 模拟对方随机接听或拒绝
             const isAccepted = Math.random() > 0.3;
             if(isAccepted) {
-                document.getElementById('call-invite-name').innerText = charName;
-                document.getElementById('call-invite-modal').classList.add('active');
-                // 这里逻辑应该是等待对方接听，我们为了简便，直接显示弹窗供用户自己点（模拟对方视角）
-                // 实际上如果是用户发起，这里应该是等待对方响应，但因为没有后端，我们假设对方秒接，直接进入通话
-                // 为了体验，我们反向弹窗：如果是用户发起，直接进入通话界面，或者弹出一个“等待对方接听”然后自动进入。
-                // 根据需求：“如果char拒绝了，聊天界面会出现提示”。我们让用户点发起后，弹出一个模拟接听的弹窗（角色视角）。
-                // 用户点接听则进入通话，点拒绝则显示拒绝。
-                // 其实需求是：用户发起，char接听/拒绝；char发起，用户接听/拒绝。
-                // 为了不弄太复杂，点击“通话”直接打开图5的弹窗（假装是对方打过来的，或者是我们打给对方的确认框）。
-                // 按照图5，这是一个来电界面。我们设定：用户点击通话，聊天框出现“你发起了通话”，然后弹窗显示给对方，用户自己点接听（模拟打通）。
-                // 真正的实现：
-                // 用户发起：聊天记录添加“发起了通话”。弹窗显示（这里如果是单机，自己弹自己）。
-                // 更好的单机模拟：用户点击发起，聊天记录出现卡片“发起了通话邀请”，随机时间后变为“对方已接听”并进入通话界面，或者“对方已拒绝”。
-                // 这里为了遵循用户的要求“发起通话与同意或拒绝的按钮的ui完全仿照图5”，我们直接调起图5弹窗。
-                
                 document.getElementById('call-invite-avatar').style.backgroundImage = char ? `url(${await getImageFromDB(`contact_avatar_${char.id}`)})` : 'none';
                 document.getElementById('call-invite-name').innerText = charName;
                 document.getElementById('call-invite-modal').classList.add('active');
                 document.getElementById('call-invite-modal').dataset.charId = currentChatCharId;
-                document.getElementById('call-invite-modal').dataset.initiator = 'char'; // 模拟为对方发起
+                document.getElementById('call-invite-modal').dataset.initiator = 'char'; 
             } else {
                 addSystemMessage(`对方已拒绝您的通话申请`);
             }
@@ -3486,7 +3480,6 @@
         callHistory.push({ role: 'user', content: text });
         appendCallMsg(text, true);
         
-        // 简单回复
         const char = contacts.find(c => c.id === currentChatCharId);
         const reply = "我听到了，你继续说。";
         setTimeout(() => {
@@ -3508,7 +3501,6 @@
         const container = document.getElementById('call-chat-container');
         container.innerHTML += `<div style="text-align:center; font-size:12px; color:#999; margin:10px 0;">通话已结束</div>`;
         
-        // 需求5: 总结通话内容
         if(callHistory.length > 0) {
             addSystemMessage('通话已结束');
             const configStr = localStorage.getItem('settings_api_config');
@@ -3655,13 +3647,12 @@
     }
 
     function handlePayCardClick(id, type, isSelf) {
-        if(isSelf) return; // 只能点击对方发来的
+        if(isSelf) return; 
         const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
         const msg = history.find(m => m.type === type && m.data && m.data.id === id);
         if(!msg || msg.data.status !== 'pending') return;
         
         if(type === 'gift') {
-            // 收下礼物需填地址
             document.getElementById('gift-address-input').value = '';
             document.getElementById('gift-address-modal').classList.add('active');
             document.getElementById('gift-address-modal').dataset.giftId = id;
@@ -3697,7 +3688,7 @@
         const pinSwitch = document.getElementById('pin-switch');
         if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on'); else pinSwitch.classList.remove('on');
         loadDetailAvatars(); document.getElementById('chat-detail-modal').classList.add('active');
-        applyChatBeautify(); // 更新状态显示
+        applyChatBeautify(); 
     }
     function closeChatDetailModal() { document.getElementById('chat-detail-modal').classList.remove('active'); }
 
@@ -3726,7 +3717,7 @@
         localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds)); renderXunyanMessages();
     }
 
-    // 需求3: 修复聊天搜索
+    // 修复聊天搜索
     function toggleChatSearch() {
         const searchBar = document.getElementById('chat-search-bar');
         const isHidden = searchBar.style.display === 'none' || !searchBar.style.display;
@@ -3807,7 +3798,6 @@
         
         let systemPrompt = localStorage.getItem('global_system_prompt') || "你是一个真实的聊天对象。";
         
-        // 读取记忆
         const charMemories = safeParseJSON(localStorage.getItem(`char_memory_${char.id}`), []);
         if(charMemories.length > 0) {
             systemPrompt += `\n【你的记忆（包括之前的通话总结等）】\n${charMemories.join('\n')}\n`;
@@ -3844,10 +3834,8 @@
         
         recentHistory.forEach(msg => {
             if(msg.type === 'redpacket' || msg.type === 'transfer' || msg.type === 'gift' || msg.type === 'location' || msg.type === 'call_invite') {
-                // 系统消息跳过
+                // 跳过系统消息
             } else if (msg.image) {
-                 // 处理图片识图 (如果 API 支持)
-                 // 简单格式组装 (OpenAI Vision 格式)
                  if (config.model.includes('vision') || config.model.includes('gpt-4')) {
                      messages.push({ 
                          role: msg.isSelf ? "user" : "assistant", 
@@ -3894,8 +3882,6 @@
         callHistory.push({ role: 'user', content: text });
         appendCallMsg(text, true);
         
-        // 简单的API调用用于通话回复，这里为了简化，只做本地模拟回复
-        // 如果要连API，逻辑同 triggerCharReply
         setTimeout(() => {
             const reply = "嗯，我在听。";
             callHistory.push({ role: 'assistant', content: reply });
