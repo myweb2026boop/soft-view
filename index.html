@@ -70,9 +70,92 @@
     .manager-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 0 10px; }
     .manager-grid.dock-grid { display: flex; justify-content: flex-start; gap: 30px; }
     .manager-grid.dock-grid .dock-icon { background-color: var(--placeholder-bg); }
-    .settings-group { margin-top: 20px; padding: 0 10px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
-    .setting-btn { background-color: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 15px; color: var(--text-main); text-align: center; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .setting-btn.danger { color: var(--red); border-color: #ffd6d6; }
+    
+    /* 🌟 修改后的美化与设置区块 */
+    .settings-group { 
+        margin-top: 10px; 
+        padding: 0 10px; 
+        display: flex; 
+        flex-direction: row; /* 横向排列 */
+        gap: 15px; 
+        margin-bottom: 40px; 
+        align-items: flex-start;
+    }
+
+    /* 🌟 图2风格 壁纸卡片 */
+    .wallpaper-card {
+        width: 130px;
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        flex-shrink: 0;
+    }
+    .wallpaper-preview {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background-color: #d1d1d6; /* 灰色方块 */
+        border-radius: 16px;
+        cursor: pointer;
+        background-size: cover;
+        background-position: center;
+        transition: opacity 0.2s;
+    }
+    .wallpaper-preview:active { opacity: 0.8; }
+    .wallpaper-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        margin: 12px 0;
+        text-align: center;
+        outline: none;
+        width: 100%;
+        word-break: break-all;
+    }
+    .wallpaper-clear-btn {
+        background-color: #000;
+        color: #fff;
+        border-radius: 20px;
+        padding: 8px 24px;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: 500;
+        border: none;
+        width: 100%;
+        text-align: center;
+    }
+    .wallpaper-clear-btn:active { opacity: 0.8; }
+
+    /* 右侧白色胶囊按钮组 */
+    .other-settings-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-grow: 1;
+    }
+    .pill-btn {
+        background: #ffffff;
+        border-radius: 30px; /* 胶囊形状 */
+        padding: 12px 16px;
+        font-size: 13px;
+        color: #000000; /* 字体变黑 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        border: none;
+        text-align: center;
+        width: 100%;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+    .pill-btn:active { background: #f0f0f0; }
+    .pill-btn svg { fill: #000000; } /* 图标也变黑 */
+
     [contenteditable="true"] { outline: none; background-color: rgba(0, 122, 255, 0.1); border-radius: 4px; cursor: text; }
 
     /* --- 讯言 App 界面样式 (首页) --- */
@@ -820,16 +903,24 @@
         <div class="app-item"><div class="dock-icon manager-upload-btn" id="mg-dock-2" data-target="d2"></div></div>
     </div>
     <div class="manager-section-title">美化与设置</div>
+    
+    <!-- 重构后的壁纸与设置布局 -->
     <div class="settings-group">
-        <button class="setting-btn" id="btn-change-wallpaper"><svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>更换桌面壁纸</button>
-        <!-- 全局字体上传入口 -->
-        <button class="setting-btn" onclick="document.getElementById('global-font-upload').click()" style="color:#007aff;">
-            <svg style="width:18px;height:18px;fill:#007aff;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>上传全局字体
-        </button>
-        <button class="setting-btn" id="btn-export"><svg style="width:18px;height:18px;fill:#34c759;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>导出桌面美化</button>
-        <button class="setting-btn" id="btn-import"><svg style="width:18px;height:18px;fill:#ff9500;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>导入桌面美化</button>
-        <button class="setting-btn danger" id="btn-reset-wallpaper"><svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>恢复默认桌面壁纸</button>
-        <button class="setting-btn danger" id="btn-reset-apps"><svg style="width:18px;height:18px;fill:#ff3b30;" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>恢复默认图标与名称</button>
+        <!-- 左侧壁纸卡片 (图2风格) -->
+        <div class="wallpaper-card">
+            <div class="wallpaper-preview" id="wallpaper-preview" onclick="triggerUploadWallpaper()"></div>
+            <div class="wallpaper-label" id="wallpaper-label" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveWallpaperLabel(this.innerText)">Choice</div>
+            <button class="wallpaper-clear-btn" onclick="resetWallpaper()">清除</button>
+        </div>
+        
+        <!-- 右侧白色胶囊按钮组 -->
+        <div class="other-settings-container">
+            <button class="pill-btn" onclick="document.getElementById('global-font-upload').click()">上传全局字体</button>
+            <button class="pill-btn" onclick="resetGlobalFont()">恢复默认字体</button>
+            <button class="pill-btn" onclick="exportGlobalData()">导出桌面美化</button>
+            <button class="pill-btn" onclick="document.getElementById('import-data-file').click()">导入桌面美化</button>
+            <button class="pill-btn" onclick="resetDefaultApps()">恢复默认图标与名称</button>
+        </div>
     </div>
 </div>
 
@@ -1643,7 +1734,12 @@
     document.querySelectorAll('.manager-upload-btn').forEach(btn => { btn.addEventListener('click', function() { currentUploadTarget = { type: 'app', id: this.dataset.target }; fileInput.click(); }); });
     function setupHomeImageUpload(elementId) { const el = document.getElementById(elementId); el.addEventListener('click', () => { currentUploadTarget = { type: 'other', id: elementId }; fileInput.click(); }); }
     setupHomeImageUpload('widget-img-1'); setupHomeImageUpload('widget-img-2'); setupHomeImageUpload('widget-img-3'); setupHomeImageUpload('avatar-img');
-    document.getElementById('btn-change-wallpaper').addEventListener('click', () => { currentUploadTarget = { type: 'wallpaper', id: 'wallpaper' }; fileInput.click(); });
+
+    // 新增：壁纸卡片上传逻辑
+    function triggerUploadWallpaper() {
+        currentUploadTarget = { type: 'wallpaper', id: 'wallpaper' };
+        fileInput.click();
+    }
 
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -1655,14 +1751,53 @@
                 else if (currentUploadTarget.type === 'wallpaper') dbKey = 'app_wallpaper';
                 else dbKey = `other_img_${currentUploadTarget.id}`;
                 await saveImageToDB(dbKey, base64Data);
+                
                 if (currentUploadTarget.type === 'app') await renderApps(); 
-                else if (currentUploadTarget.type === 'wallpaper') document.body.style.backgroundImage = `url(${base64Data})`;
+                else if (currentUploadTarget.type === 'wallpaper') {
+                    document.body.style.backgroundImage = `url(${base64Data})`;
+                    document.getElementById('wallpaper-preview').style.backgroundImage = `url(${base64Data})`;
+                }
                 else { const el = document.getElementById(currentUploadTarget.id); if (el) el.style.backgroundImage = `url(${base64Data})`; }
                 fileInput.value = '';
             };
             reader.readAsDataURL(file);
         }
     });
+
+    // 新增：壁纸清除与恢复逻辑
+    async function resetWallpaper() {
+        await deleteImageFromDB('app_wallpaper');
+        document.body.style.backgroundImage = 'none';
+        document.getElementById('wallpaper-preview').style.backgroundImage = 'none';
+        alert('已恢复默认壁纸');
+    }
+
+    // 新增：保存自定义壁纸文字
+    function saveWallpaperLabel(text) {
+        const label = text.trim() || 'Choice';
+        document.getElementById('wallpaper-label').innerText = label;
+        document.getElementById('wallpaper-label').contentEditable = 'false';
+        localStorage.setItem('wallpaper_custom_label', label);
+    }
+
+    // 新增：恢复默认字体
+    async function resetGlobalFont() {
+        await deleteImageFromDB('global_font_blob');
+        document.documentElement.style.setProperty('--global-font', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif');
+        alert('已恢复默认字体');
+    }
+
+    // 新增：恢复默认图标与名称
+    async function resetDefaultApps() {
+        if(confirm('确定要恢复默认图标与名称吗？')) {
+            for (const app of defaultApps) {
+                localStorage.removeItem(`app_name_${app.id}`);
+                await deleteImageFromDB(`app_img_${app.id}`);
+            }
+            await renderApps();
+            alert('已恢复默认图标与名称！');
+        }
+    }
 
     const xyFileInput = document.getElementById('xy-file-upload');
     document.getElementById('xy-avatar').addEventListener('click', () => xyFileInput.click());
@@ -3379,7 +3514,18 @@
         await applyGlobalFont(); // 初始化全局字体
         
         const wallpaperImg = await getImageFromDB('app_wallpaper');
-        if (wallpaperImg) document.body.style.backgroundImage = `url(${wallpaperImg})`;
+        if (wallpaperImg) {
+            document.body.style.backgroundImage = `url(${wallpaperImg})`;
+            const preview = document.getElementById('wallpaper-preview');
+            if(preview) preview.style.backgroundImage = `url(${wallpaperImg})`;
+        }
+
+        // 初始化壁纸自定义文字
+        const savedLabel = localStorage.getItem('wallpaper_custom_label');
+        if(savedLabel) {
+            const labelEl = document.getElementById('wallpaper-label');
+            if(labelEl) labelEl.innerText = savedLabel;
+        }
 
         const avatarImg = await getImageFromDB('other_img_avatar-img');
         if (avatarImg) document.getElementById('avatar-img').style.backgroundImage = `url(${avatarImg})`;
