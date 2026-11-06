@@ -459,7 +459,8 @@
     .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; border-radius: 24px; margin: 0 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow: hidden; }
     .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .music-card-title { font-size: 22px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
-    .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
+    .music-card-actions { display: flex; align-items: center; gap: 15px; }
+    .music-action-btn { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; background: none; border: none; padding: 0; }
     
     /* 横向滚动列表 */
     .music-list { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 10px; flex-grow: 1; align-items: flex-start; -webkit-overflow-scrolling: touch; }
@@ -470,10 +471,6 @@
     .music-item-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; flex: 1; line-height: 1.2; }
     .music-item-artist { font-size: 13px; color: #888; outline: none; margin-top: 4px; word-break: break-all; }
     .music-item-more { font-size: 20px; font-weight: 800; color: #000; line-height: 1; cursor: pointer; margin-left: 5px; position: relative; top: -2px; }
-
-    /* 底部胶囊操作栏 */
-    .music-floating-actions { padding: 10px 20px 30px; display: flex; gap: 15px; flex-shrink: 0; }
-    .music-pill-btn { flex: 1; background: #ffffff; border-radius: 30px; padding: 16px 10px; font-size: 15px; font-weight: 600; color: #000; text-align: center; border: none; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
     /* 播放界面 (图五) */
     #music-playing-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 10; display: none; flex-direction: column; padding: 20px; }
@@ -593,18 +590,16 @@
         <div class="music-card">
             <div class="music-card-header">
                 <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicMainTitle(this.innerText)">Upcoming Trips</div>
-                <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
+                <div class="music-card-actions">
+                    <button class="music-action-btn" onclick="document.getElementById('music-audio-upload').click()">+ MP3</button>
+                    <button class="music-action-btn" onclick="openPasteLyricsModal()">+ 歌词</button>
+                    <div class="music-action-btn" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
+                </div>
             </div>
             <div id="music-list-container" class="music-list">
                 <!-- 动态渲染歌曲列表或灰色占位框 -->
             </div>
         </div>
-    </div>
-    
-    <!-- 底部操作按钮 -->
-    <div class="music-floating-actions">
-        <button class="music-pill-btn" onclick="document.getElementById('music-audio-upload').click()">+ 上传 MP3</button>
-        <button class="music-pill-btn" onclick="openPasteLyricsModal()">粘贴/上传歌词</button>
     </div>
 
     <!-- 播放详情界面 (图五) -->
@@ -1162,8 +1157,13 @@
 <!-- 弹窗：粘贴歌词 (用于纯文本复制) -->
 <div class="modal-overlay" id="paste-lyrics-modal">
     <div class="modal-content">
-        <div class="modal-title">粘贴歌词文本</div>
-        <div class="modal-input-group"><textarea id="paste-lyrics-input" placeholder="在此粘贴歌词内容，每一行作为一句显示。"></textarea></div>
+        <div class="modal-title">粘贴/上传歌词文本</div>
+        <div class="modal-input-group">
+            <textarea id="paste-lyrics-input" placeholder="在此粘贴歌词内容，或点击下方按钮上传文件..."></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+                <button class="ins-btn-text" onclick="document.getElementById('music-lyrics-upload').click()">上传歌词文件</button>
+            </div>
+        </div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closePasteLyricsModal()">取消</button>
             <button class="modal-btn confirm" onclick="savePastedLyrics()">保存</button>
@@ -1764,7 +1764,7 @@
         const savedTitle = localStorage.getItem('music_main_title');
         if(savedTitle) document.querySelector('.music-card-title').innerText = savedTitle;
         const savedViewAll = localStorage.getItem('music_view_all');
-        if(savedViewAll) document.querySelector('.music-card-viewall').innerText = savedViewAll;
+        if(savedViewAll) document.querySelector('[onblur="saveMusicViewAll(this.innerText)"]').innerText = savedViewAll;
 
         await renderMusicList();
     }
@@ -1776,7 +1776,7 @@
     }
     function saveMusicViewAll(val) {
         val = val.trim() || 'View all';
-        document.querySelector('.music-card-viewall').innerText = val;
+        document.querySelector('[onblur="saveMusicViewAll(this.innerText)"]').innerText = val;
         localStorage.setItem('music_view_all', val);
     }
     function saveMusicPlayingTitle(val) {
@@ -1818,9 +1818,8 @@
                     <div class="music-item-cover" style="background-color: #e5e5ea;"></div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; width: 100%;">
                         <div class="music-item-title">待添加</div>
-                        <div class="music-item-more">...</div>
+                        <div class="music-item-more" onclick="event.stopPropagation();">...</div>
                     </div>
-                    <div class="music-item-artist">点击上传</div>
                 `;
                 container.appendChild(div);
             }
@@ -1909,7 +1908,13 @@
         if (musicList.length === 0) { alert("请先上传MP3创建歌曲！"); return; }
         const targetId = currentPlayingSongId || musicList[musicList.length-1].id;
         document.getElementById('paste-lyrics-modal').dataset.songId = targetId;
-        document.getElementById('paste-lyrics-input').value = '';
+        // 加载已有歌词用于编辑
+        const song = musicList.find(s => s.id === targetId);
+        if(song && song.lyrics && song.lyrics.length > 0) {
+            document.getElementById('paste-lyrics-input').value = song.lyrics.map(l => l.text).join('\n');
+        } else {
+            document.getElementById('paste-lyrics-input').value = '';
+        }
         document.getElementById('paste-lyrics-modal').classList.add('active');
     }
     function closePasteLyricsModal() { document.getElementById('paste-lyrics-modal').classList.remove('active'); }
@@ -1939,13 +1944,8 @@
         const reader = new FileReader();
         reader.onload = function(event) {
             const text = event.target.result;
-            const song = musicList.find(s => s.id === targetId);
-            if(song) {
-                song.lyrics = parseLyrics(text);
-                localStorage.setItem('music_list', JSON.stringify(musicList));
-                if(currentPlayingSongId === targetId) renderLyrics(song.lyrics);
-                alert("歌词文件导入成功！");
-            }
+            document.getElementById('paste-lyrics-input').value = text; // 自动填入输入框，供用户查看修改
+            alert("歌词文件读取成功！请点击保存。");
         };
         reader.readAsText(file);
         this.value = '';
