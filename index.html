@@ -241,7 +241,10 @@
     .chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
     .chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
     
+    /* 表情包图片样式（去掉原有气泡的 padding 限制） */
+    .chat-msg-content img.sticker-img { max-width: 150px; max-height: 150px; border-radius: 8px; display: block; object-fit: contain; }
     .chat-bubble img.sticker-img { max-width: 100px; max-height: 100px; border-radius: 8px; display: block; object-fit: contain; }
+    
     .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; }
 
     /* 底部输入框 */
@@ -392,7 +395,6 @@
     .sticker-pack-list { padding: 20px; }
     .sticker-pack-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; }
     .sticker-pack-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; }
-    /* 彻底修复名称截断问题 */
     .sticker-pack-name { font-size: 16px; font-weight: 600; color: #333; word-break: break-all; white-space: normal; line-height: 1.4; padding-right: 10px; }
     .sticker-pack-count { font-size: 13px; color: #999; }
     .sticker-pack-delete { background: #feeceb; color: #e74c3c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-shrink: 0; }
@@ -419,7 +421,6 @@
     .sticker-tab { padding: 6px 12px; background: #f2f2f7; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
     .sticker-tab.active { background: var(--blue); color: #fff; }
 
-    /* 核心修复：使用 Grid 保证每行严格对齐，不产生多余空隙 */
     .sticker-panel-content { 
         flex-grow: 1; 
         overflow-y: auto; 
@@ -434,30 +435,32 @@
     #sticker-bind-modal { z-index: 6000 !important; }
 
     /* ==================================================== */
-    /* 🌟 全新音乐 App (图一/图四/图五完美融合) */
+    /* 🌟 全新音乐 App (完美仿图二) */
     /* ==================================================== */
-    #music-app-screen { background-color: #ffffff; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
+    #music-app-screen { background-color: #f2f2f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #music-app-screen.active { display: flex; }
     
-    /* 主界面完美复刻图2 */
-    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; background: #ffffff; }
-    .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; padding: 20px; }
-    .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
-    .music-card-title { font-size: 26px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
-    .music-card-viewall { font-size: 15px; font-weight: 600; color: #000; cursor: pointer; }
+    .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 0; overflow-y: auto; }
     
-    .music-list { overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
-    .music-item { display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
-    .music-item:last-child { border-bottom: none; }
-    .music-item-cover { width: 60px; height: 60px; border-radius: 12px; background: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; }
-    .music-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-    .music-item-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; }
-    .music-item-artist { font-size: 13px; color: #888; outline: none; word-break: break-all; }
-    .music-item-more { font-size: 20px; color: #888; padding: 10px; }
+    /* 图二白板卡片 */
+    .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; border-radius: 24px; margin: 0 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow: hidden; }
+    .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .music-card-title { font-size: 22px; font-weight: 700; color: #000; outline: none; }
+    .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
+    
+    /* 横向滚动列表 */
+    .music-list { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 10px; flex-grow: 1; align-items: flex-start; -webkit-overflow-scrolling: touch; }
+    .music-list::-webkit-scrollbar { display: none; }
+    
+    .music-item { display: flex; flex-direction: column; min-width: 130px; width: 130px; cursor: pointer; }
+    .music-item-cover { width: 100%; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; }
+    .music-item-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; flex: 1; line-height: 1.2; }
+    .music-item-artist { font-size: 13px; color: #888; outline: none; margin-top: 4px; word-break: break-all; }
+    .music-item-more { font-size: 18px; font-weight: bold; color: #000; line-height: 1; cursor: pointer; margin-left: 5px; }
 
     /* 底部胶囊操作栏 */
-    .music-floating-actions { padding: 10px 20px 30px; display: flex; gap: 15px; background: #ffffff; flex-shrink: 0; }
-    .music-pill-btn { flex: 1; background: #f5f5f7; border-radius: 30px; padding: 16px 10px; font-size: 15px; font-weight: 600; color: #000; text-align: center; border: none; cursor: pointer; }
+    .music-floating-actions { padding: 10px 20px 30px; display: flex; gap: 15px; flex-shrink: 0; }
+    .music-pill-btn { flex: 1; background: #ffffff; border-radius: 30px; padding: 16px 10px; font-size: 15px; font-weight: 600; color: #000; text-align: center; border: none; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
     /* 播放界面 (图五) */
     #music-playing-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 10; display: none; flex-direction: column; padding: 20px; }
@@ -566,14 +569,18 @@
     </div>
 </div>
 
-<!-- 🌟 全新音乐 App 结构 (完美仿图2) -->
+<!-- 🌟 全新音乐 App 结构 (完美仿图二，无黑框，含返回键) -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
+        <!-- 返回键 -->
+        <div style="padding: 0 20px; display: flex; align-items: center; margin-bottom: 10px;">
+            <svg onclick="closeScreen('music-app-screen')" style="width: 28px; height: 28px; stroke: #000; stroke-width: 2; fill: none; cursor: pointer;" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+        </div>
         <div class="music-card">
             <div class="music-card-header">
                 <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicMainTitle(this.innerText)">Upcoming Trips</div>
-                <div class="music-card-viewall">View all</div>
+                <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveMusicViewAll(this.innerText)">View all</div>
             </div>
             <div id="music-list-container" class="music-list">
                 <!-- 动态渲染歌曲列表 -->
@@ -1729,7 +1736,7 @@
     }
 
     // ==========================================
-    // 🌟 4. 全新音乐 App 逻辑
+    // 🌟 4. 全新音乐 App 逻辑 (横向仿图二)
     // ==========================================
     let musicList = safeParseJSON(localStorage.getItem('music_list'), []);
     let currentPlayingSongId = null;
@@ -1739,12 +1746,25 @@
     async function openMusicApp() {
         openScreen('music-app-screen');
         document.getElementById('music-playing-screen').classList.remove('active');
+        
+        // 加载保存的文字
+        const savedTitle = localStorage.getItem('music_main_title');
+        if(savedTitle) document.querySelector('.music-card-title').innerText = savedTitle;
+        const savedViewAll = localStorage.getItem('music_view_all');
+        if(savedViewAll) document.querySelector('.music-card-viewall').innerText = savedViewAll;
+
         await renderMusicList();
     }
 
     function saveMusicMainTitle(val) {
         val = val.trim() || 'Upcoming Trips';
         document.querySelector('.music-card-title').innerText = val;
+        localStorage.setItem('music_main_title', val);
+    }
+    function saveMusicViewAll(val) {
+        val = val.trim() || 'View all';
+        document.querySelector('.music-card-viewall').innerText = val;
+        localStorage.setItem('music_view_all', val);
     }
     function saveMusicPlayingTitle(val) {
         val = val.trim() || 'Now playing';
@@ -1756,7 +1776,7 @@
         container.innerHTML = '';
         
         if (musicList.length === 0) {
-            container.innerHTML = '<div style="text-align: center; color: #999; margin-top: 20px;">暂无音乐，点击下方胶囊上传</div>';
+            container.innerHTML = '<div style="text-align: center; color: #999; margin-top: 20px; width: 100%;">暂无音乐，点击下方胶囊上传</div>';
             return;
         }
 
@@ -1768,13 +1788,14 @@
             div.className = 'music-item';
             div.onclick = () => openPlayingScreen(song.id);
             
+            // 图二风格卡片结构
             div.innerHTML = `
                 <div class="music-item-cover" style="${coverStyle}" onclick="event.stopPropagation(); triggerUploadCover('${song.id}')"></div>
-                <div class="music-item-info">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px;">
                     <div class="music-item-title" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongTitle('${song.id}', this.innerText)">${song.title}</div>
-                    <div class="music-item-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist}</div>
+                    <div class="music-item-more" onclick="event.stopPropagation(); showSongMenu('${song.id}')">...</div>
                 </div>
-                <div class="music-item-more" onclick="event.stopPropagation(); showSongMenu('${song.id}')">⋮</div>
+                <div class="music-item-artist" contenteditable="false" ondblclick="event.stopPropagation(); this.contentEditable='true'; this.focus();" onblur="saveSongArtist('${song.id}', this.innerText)">${song.artist}</div>
             `;
             container.appendChild(div);
         }
@@ -1847,7 +1868,7 @@
         const newSong = {
             id: songId,
             title: file.name.replace(/\.[^/.]+$/, ""),
-            artist: '未知歌手',
+            artist: 'May 18 - May 25', // 仿照图二的初始日期
             lyrics: []
         };
         musicList.push(newSong);
@@ -2822,11 +2843,33 @@
         }
         const msgRow = document.createElement('div'); msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
         let bubbleHtml = '';
+        
         if (imageBase64) {
-            bubbleHtml = `<div class="chat-bubble"><img src="${imageBase64}" class="sticker-img" alt="${text}"></div>`;
+            // 直接显示图片（表情包），不加气泡边框
+            bubbleHtml = `<img src="${imageBase64}" class="sticker-img" alt="${text}" style="max-width: 150px; max-height: 150px; border-radius: 8px; display: block;">`;
         } else {
             const stickerRegex = /\[表情:(.*?)\]/g;
-            if (stickerRegex.test(text)) {
+            // 判断是否整条消息只是一个表情包
+            const pureStickerMatch = text.match(/^\[表情:(.*?)\]$/);
+            
+            if (pureStickerMatch) {
+                const meaning = pureStickerMatch[1].trim();
+                const boundPackIds = charStickerBindings[currentChatCharId] || [];
+                let foundImg = null;
+                for(let pid of boundPackIds) {
+                    const pack = stickerPacks.find(p => p.id === pid);
+                    if(pack) {
+                        const sticker = pack.stickers.find(s => s.meaning === meaning);
+                        if(sticker) { foundImg = sticker.image; break; }
+                    }
+                }
+                if (foundImg) {
+                    // 直接显示图片（表情包），不加气泡边框
+                    bubbleHtml = `<img src="${foundImg}" class="sticker-img" alt="${meaning}" title="${meaning}" style="max-width: 150px; max-height: 150px; border-radius: 8px; display: block;">`;
+                } else {
+                    bubbleHtml = `<div class="chat-bubble">${text}</div>`;
+                }
+            } else if (stickerRegex.test(text)) {
                 bubbleHtml = `<div class="chat-bubble">${text.replace(stickerRegex, (match, meaning) => {
                     const boundPackIds = charStickerBindings[currentChatCharId] || [];
                     for(let pid of boundPackIds) {
@@ -2842,7 +2885,10 @@
                 bubbleHtml = `<div class="chat-bubble">${text}</div>`;
             }
         }
-        if(text.includes('( ') || text.includes('₍')) { bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`; }
+        
+        if(!imageBase64 && !text.match(/^\[表情:(.*?)\]$/) && (text.includes('( ') || text.includes('₍'))) { 
+            bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`; 
+        }
 
         msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`; container.appendChild(msgRow);
         if (scroll) container.scrollTop = container.scrollHeight;
