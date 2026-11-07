@@ -2188,6 +2188,40 @@
     async function clearImageDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); store.clear(); tx.oncomplete = () => resolve(); tx.onerror = (e) => reject(e.target.error); }); }
 
     // ==========================================
+    // 全新聊天记录存储架构 (内存缓存 + IndexedDB)
+    // ==========================================
+    let chatHistoryCache = {};
+    
+    async function getChatHistory(charId) {
+        if (chatHistoryCache[charId]) return chatHistoryCache[charId];
+        
+        let historyStr = await getImageFromDB(`chat_history_${charId}`);
+        let history = safeParseJSON(historyStr, []);
+        
+        if (history.length === 0) {
+            const oldStr = localStorage.getItem(`chat_history_${charId}`);
+            if (oldStr) {
+                try {
+                    history = JSON.parse(oldStr);
+                    if (Array.isArray(history) && history.length > 0) {
+                        await saveImageToDB(`chat_history_${charId}`, JSON.stringify(history));
+                        localStorage.removeItem(`chat_history_${charId}`);
+                    }
+                } catch(e) {
+                    console.error("迁移聊天记录失败", e);
+                }
+            }
+        }
+        chatHistoryCache[charId] = history;
+        return history;
+    }
+
+    async function saveChatHistory(charId, history) {
+        chatHistoryCache[charId] = history;
+        await saveImageToDB(`chat_history_${charId}`, JSON.stringify(history));
+    }
+
+    // ==========================================
     // 2. 基础逻辑
     // ==========================================
     function updateLiveTime() { const now = new Date(); const hours = String(now.getHours()).padStart(2, '0'); const minutes = String(now.getMinutes()).padStart(2, '0'); document.getElementById('live-time').innerText = `${hours}:${minutes}`; }
@@ -2768,9 +2802,9 @@
         const msgId = Date.now().toString();
         await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, true, sticker.image, 'sticker', null, '', msgId);
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'sticker', text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
@@ -4174,8 +4208,10 @@
         const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
         currentUserAvatarCache = chatUserImg || globalUserImg;
 
-        const hasHistory = localStorage.getItem(`chat_history_${charId}`);
-        if(hasHistory) { const history = safeParseJSON(hasHistory, []); for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); } }
+        const history = await getChatHistory(charId);
+        for (const msg of history) { 
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
+        }
         
         const inputField = document.getElementById('chat-input-field');
         inputField.value = '';
@@ -4440,9 +4476,9 @@
         const msgId = Date.now().toString();
         await renderChatMessage(text, true, true, null, 'text', null, '', msgId);
         if(currentChatCharId) { 
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); 
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() }); 
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) { alert("存储空间不足！"); }
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
@@ -4529,14 +4565,9 @@
                 const msgId = Date.now().toString();
                 await renderChatMessage("[发送了一张图片]", true, true, compressedBase64, 'image', null, '', msgId);
                 if(currentChatCharId) {
-                    const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+                    const history = await getChatHistory(currentChatCharId);
                     history.push({ id: msgId, type: 'image', text: "[发送了一张图片]", image: compressedBase64, isSelf: true, time: Date.now() });
-                    try {
-                        localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-                    } catch(e) {
-                        console.error("图片过大导致存储失败", e);
-                        alert("图片已发送，但受限于本地存储空间，可能无法永久保存！");
-                    }
+                    await saveChatHistory(currentChatCharId, history);
                 }
                 toggleAttachmentPanel();
             });
@@ -4582,9 +4613,9 @@
         await renderChatMessage(`[位置] ${title} - ${address}`, true, true, null, 'location', msgData, '', msgId);
         
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'location', text: `[位置] ${title} - ${address}`, data: msgData, isSelf: true, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
@@ -4612,9 +4643,9 @@
 
         await renderChatMessage(msgText, true, true, null, currentPaymentType, msgData, '', msgId);
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
@@ -4675,23 +4706,23 @@
         await renderChatMessage(`[礼物] 마음`, true, true, null, 'gift', msgData, '', msgId);
         
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
     // 处理领取/退回
     let currentActionMsgId = null;
     let currentActionType = '';
-    function handlePaymentAction(msgId, type) {
+    async function handlePaymentAction(msgId, type) {
         const isCallActive = document.getElementById('call-screen').classList.contains('active');
         const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
         const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${msgId}"]`);
         if (!msgRow) return;
         const isSelf = msgRow.classList.contains('right');
         
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const history = await getChatHistory(currentChatCharId);
         const msgIndex = history.findIndex(m => m.id === msgId);
         if (msgIndex === -1) return;
         const msg = history[msgIndex];
@@ -4733,14 +4764,14 @@
         const char = contacts.find(c => c.id === currentChatCharId);
         const charName = char ? (char.remark || char.name) : '对方';
         
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const history = await getChatHistory(currentChatCharId);
         const msgIndex = history.findIndex(m => m.id === currentActionMsgId);
         if (msgIndex === -1) return;
         
         history[msgIndex].data.status = action;
         if (address) history[msgIndex].data.address = address;
         
-        try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        await saveChatHistory(currentChatCharId, history);
 
         let sysText = '';
         if (currentActionType === 'redpacket') {
@@ -4775,12 +4806,12 @@
     }
 
     async function handleLocationAction(msgId, action) {
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const history = await getChatHistory(currentChatCharId);
         const msgIndex = history.findIndex(m => m.id === msgId);
         if (msgIndex === -1) return;
         
         history[msgIndex].data.status = action === 'accept' ? 'accepted' : 'rejected';
-        try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        await saveChatHistory(currentChatCharId, history);
         
         const char = contacts.find(c => c.id === currentChatCharId);
         const charName = char ? (char.remark || char.name) : '对方';
@@ -4839,7 +4870,7 @@
         });
         systemPrompt = systemPrompt + '\n' + charPersona + userPersona + memoryPrompt + stickerPrompt;
 
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${char.id}`), []);
+        const history = await getChatHistory(char.id);
         const messages = [{ role: "system", content: systemPrompt }];
         const recentHistory = history.slice(-15);
         
@@ -4906,7 +4937,7 @@
                     const msgId = Date.now().toString();
                     await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
                     history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
-                    try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
+                    await saveChatHistory(char.id, history);
                 }
                 showIncomingCall();
                 return;
@@ -4916,7 +4947,7 @@
             const msgId = Date.now().toString();
             await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
             history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
-            try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(char.id, history);
 
             if (document.visibilityState === 'hidden') {
                 playRingtone();
@@ -5001,17 +5032,22 @@
         });
     }
 
-    function clearChatHistory() {
+    async function clearChatHistory() {
         if(confirm("确定要清空该聊天的所有记录吗？此操作不可恢复！")) {
-            localStorage.removeItem(`chat_history_${currentChatCharId}`); document.getElementById('chat-container').innerHTML = ''; closeChatDetailModal();
+            await deleteImageFromDB(`chat_history_${currentChatCharId}`);
+            delete chatHistoryCache[currentChatCharId];
+            document.getElementById('chat-container').innerHTML = ''; 
+            closeChatDetailModal();
         }
     }
 
-    function deleteChatSession() {
+    async function deleteChatSession() {
         if(confirm("仅删除与该角色的聊天界面，通讯录不受影响。重新添加可通过 Bout 列表。")) {
             let boutIds = safeParseJSON(localStorage.getItem('xy_selected_chars'), []); boutIds = boutIds.filter(id => id !== currentChatCharId); localStorage.setItem('xy_selected_chars', JSON.stringify(boutIds));
             let pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []); pinnedIds = pinnedIds.filter(id => id !== currentChatCharId); localStorage.setItem('chat_pinned_ids', JSON.stringify(pinnedIds));
-            localStorage.removeItem(`chat_history_${currentChatCharId}`); closeScreen('chat-screen'); closeChatDetailModal(); selectedBoutIds = boutIds; renderXunyanMessages();
+            await deleteImageFromDB(`chat_history_${currentChatCharId}`);
+            delete chatHistoryCache[currentChatCharId];
+            closeScreen('chat-screen'); closeChatDetailModal(); selectedBoutIds = boutIds; renderXunyanMessages();
         }
     }
 
@@ -5071,13 +5107,10 @@
 
     async function reRenderChatHistory() {
         const container = document.getElementById('chat-container'); container.innerHTML = '';
-        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
-        if(hasHistory) { 
-            const history = safeParseJSON(hasHistory, []); 
-            for(const msg of history) { 
-                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
-            } 
-        }
+        const history = await getChatHistory(currentChatCharId);
+        for(const msg of history) { 
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
+        } 
         container.scrollTop = container.scrollHeight;
     }
 
@@ -5095,9 +5128,9 @@
             await renderChatMessage(text, false, true, null, 'system', null, '', msgId, 'call-chat-container');
         }
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'system', text: text, isSelf: false, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
     }
 
@@ -5160,13 +5193,10 @@
         // 同步聊天记录到通话界面
         const callChatContainer = document.getElementById('call-chat-container');
         callChatContainer.innerHTML = '';
-        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
-        if(hasHistory) { 
-            const history = safeParseJSON(hasHistory, []); 
-            const recent = history.slice(-20);
-            for(const msg of recent) { 
-                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'call-chat-container'); 
-            } 
+        const history = await getChatHistory(currentChatCharId);
+        const recent = history.slice(-20);
+        for(const msg of recent) { 
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'call-chat-container'); 
         }
         
         document.getElementById('call-screen').classList.add('active');
@@ -5193,9 +5223,9 @@
         const msgId = Date.now().toString();
         await renderChatMessage(text, true, true, null, 'text', null, '', msgId, 'call-chat-container');
         if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() });
-            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+            await saveChatHistory(currentChatCharId, history);
         }
         // 自动呼叫AI回复 (通话内逻辑保持不变)
         triggerCharReply();
@@ -5216,7 +5246,7 @@
         if (!config || !config.url || !config.key) return;
         
         const char = contacts.find(c => c.id === charId);
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${charId}`), []);
+        const history = await getChatHistory(charId);
         
         let prompt = `你刚刚与用户进行了一次语音通话。请根据以下上下文，用第一人称写一段简短的通话记忆（100字以内），只输出记忆内容，不要包含其他解释。\n`;
         
@@ -5262,7 +5292,7 @@
     }
 
     // ==========================================
-    // 🌟 7. 消息操作逻辑（引用、撤回、删除、收藏、多选、语音）
+    // 🌟 7. 消息操作逻辑（引用、撤回、删除、多选）
     // ==========================================
     let currentMsgId = null;
     let currentMsgRow = null;
@@ -5322,11 +5352,11 @@
         closeMsgActionMenu();
     }
 
-    function msgActionDelete() {
+    async function msgActionDelete() {
         if(!confirm('确定要删除这条消息吗？删除后对方将不再记得此内容。')) return;
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        let history = await getChatHistory(currentChatCharId);
         history = history.filter(m => m.id !== currentMsgId);
-        localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+        await saveChatHistory(currentChatCharId, history);
         if(currentMsgRow) currentMsgRow.remove();
         closeMsgActionMenu();
     }
@@ -5344,14 +5374,14 @@
         document.getElementById('chat-input-field').focus();
     }
 
-    function msgActionRecall() {
+    async function msgActionRecall() {
         const msgId = currentMsgId || (currentMsgRow ? currentMsgRow.dataset.msgId : null);
         if (!msgId) {
             alert('找不到消息ID，撤回失败');
             return;
         }
 
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        let history = await getChatHistory(currentChatCharId);
         const msgIndex = history.findIndex(m => m.id === msgId);
         if (msgIndex === -1) {
             alert('消息不存在，撤回失败');
@@ -5377,11 +5407,11 @@
         }
         
         try {
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-            reRenderChatHistory();
+            await saveChatHistory(currentChatCharId, history);
+            await reRenderChatHistory();
             alert('消息已撤回');
         } catch(e) {
-            alert('撤回失败，存储空间可能已满');
+            alert('撤回失败: ' + e.message);
         }
         closeMsgActionMenu();
     }
@@ -5436,22 +5466,22 @@
         countEl.innerText = `已选 ${selectedMsgIds.size} 条`;
     }
 
-    function deleteSelectedMessages() {
+    async function deleteSelectedMessages() {
         if (selectedMsgIds.size === 0) {
             alert('请先选择消息');
             return;
         }
         if (!confirm(`确定要删除选中的 ${selectedMsgIds.size} 条消息吗？`)) return;
         
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        let history = await getChatHistory(currentChatCharId);
         history = history.filter(m => !selectedMsgIds.has(m.id));
         try {
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-            reRenderChatHistory();
+            await saveChatHistory(currentChatCharId, history);
+            await reRenderChatHistory();
             cancelMultiSelect();
             alert('删除成功');
         } catch (e) {
-            alert('删除失败，存储空间可能已满');
+            alert('删除失败: ' + e.message);
         }
     }
 
