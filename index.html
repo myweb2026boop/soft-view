@@ -148,7 +148,7 @@
         text-overflow: ellipsis;
     }
 
-    [contenteditable="true"] { outline: none; background-color: rgba(0, 122, 255, 0.1); border-radius: 4px; cursor: text; }
+    [contenteditable="true"] { outline: none; border-radius: 4px; cursor: text; }
 
     /* --- 讯言 App 界面样式 (首页) --- */
     #xunyan-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
@@ -292,7 +292,7 @@
     .chat-more-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
     .chat-more-btn svg { width: 24px; height: 24px; fill: #333; }
 
-    .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; }
+    .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; transition: padding-top 0.3s; }
     .chat-msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 100%; }
     .chat-msg-row.left { flex-direction: row; justify-content: flex-start; }
     .chat-msg-row.right { flex-direction: row-reverse; justify-content: flex-start; }
@@ -330,11 +330,27 @@
         flex-shrink: 0; background-color: #ffffff; padding: 10px 15px; 
         display: flex; align-items: center; gap: 10px; box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
         border-radius: 30px; margin: 10px 15px 20px;
+        z-index: 4005; position: relative;
     }
     .chat-input-icon-btn { background: none; border: none; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .chat-input-icon-btn svg { width: 24px; height: 24px; fill: #666; }
     .chat-input-field { flex-grow: 1; background-color: #f2f2f2; border: none; outline: none; border-radius: 20px; padding: 10px 16px; font-size: 15px; color: #333; }
     .chat-input-field::placeholder { color: #aaa; }
+
+    /* 🌟 全新附件面板 */
+    #attachment-panel {
+        position: fixed; bottom: 0; left: 0; width: 100vw; height: 260px;
+        background: #f2f2f7; border-top-left-radius: 20px; border-top-right-radius: 20px;
+        z-index: 4001; display: none; flex-direction: column; padding: 20px 10px; box-sizing: border-box;
+        transition: transform 0.3s ease-out; transform: translateY(100%);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    }
+    #attachment-panel.active { display: flex; transform: translateY(0); }
+    .attach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; justify-items: center; }
+    .attach-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .attach-icon { width: 60px; height: 60px; background: #fff; border-radius: 16px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .attach-icon svg { width: 28px; height: 28px; fill: #666; }
+    .attach-label { font-size: 12px; color: #666; margin-top: 8px; }
 
     /* --- 🌟 聊天详情弹窗 --- */
     #chat-detail-modal { z-index: 5000; } 
@@ -347,8 +363,10 @@
     .chat-detail-switch.on { background-color: var(--green); }
     .chat-detail-switch.on::after { transform: translateX(16px); }
 
-    #chat-search-bar { display: none; padding: 10px 20px; background: #fff; border-bottom: 1px solid #eaeaea; }
-    #chat-search-input { width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #e5e5ea; outline: none; background: #f5f5f7; font-size: 14px; }
+    /* 🌟 搜索全屏栏 */
+    #chat-search-bar { display: none; padding: 15px 20px; background: #ffffff; border-bottom: 1px solid #eaeaea; align-items: center; gap: 10px; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; box-sizing: border-box; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    #chat-search-input { flex-grow: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid #e5e5ea; outline: none; background: #f5f5f7; font-size: 15px; }
+    .search-cancel-btn { background: none; border: none; font-size: 16px; color: #333; cursor: pointer; padding: 0; }
 
     /* ==================================================== */
     /* 🌟 Contact 线下界面样式 */
@@ -1528,15 +1546,58 @@
         <div class="chat-title" id="chat-title">角色名称</div>
         <button class="chat-more-btn" onclick="openChatDetailModal()"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
     </div>
-    <div id="chat-search-bar"><input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()"></div>
+    <div id="chat-search-bar">
+        <button class="search-cancel-btn" onclick="toggleChatSearch()">取消</button>
+        <input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
+    </div>
     <div class="chat-container" id="chat-container"></div>
     <div class="chat-input-bar">
         <button class="chat-input-icon-btn" onclick="triggerCharReply()"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
         <input type="text" class="chat-input-field" id="chat-input-field" placeholder="输入消息...">
         <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
-        <button class="chat-input-icon-btn"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+        <button class="chat-input-icon-btn" onclick="toggleAttachmentPanel()"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
     </div>
 </div>
+
+<!-- 附件面板 -->
+<div id="attachment-panel">
+    <div class="attach-grid">
+        <div class="attach-item" onclick="document.getElementById('chat-photo-upload').click()">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+            <span class="attach-label">照片</span>
+        </div>
+        <div class="attach-item" onclick="document.getElementById('chat-camera-upload').click()">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M12 15.2c1.77 0 3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2 1.43 3.2 3.2 3.2zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg></div>
+            <span class="attach-label">拍摄</span>
+        </div>
+        <div class="attach-item" onclick="alert('发起通话中...'); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
+            <span class="attach-label">通话</span>
+        </div>
+        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+            <span class="attach-label">位置</span>
+        </div>
+        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
+            <span class="attach-label">红包</span>
+        </div>
+        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+            <span class="attach-label">礼物</span>
+        </div>
+        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
+            <span class="attach-label">转账</span>
+        </div>
+        <div class="attach-item" onclick="openManager(); toggleAttachmentPanel();">
+            <div class="attach-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+            <span class="attach-label">美化</span>
+        </div>
+    </div>
+</div>
+<input type="file" id="chat-photo-upload" accept="image/*" style="display:none;">
+<input type="file" id="chat-camera-upload" accept="image/*" capture="camera" style="display:none;">
 
 <!-- 弹窗：关联人选择 -->
 <div class="modal-overlay" id="relation-modal">
@@ -3649,9 +3710,14 @@
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'}`;
         const container = document.getElementById('chat-container'); container.innerHTML = ''; 
         
-        // 重置搜索状态
+        // 重置搜索状态与附件面板
         document.getElementById('chat-search-bar').style.display = 'none';
         document.getElementById('chat-search-input').value = '';
+        document.querySelector('.chat-header').style.display = 'flex';
+        document.querySelector('.chat-input-bar').style.display = 'flex';
+        document.getElementById('chat-container').style.paddingTop = '20px';
+        document.getElementById('attachment-panel').classList.remove('active');
+        setTimeout(() => document.getElementById('attachment-panel').style.display = 'none', 300);
 
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
         const chatScreen = document.getElementById('chat-screen');
@@ -3680,7 +3746,7 @@
         let bubbleHtml = '';
         
         if (imageBase64) {
-            bubbleHtml = `<img src="${imageBase64}" class="sticker-img" alt="${text}">`;
+            bubbleHtml = `<img src="${imageBase64}" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px;" alt="${text}">`;
         } else {
             const stickerRegex = /\[表情:(.*?)\]/g;
             const pureStickerMatch = text.match(/^\[表情:(.*?)\]$/);
@@ -3734,6 +3800,43 @@
         }
     });
 
+    // 附件面板逻辑
+    function toggleAttachmentPanel() {
+        const panel = document.getElementById('attachment-panel');
+        if (panel.classList.contains('active')) {
+            panel.classList.remove('active');
+            setTimeout(() => panel.style.display = 'none', 300);
+        } else {
+            panel.style.display = 'block';
+            panel.offsetHeight; // 强制重绘
+            panel.classList.add('active');
+            const container = document.getElementById('chat-container');
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    async function handleImageUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const base64Data = event.target.result;
+            await renderChatMessage("[发送了一张图片]", true, true, base64Data);
+            if(currentChatCharId) {
+                const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+                history.push({ text: "[发送了一张图片]", image: base64Data, isSelf: true, time: Date.now() });
+                localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            }
+            toggleAttachmentPanel();
+            // 自动触发大模型识图回复
+            triggerCharReply();
+        };
+        reader.readAsDataURL(file);
+        input.value = '';
+    }
+    document.getElementById('chat-photo-upload').addEventListener('change', function() { handleImageUpload(this); });
+    document.getElementById('chat-camera-upload').addEventListener('change', function() { handleImageUpload(this); });
+
     async function triggerCharReply() {
         if (!currentChatCharId) return;
         const configStr = localStorage.getItem('settings_api_config'); if (!configStr) { alert("请先在 设置 -> API接口 中配置并保存模型参数！"); return; }
@@ -3771,8 +3874,17 @@
         const recentHistory = history.slice(-15);
         
         recentHistory.forEach(msg => {
-            let content = msg.image ? `[发送了表情包：${msg.text}]` : msg.text;
-            messages.push({ role: msg.isSelf ? "user" : "assistant", content: content });
+            if (msg.image) {
+                messages.push({ 
+                    role: msg.isSelf ? "user" : "assistant", 
+                    content: [
+                        { type: "text", text: msg.text || "发送了一张图片" },
+                        { type: "image_url", image_url: { url: msg.image } }
+                    ]
+                });
+            } else {
+                messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text });
+            }
         });
 
         const container = document.getElementById('chat-container'); const loadingRow = document.createElement('div'); loadingRow.className = `chat-msg-row left`; loadingRow.id = 'loading-msg';
@@ -3839,11 +3951,21 @@
 
     function toggleChatSearch() {
         const searchBar = document.getElementById('chat-search-bar');
+        const chatHeader = document.querySelector('.chat-header');
+        const chatInputBar = document.querySelector('.chat-input-bar');
+        const container = document.getElementById('chat-container');
+        
         if (searchBar.style.display === 'none' || !searchBar.style.display) { 
-            searchBar.style.display = 'block'; 
+            searchBar.style.display = 'flex'; 
+            chatHeader.style.display = 'none';
+            chatInputBar.style.display = 'none';
+            container.style.paddingTop = '80px'; 
             document.getElementById('chat-search-input').focus(); 
         } else { 
             searchBar.style.display = 'none'; 
+            chatHeader.style.display = 'flex';
+            chatInputBar.style.display = 'flex';
+            container.style.paddingTop = '20px';
             document.getElementById('chat-search-input').value = ''; 
             filterChatMessages(); 
         }
@@ -3854,7 +3976,7 @@
         const keyword = document.getElementById('chat-search-input').value.trim().toLowerCase();
         const rows = document.querySelectorAll('#chat-container .chat-msg-row');
         rows.forEach(row => {
-            const text = row.querySelector('.chat-bubble, .chat-bubble-plain')?.innerText.toLowerCase() || '';
+            const text = row.querySelector('.chat-bubble, .chat-bubble-plain, img')?.innerText.toLowerCase() || '';
             if (!keyword || text.includes(keyword)) row.style.display = 'flex'; else row.style.display = 'none';
         });
     }
