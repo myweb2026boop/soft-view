@@ -308,7 +308,7 @@
         touch-action: pan-y; 
         min-height: 0; 
     }
-    .chat-msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 100%; }
+    .chat-msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 100%; position: relative; }
     .chat-msg-row.left { flex-direction: row; justify-content: flex-start; }
     .chat-msg-row.right { flex-direction: row-reverse; justify-content: flex-start; }
     .chat-msg-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -1068,7 +1068,85 @@
     .chat-msg-row.right .voice-bubble { flex-direction: row-reverse; }
     
     /* 🌟 多选模式底栏 */
-    #multi-select-bar { display: none; padding: 10px; background: #f5f5f7; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; z-index: 4005; }
+    #multi-select-bar { display: none; padding: 10px; background: #f5f5f7; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; z-index: 4005; border-top: 1px solid #e5e5ea; box-sizing: border-box; }
+    
+    /* 🌟 消息长按操作菜单 (高度还原图1) */
+    #msg-action-menu {
+        position: fixed;
+        background-color: #333;
+        border-radius: 12px;
+        padding: 15px;
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        color: #fff;
+        width: 280px;
+    }
+    #msg-action-menu::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px 8px 0;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+    }
+    #msg-action-menu.arrow-top::after {
+        bottom: auto;
+        top: -8px;
+        border-width: 0 8px 8px 8px;
+        border-color: transparent transparent #333 transparent;
+    }
+    .msg-action-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .msg-action-row:last-child {
+        margin-bottom: 0;
+    }
+    .msg-action-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        width: 20%;
+    }
+    .msg-action-item svg {
+        width: 20px;
+        height: 20px;
+        fill: #fff;
+    }
+    .msg-action-item span {
+        font-size: 11px;
+        color: #ddd;
+        white-space: nowrap;
+    }
+    .msg-action-divider {
+        height: 1px;
+        background-color: #444;
+        margin: 10px 0 15px;
+    }
+
+    /* 🌟 多选模式下的消息样式 */
+    .chat-msg-row.multi-selectable { padding-left: 30px; position: relative; cursor: pointer; }
+    .chat-msg-row.multi-selectable::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 50%; transform: translateY(-50%);
+        width: 20px; height: 20px; border-radius: 50%;
+        border: 1px solid #999; background: #fff;
+    }
+    .chat-msg-row.multi-selected::before {
+        background: #007aff; border-color: #007aff;
+    }
+    .chat-msg-row.multi-selected::after {
+        content: '✓'; position: absolute; left: 5px; top: 50%; transform: translateY(-50%);
+        color: #fff; font-size: 12px; font-weight: bold;
+    }
 </style>
 </head>
 <body>
@@ -1930,14 +2008,66 @@
     </div>
 </div>
 
-<!-- 消息操作弹窗 (双击) -->
-<div class="modal-overlay" id="msg-action-modal" style="z-index: 9000;">
-    <div class="modal-content" style="width: 200px; padding: 0;">
-        <div class="chat-detail-item" onclick="quoteMessage()" style="padding: 15px; justify-content: center;">引用</div>
-        <div class="chat-detail-item" onclick="recallMessage()" style="padding: 15px; justify-content: center;">撤回</div>
-        <div class="chat-detail-item" onclick="deleteMessage()" style="padding: 15px; justify-content: center;">删除</div>
-        <div class="chat-detail-item" onclick="favoriteMessage()" style="padding: 15px; justify-content: center;">收藏</div>
-        <div class="modal-actions" style="margin: 0; padding: 10px 20px;"><button class="modal-btn cancel" onclick="closeMsgActionModal()">取消</button></div>
+<!-- 消息长按操作菜单 (高度还原图1) -->
+<div id="msg-action-menu">
+    <div class="msg-action-row">
+        <div class="msg-action-item" onclick="msgActionCopy()">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            <span>复制</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionForward()">
+            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+            <span>转发</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionFavorite()">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2 6h-4v4h-2v-4H8v-2h4V6h2v4h4v2z"/></svg>
+            <span>收藏</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionDelete()">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            <span>删除</span>
+        </div>
+        <div class="msg-action-item" onclick="enterMultiSelect()">
+            <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            <span>多选</span>
+        </div>
+    </div>
+    <div class="msg-action-row">
+        <div class="msg-action-item" onclick="msgActionQuote()">
+            <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+            <span>引用</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionRemind()">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+            <span>提醒</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionReadAloud()">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span>连续朗读</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionTranslate()">
+            <svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+            <span>翻译</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionAskBot()">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5c0-4.14-3.36-7.5-7.5-7.5S6 7.36 6 11.5 9.36 19 13.5 19h.5v2c3.87 0 7-3.13 7-7v-2h-.5zM12 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+            <span>问小微</span>
+        </div>
+    </div>
+    <div class="msg-action-divider"></div>
+    <div class="msg-action-row">
+        <div class="msg-action-item" id="action-recall" onclick="msgActionRecall()">
+            <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+            <span>撤回</span>
+        </div>
+        <div class="msg-action-item" id="action-edit-voice" style="display: none;" onclick="msgActionEditVoice()">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+            <span>改语音</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionSearch()">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <span>搜一搜</span>
+        </div>
     </div>
 </div>
 
@@ -4065,6 +4195,7 @@
         document.getElementById('attachment-panel').style.display = 'none';
         document.getElementById('call-screen').classList.remove('active');
         document.getElementById('incoming-call-modal').classList.remove('active');
+        document.getElementById('msg-action-menu').style.display = 'none';
 
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
         const chatScreen = document.getElementById('chat-screen');
@@ -4096,8 +4227,8 @@
         const container = document.getElementById(targetId); 
         if (!container) return;
 
-        // 系统提示样式
-        if (!isSelf && (msgType === 'system' || text.startsWith('[系统]') || text.includes('正在呼叫你') || text.includes('已拒绝'))) {
+        // 系统提示样式 (撤回等)
+        if (msgType === 'system' || text.startsWith('[系统]')) {
             const sysMsg = document.createElement('div');
             sysMsg.style.textAlign = 'center';
             sysMsg.style.color = '#999';
@@ -4211,7 +4342,7 @@
                 </div>
             </div>`;
         } else if (msgType === 'voice') {
-            bubbleHtml = `<div class="chat-bubble voice-bubble" onclick="toggleVoiceText(event, this)" data-voice-text="${text}" ondblclick="editVoiceText(event, '${msgId}', this)">
+            bubbleHtml = `<div class="chat-bubble voice-bubble" onclick="toggleVoiceText(event, this)" data-voice-text="${text}">
                 <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
                 <span class="voice-duration">${Math.max(1, Math.floor(text.length / 5))}"</span>
             </div>`;
@@ -4260,12 +4391,59 @@
 
         msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`; container.appendChild(msgRow);
         
-        // 🌟 添加双击菜单
-        msgRow.ondblclick = (e) => {
-            e.stopPropagation();
-            if (isMultiSelectMode) return;
-            openMsgActionModal(msgId, msgRow);
-        };
+        // 🌟 长按菜单绑定
+        if (msgId) {
+            let startX, startY, pressTimer;
+            let isLongPressed = false;
+            
+            const startPress = (e) => {
+                if (isMultiSelectMode) return;
+                isLongPressed = false;
+                if(e.touches) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                }
+                pressTimer = setTimeout(() => {
+                    isLongPressed = true;
+                    showMsgActionMenu(e, msgRow);
+                }, 600);
+            };
+
+            const cancelPress = () => {
+                clearTimeout(pressTimer);
+            };
+
+            const movePress = (e) => {
+                if (!e.touches) return;
+                if (Math.abs(e.touches[0].clientX - startX) > 10 || Math.abs(e.touches[0].clientY - startY) > 10) {
+                    cancelPress();
+                }
+            };
+
+            msgRow.addEventListener('touchstart', startPress, {passive: true});
+            msgRow.addEventListener('touchmove', movePress, {passive: true});
+            msgRow.addEventListener('touchend', cancelPress);
+            
+            msgRow.addEventListener('mousedown', startPress);
+            msgRow.addEventListener('mouseup', cancelPress);
+            msgRow.addEventListener('mouseleave', cancelPress);
+            
+            msgRow.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                showMsgActionMenu(e, msgRow);
+            });
+
+            msgRow.addEventListener('click', (e) => {
+                if (isLongPressed) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    isLongPressed = false;
+                }
+            });
+        }
 
         if (scroll) container.scrollTop = container.scrollHeight;
     }
@@ -4279,7 +4457,7 @@
         if (currentReplyTo) {
             const char = contacts.find(c => c.id === currentChatCharId);
             const senderName = currentReplyTo.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
-            const quoteText = `[引用: ${senderName}: ${currentReplyTo.text ? currentReplyTo.text.substring(0, 20) : '[图片/语音]'}] `;
+            let quoteText = `[引用: ${senderName}: ${currentReplyTo.text ? currentReplyTo.text.substring(0, 20) : '[图片/语音]'}] `;
             text = quoteText + text;
             currentReplyTo = null;
             document.getElementById('reply-preview').style.display = 'none';
@@ -4326,10 +4504,10 @@
                 const msgId = row.dataset.msgId;
                 if (selectedMsgIds.has(msgId)) {
                     selectedMsgIds.delete(msgId);
-                    row.style.backgroundColor = '';
+                    row.classList.remove('multi-selected');
                 } else {
                     selectedMsgIds.add(msgId);
-                    row.style.backgroundColor = '#e5f1ff';
+                    row.classList.add('multi-selected');
                 }
                 updateMultiSelectCount();
             }
@@ -4341,6 +4519,16 @@
         }
         if (document.getElementById('sticker-panel').classList.contains('active')) {
             closeStickerPanel();
+        }
+        if (document.getElementById('msg-action-menu').style.display === 'flex') {
+            document.getElementById('msg-action-menu').style.display = 'none';
+        }
+    });
+
+    // 全局点击关闭菜单
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#msg-action-menu') && !e.target.closest('.chat-msg-row') && !e.target.closest('.chat-input-bar')) {
+            document.getElementById('msg-action-menu').style.display = 'none';
         }
     });
 
@@ -4689,6 +4877,13 @@
         const recentHistory = history.slice(-15);
         
         recentHistory.forEach(msg => {
+            if (msg.isRecalled) {
+                if (msg.isSelf) {
+                    messages.push({ role: "user", content: `[系统提示：用户撤回了一条消息，原内容：${msg.originalText || ''}]` });
+                }
+                return;
+            }
+            
             let contentText = msg.text || '';
             if (msg.type === 'location') contentText = `[发送了位置共享：${msg.data.address}，状态：${msg.data.status}]`;
             else if (msg.type === 'redpacket') contentText = `[发了一个红包，备注：${msg.data.remark}，状态：${msg.data.status}]`;
@@ -5100,25 +5295,98 @@
     }
 
     // ==========================================
-    // 🌟 7. 消息操作逻辑（引用、撤回、删除、收藏、多选）
+    // 🌟 7. 消息操作逻辑（引用、撤回、删除、收藏、多选、语音）
     // ==========================================
     let currentMsgId = null;
     let currentMsgRow = null;
     let currentReplyTo = null;
 
-    function openMsgActionModal(msgId, rowElement) {
-        if (!msgId) return;
-        currentMsgId = msgId;
-        currentMsgRow = rowElement;
-        document.getElementById('msg-action-modal').classList.add('active');
+    function showMsgActionMenu(e, msgRow) {
+        if (isMultiSelectMode) return;
+        e.preventDefault();
+        currentMsgId = msgRow.dataset.msgId;
+        currentMsgRow = msgRow;
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg) return;
+
+        const menu = document.getElementById('msg-action-menu');
+        menu.style.display = 'flex';
+        
+        // 动态判断位置
+        const rect = msgRow.getBoundingClientRect();
+        menu.classList.remove('arrow-top');
+        
+        let top = rect.top - menu.offsetHeight - 10;
+        if (top < 50) {
+            top = rect.bottom + 10;
+            menu.classList.add('arrow-top');
+        }
+        let left = rect.left + rect.width / 2 - menu.offsetWidth / 2;
+        if (left < 10) left = 10;
+        if (left + menu.offsetWidth > window.innerWidth - 10) left = window.innerWidth - menu.offsetWidth - 10;
+        
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+
+        // 动态显示"修改语音"按钮（如果消息是语音）
+        const editVoiceBtn = document.getElementById('action-edit-voice');
+        if (msg.type === 'voice') {
+            editVoiceBtn.style.display = 'flex';
+        } else {
+            editVoiceBtn.style.display = 'none';
+        }
+        
+        // 撤回按钮判断
+        const recallBtn = document.getElementById('action-recall');
+        if (msg.isSelf && Date.now() - msg.time > 120000) { // 超过2分钟不可撤回
+            recallBtn.style.opacity = '0.5';
+            recallBtn.style.pointerEvents = 'none';
+        } else {
+            recallBtn.style.opacity = '1';
+            recallBtn.style.pointerEvents = 'auto';
+        }
     }
-    function closeMsgActionModal() {
-        document.getElementById('msg-action-modal').classList.remove('active');
+
+    function closeMsgActionMenu() {
+        document.getElementById('msg-action-menu').style.display = 'none';
         currentMsgId = null;
         currentMsgRow = null;
     }
 
-    function quoteMessage() {
+    function msgActionCopy() {
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (msg && msg.text) {
+            navigator.clipboard.writeText(msg.text).then(() => alert('已复制')).catch(() => alert('复制失败'));
+        }
+        closeMsgActionMenu();
+    }
+
+    function msgActionForward() { alert('暂未实现转发功能'); closeMsgActionMenu(); }
+    
+    function msgActionFavorite() {
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (msg) {
+            let favorites = safeParseJSON(localStorage.getItem('chat_favorites'), []);
+            favorites.push({ ...msg, charId: currentChatCharId, charName: contacts.find(c => c.id === currentChatCharId)?.remark || '未知' });
+            localStorage.setItem('chat_favorites', JSON.stringify(favorites));
+            alert('已收藏');
+        }
+        closeMsgActionMenu();
+    }
+
+    function msgActionDelete() {
+        if(!confirm('确定要删除这条消息吗？删除后对方将不再记得此内容。')) return;
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        history = history.filter(m => m.id !== currentMsgId);
+        localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+        if(currentMsgRow) currentMsgRow.remove();
+        closeMsgActionMenu();
+    }
+
+    function msgActionQuote() {
         const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
@@ -5127,59 +5395,76 @@
         const char = contacts.find(c => c.id === currentChatCharId);
         const senderName = msg.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
         document.getElementById('reply-text').innerText = `${senderName}: ${msg.text ? msg.text.substring(0, 20) : '[图片/语音]'}`;
-        closeMsgActionModal();
+        closeMsgActionMenu();
         document.getElementById('chat-input-field').focus();
     }
 
-    function cancelReply() {
-        currentReplyTo = null;
-        document.getElementById('reply-preview').style.display = 'none';
-    }
-
-    async function recallMessage() {
+    function msgActionRecall() {
         const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
         
-        if (msg.isSelf) {
-            // 用户撤回
-            msg.type = 'system';
-            msg.text = `[用户撤回了一条消息，原内容是: ${msg.text}]`;
-            msg.isSelf = false;
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-            
-            currentMsgRow.innerHTML = `<div style="text-align:center; width:100%; color:#999; font-size:12px;">你撤回了一条消息</div>`;
-        } else {
-            // 角色撤回
-            const newHistory = history.filter(m => m.id !== currentMsgId);
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(newHistory));
-            
-            currentMsgRow.innerHTML = `<div style="text-align:center; width:100%; color:#999; font-size:12px;">对方撤回了一条消息</div>`;
+        if (Date.now() - msg.time > 120000) {
+            alert('超过2分钟的消息不能撤回');
+            return;
         }
-        closeMsgActionModal();
-    }
 
-    async function deleteMessage() {
-        if(!confirm('确定要删除这条消息吗？删除后对方将不再记得此内容。')) return;
-        
-        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-        history = history.filter(m => m.id !== currentMsgId);
+        if (msg.isSelf) {
+            msg.originalText = msg.text;
+            msg.type = 'system';
+            msg.text = '[系统] 你撤回了一条消息';
+            msg.isRecalled = true;
+        } else {
+            msg.type = 'system';
+            msg.text = '[系统] 对方撤回了一条消息';
+            msg.isRecalled = true;
+        }
         localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-        
-        currentMsgRow.remove();
-        closeMsgActionModal();
+        reRenderChatHistory();
+        closeMsgActionMenu();
     }
 
-    async function favoriteMessage() {
+    function msgActionEditVoice() {
         const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
-        
-        let favorites = safeParseJSON(localStorage.getItem('chat_favorites'), []);
-        favorites.push({ ...msg, charId: currentChatCharId, charName: contacts.find(c => c.id === currentChatCharId)?.remark || '未知' });
-        localStorage.setItem('chat_favorites', JSON.stringify(favorites));
-        alert('已收藏');
-        closeMsgActionModal();
+        const newText = prompt("修改语音内容（对方无感知）：", msg.text);
+        if (newText !== null && newText.trim() !== '') {
+            msg.text = newText;
+            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            // 更新DOM
+            if (currentMsgRow) {
+                const bubble = currentMsgRow.querySelector('.voice-bubble');
+                if (bubble) {
+                    bubble.dataset.voiceText = newText;
+                    if (bubble.classList.contains('showing-text')) {
+                        bubble.innerHTML = `<span class="voice-text">${newText}</span>`;
+                    } else {
+                        bubble.innerHTML = `<svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg><span class="voice-duration">${Math.max(1, Math.floor(newText.length / 5))}"</span>`;
+                    }
+                }
+            }
+        }
+        closeMsgActionMenu();
+    }
+
+    function msgActionRemind() { alert('暂未实现提醒功能'); closeMsgActionMenu(); }
+    function msgActionReadAloud() { alert('暂未实现朗读功能'); closeMsgActionMenu(); }
+    function msgActionTranslate() { alert('暂未实现翻译功能'); closeMsgActionMenu(); }
+    function msgActionAskBot() { alert('暂未实现问小微功能'); closeMsgActionMenu(); }
+    function msgActionSearch() { alert('暂未实现搜一搜功能'); closeMsgActionMenu(); }
+
+    // 语音消息切换文字
+    function toggleVoiceText(e, el) {
+        e.stopPropagation();
+        const voiceText = el.dataset.voiceText;
+        if (el.classList.contains('showing-text')) {
+            el.classList.remove('showing-text');
+            el.innerHTML = `<svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg><span class="voice-duration">${Math.max(1, Math.floor(voiceText.length / 5))}"</span>`;
+        } else {
+            el.classList.add('showing-text');
+            el.innerHTML = `<span class="voice-text">${voiceText}</span>`;
+        }
     }
 
     // 多选模式
@@ -5192,8 +5477,19 @@
             document.getElementById('multi-select-bar').style.display = 'flex';
             document.getElementById('chat-input-bar').style.display = 'none';
             document.getElementById('multi-select-toggle-btn').style.color = '#007aff';
+            document.querySelectorAll('.chat-msg-row').forEach(row => {
+                row.classList.add('multi-selectable');
+                row.classList.remove('multi-selected');
+            });
         } else {
             cancelMultiSelect();
+        }
+    }
+
+    function enterMultiSelect() {
+        closeMsgActionMenu();
+        if (!isMultiSelectMode) {
+            toggleMultiSelectMode();
         }
     }
 
@@ -5204,7 +5500,7 @@
         document.getElementById('chat-input-bar').style.display = 'flex';
         document.getElementById('multi-select-toggle-btn').style.color = '#333';
         document.querySelectorAll('.chat-msg-row').forEach(row => {
-            row.style.backgroundColor = '';
+            row.classList.remove('multi-selectable', 'multi-selected');
         });
         updateMultiSelectCount();
     }
@@ -5214,7 +5510,7 @@
         btn.innerText = `收藏选中 (${selectedMsgIds.size})`;
     }
 
-    async function favoriteSelectedMessages() {
+    function favoriteSelectedMessages() {
         if (selectedMsgIds.size === 0) {
             alert('请先选择消息');
             return;
@@ -5232,34 +5528,9 @@
         cancelMultiSelect();
     }
 
-    // 语音消息切换文字
-    function toggleVoiceText(e, el) {
-        e.stopPropagation();
-        const voiceText = el.dataset.voiceText;
-        if (el.classList.contains('showing-text')) {
-            el.classList.remove('showing-text');
-            el.innerHTML = `<svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg><span class="voice-duration">${Math.max(1, Math.floor(voiceText.length / 5))}"</span>`;
-        } else {
-            el.classList.add('showing-text');
-            el.innerHTML = `<span class="voice-text">${voiceText}</span>`;
-        }
-    }
-
-    function editVoiceText(e, msgId, el) {
-        e.stopPropagation();
-        const newText = prompt("修改语音内容（对方无感知）：", el.dataset.voiceText);
-        if (newText !== null && newText.trim() !== '') {
-            el.dataset.voiceText = newText;
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            const msg = history.find(m => m.id === msgId);
-            if (msg) {
-                msg.text = newText;
-                localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-            }
-            if (el.classList.contains('showing-text')) {
-                el.innerHTML = `<span class="voice-text">${newText}</span>`;
-            }
-        }
+    function cancelReply() {
+        currentReplyTo = null;
+        document.getElementById('reply-preview').style.display = 'none';
     }
 
     async function initApp() {
