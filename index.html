@@ -2046,6 +2046,7 @@
     }
     let currentUploadingDecoIndex = -1;
 
+    // 修复：加上 async 关键字
     async function openMusicApp() {
         openScreen('music-app-screen');
         
@@ -3859,6 +3860,7 @@
     }
 
     async function renderNormalChatMessage(text, isSelf, scroll = true, imageBase64 = null) {
+        text = text || ''; // 防止未定义导致的报错
         const container = document.getElementById('chat-container'); let avatarHtml = ''; let nameHtml = '';
         if (isSelf) {
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId); const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
@@ -4003,11 +4005,11 @@
             if(msg.specialType) return;
             if(msg.image) {
                 messages.push({ role: msg.isSelf ? "user" : "assistant", content: [
-                    { type: "text", text: msg.text },
+                    { type: "text", text: msg.text || '[图片]' },
                     { type: "image_url", image_url: { url: msg.image } }
                 ] });
             } else {
-                messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text });
+                messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text || '' });
             }
         });
 
