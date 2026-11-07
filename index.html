@@ -2159,7 +2159,7 @@
                 document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'CustomOfflineFont, sans-serif');
             } catch (e) { console.error("线下字体加载失败", e); }
         } else {
-            document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'var(--global-font)');
+            document.getElementById('contact-offline-screen').setProperty('--offline-font', 'var(--global-font)');
         }
     }
     document.getElementById('global-font-upload').addEventListener('change', function(e) {
@@ -4010,8 +4010,12 @@
         const inputField = document.getElementById('chat-input-field');
         inputField.value = '';
         inputField.style.height = 'auto';
-        
-        container.scrollTop = container.scrollHeight; openScreen('chat-screen');
+
+        openScreen('chat-screen');
+        requestAnimationFrame(() => {
+            container.scrollTop = container.scrollHeight;
+            requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
+        });
     }
 
     async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null, msgType = 'text', msgData = null, msgStatus = '', msgId = null, targetId = 'chat-container') {
