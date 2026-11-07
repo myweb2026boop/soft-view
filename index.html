@@ -976,15 +976,25 @@
 
     /* 🌟 聊天特殊卡片样式 (转账、红包、礼物) */
     
-    /* 转账/红包卡片 (图1样式) */
+    /* 转账卡片 (图2样式) */
     .card-payment-v2 { border-radius: 12px; padding: 16px; width: 220px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #fff; position: relative; overflow: hidden; transition: opacity 0.3s; }
-    .card-payment-v2.transfer { background: #ffe8eb; color: #ff5e6a; } /* 清透粉色 */
-    .card-payment-v2.redpacket { background: #e6f3ff; color: #3b88f6; } /* 清透浅蓝 */
+    .card-payment-v2.transfer { background: #f9d6d9; color: #fff; } /* 完美复刻图2的浅粉色背景和白色字 */
+    .card-payment-v2.transfer .cpv-desc { color: #fff; opacity: 1; }
+    
+    /* 红包卡片 (微信风格) */
+    .redpacket-card { background: #fa9d3b; border-radius: 12px; width: 220px; overflow: hidden; color: #fff; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .rp-top { padding: 20px 15px; text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.3); background: #fa9d3b; }
+    .rp-icon svg { width: 40px; height: 40px; fill: #fde6b4; }
+    .rp-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+    .rp-bottom { padding: 8px; text-align: center; font-size: 13px; background: #fa9d3b; color: rgba(255,255,255,0.8); }
     
     /* 已完成状态，颜色变浅、去色 */
     .card-payment-v2.finished { opacity: 0.6; background: #f2f2f7; color: #888; }
     .card-payment-v2.finished .cpv-icon { border-color: #ccc; }
     .card-payment-v2.finished .cpv-icon svg { fill: #ccc; }
+    .redpacket-card.finished { opacity: 0.6; background: #e5e5ea; color: #888; }
+    .redpacket-card.finished .rp-top, .redpacket-card.finished .rp-bottom { background: #e5e5ea; }
+    .redpacket-card.finished .rp-icon svg { fill: #ccc; }
 
     .cpv-icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
     .cpv-icon svg { width: 26px; height: 26px; fill: currentColor; }
@@ -1045,6 +1055,20 @@
 
     /* 隐藏 input */
     .hidden-input { display: none; }
+
+    /* 🌟 聊天功能弹窗层级提升 */
+    #location-modal, #payment-modal, #action-modal, #msg-action-modal { z-index: 9000 !important; }
+    
+    /* 🌟 引用预览框 */
+    .reply-preview { display: none; padding: 8px 15px; background: #f5f5f7; border-bottom: 1px solid #e5e5ea; align-items: center; justify-content: space-between; z-index: 4005; }
+    .reply-text { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; margin-right: 10px; }
+    
+    /* 🌟 语音气泡 */
+    .voice-bubble { display: flex; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; }
+    .chat-msg-row.right .voice-bubble { flex-direction: row-reverse; }
+    
+    /* 🌟 多选模式底栏 */
+    #multi-select-bar { display: none; padding: 10px; background: #f5f5f7; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; z-index: 4005; }
 </style>
 </head>
 <body>
@@ -1709,7 +1733,12 @@
     <div class="chat-header">
         <button class="chat-back-btn" onclick="closeScreen('chat-screen')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg></button>
         <div class="chat-title" id="chat-title">角色名称</div>
-        <button class="chat-more-btn" onclick="openChatDetailModal()"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+        <div style="display: flex; align-items: center;">
+            <button class="chat-more-btn" onclick="toggleMultiSelectMode()" id="multi-select-toggle-btn" style="margin-right: 15px;">
+                <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: #333;"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            </button>
+            <button class="chat-more-btn" onclick="openChatDetailModal()"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+        </div>
     </div>
     <div id="chat-search-bar">
         <button class="search-cancel-btn" onclick="toggleChatSearch()">取消</button>
@@ -1717,6 +1746,12 @@
     </div>
     <div class="chat-container" id="chat-container"></div>
     
+    <!-- 引用预览框 -->
+    <div class="reply-preview" id="reply-preview">
+        <div class="reply-text" id="reply-text"></div>
+        <button onclick="cancelReply()" style="background: none; border: none; font-size: 16px; color: #999; cursor: pointer;">×</button>
+    </div>
+
     <!-- 🌟 底栏变回图二样式 -->
     <div class="chat-input-bar">
         <!-- 麦克风触发AI回复 -->
@@ -1737,6 +1772,12 @@
         <button class="chat-send-btn-inline" onclick="sendTextMessage()" id="send-msg-btn" style="display: none;">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
+    </div>
+
+    <!-- 多选模式底栏 -->
+    <div id="multi-select-bar">
+        <button onclick="cancelMultiSelect()" style="background: none; border: none; font-size: 16px; color: #333;">取消</button>
+        <button onclick="favoriteSelectedMessages()" style="background: #007aff; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px;">收藏选中 (0)</button>
     </div>
 </div>
 
@@ -1765,8 +1806,9 @@
         </div>
         <div class="attach-item" onclick="openPaymentModal('transfer')">
             <div class="attach-icon">
+                <!-- 🌟 转账图标修改为黑色 -->
                 <svg viewBox="0 0 24 24" style="width: 32px; height: 32px;">
-                    <circle cx="12" cy="12" r="10" fill="#F59E0B" />
+                    <circle cx="12" cy="12" r="10" fill="#333" />
                     <path d="M12.5 6v2.2c-1.4 0-2.5.9-2.5 2.1s.9 1.9 2.5 2.3c1 .3 1.5.6 1.5 1.3 0 .6-.5 1.1-1.4 1.1s-1.6-.5-1.6-1.4h-1.8c0 1.6 1.1 2.7 2.8 2.9V18h1.5v-2.2c1.5 0 2.6-.9 2.6-2.2s-.9-2-2.6-2.4c-.9-.2-1.4-.5-1.4-1.2 0-.6.5-1 1.3-1s1.5.4 1.5 1.3h1.8c0-1.5-1-2.6-2.7-2.8V6h-1.5z" fill="white"/>
                 </svg>
             </div>
@@ -1885,6 +1927,17 @@
             <button class="modal-btn cancel" id="action-btn-cancel">取消</button>
             <button class="modal-btn confirm" id="action-btn-confirm">确定</button>
         </div>
+    </div>
+</div>
+
+<!-- 消息操作弹窗 (双击) -->
+<div class="modal-overlay" id="msg-action-modal" style="z-index: 9000;">
+    <div class="modal-content" style="width: 200px; padding: 0;">
+        <div class="chat-detail-item" onclick="quoteMessage()" style="padding: 15px; justify-content: center;">引用</div>
+        <div class="chat-detail-item" onclick="recallMessage()" style="padding: 15px; justify-content: center;">撤回</div>
+        <div class="chat-detail-item" onclick="deleteMessage()" style="padding: 15px; justify-content: center;">删除</div>
+        <div class="chat-detail-item" onclick="favoriteMessage()" style="padding: 15px; justify-content: center;">收藏</div>
+        <div class="modal-actions" style="margin: 0; padding: 10px 20px;"><button class="modal-btn cancel" onclick="closeMsgActionModal()">取消</button></div>
     </div>
 </div>
 
@@ -2044,7 +2097,13 @@
     setInterval(updateLiveTime, 1000); updateLiveTime();
 
     function openScreen(id) { document.getElementById(id).classList.add('active'); }
-    function closeScreen(id) { document.getElementById(id).classList.remove('active'); }
+    function closeScreen(id) {
+        if (id === 'chat-screen') {
+            cancelMultiSelect();
+            cancelReply();
+        }
+        document.getElementById(id).classList.remove('active'); 
+    }
     function openManager() { openScreen('manager-screen'); }
     function openXunyan() { renderXunyanMessages(); openScreen('xunyan-screen'); }
     function openContactList() { renderContactList(); openScreen('contact-list-screen'); }
@@ -4097,7 +4156,7 @@
                 <div class="loc-map-placeholder"><div class="loc-map-icon"></div></div>
                 ${actionHtml}
             </div>`;
-        } else if (msgType === 'redpacket' || msgType === 'transfer') {
+        } else if (msgType === 'transfer') {
             const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
             let statusText = '';
             let isFinished = pData.status !== 'pending';
@@ -4110,20 +4169,28 @@
                 statusText = '已退回';
             }
             
-            let iconSvg = '';
-            if (msgType === 'transfer') {
-                iconSvg = `<svg viewBox="0 0 24 24"><path d="M17 6l-4-4-4 4h3v4H8v3h4v4l4-4-4-4h-3V6h3z"/></svg>`;
-            } else {
-                iconSvg = `<svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>`;
-            }
-            
-            bubbleHtml = `<div class="card-payment-v2 ${msgType} ${isFinished ? 'finished' : ''}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
-                <div class="cpv-icon">${iconSvg}</div>
+            bubbleHtml = `<div class="card-payment-v2 transfer ${isFinished ? 'finished' : ''}" onclick="handlePaymentAction('${msgId}', 'transfer')">
+                <div class="cpv-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 8l-4-4-4 4h3v4H8v3h4v4l4-4-4-4h-3V8h3z"/></svg>
+                </div>
                 <div class="cpv-info">
                     <div class="cpv-amount">¥${pData.amount}</div>
-                    <div class="cpv-desc">${pData.remark || (isSelf ? '你发起了一笔' + (msgType==='transfer'?'转账':'红包') : '对方发起了' + (msgType==='transfer'?'转账':'红包'))}</div>
+                    <div class="cpv-desc">${isSelf ? '你发起了一笔转账' : '对方发起了一笔转账'}</div>
                     <div class="cpv-status">${statusText}</div>
                 </div>
+            </div>`;
+        } else if (msgType === 'redpacket') {
+            const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
+            let isFinished = pData.status !== 'pending';
+            
+            bubbleHtml = `<div class="redpacket-card ${isFinished ? 'finished' : ''}" onclick="handlePaymentAction('${msgId}', 'redpacket')">
+                <div class="rp-top">
+                    <div class="rp-icon">
+                        <svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>
+                    </div>
+                    <div class="rp-title">${pData.remark || '恭喜发财，大吉大利'}</div>
+                </div>
+                <div class="rp-bottom">${isFinished ? '已领取' : '领取红包'}</div>
             </div>`;
         } else if (msgType === 'gift') {
             const gData = msgData || { title: '마음', remark: '비고/호칭', items: [], total: '0.00', status: 'pending' };
@@ -4142,6 +4209,11 @@
                     <div class="gift-v2-list">${itemsHtml || '<div class="gift-v2-item"><span>선물 없음</span><span>$0.00</span></div>'}</div>
                     <div class="gift-v2-total"><span>총 판매가</span><span>$${gData.total || '0.00'}</span></div>
                 </div>
+            </div>`;
+        } else if (msgType === 'voice') {
+            bubbleHtml = `<div class="chat-bubble voice-bubble" onclick="toggleVoiceText(event, this)" data-voice-text="${text}" ondblclick="editVoiceText(event, '${msgId}', this)">
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+                <span class="voice-duration">${Math.max(1, Math.floor(text.length / 5))}"</span>
             </div>`;
         } else if (imageBase64) {
             bubbleHtml = `<img src="${imageBase64}" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px;" alt="${text}" onerror="this.src=''">`;
@@ -4187,14 +4259,31 @@
         }
 
         msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`; container.appendChild(msgRow);
+        
+        // 🌟 添加双击菜单
+        msgRow.ondblclick = (e) => {
+            e.stopPropagation();
+            if (isMultiSelectMode) return;
+            openMsgActionModal(msgId, msgRow);
+        };
+
         if (scroll) container.scrollTop = container.scrollHeight;
     }
 
     // 发送文字消息 (点击发送按钮触发)
     async function sendTextMessage() {
         const input = document.getElementById('chat-input-field');
-        const text = input.value.trim();
+        let text = input.value.trim();
         if (!text) return;
+        
+        if (currentReplyTo) {
+            const char = contacts.find(c => c.id === currentChatCharId);
+            const senderName = currentReplyTo.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
+            const quoteText = `[引用: ${senderName}: ${currentReplyTo.text ? currentReplyTo.text.substring(0, 20) : '[图片/语音]'}] `;
+            text = quoteText + text;
+            currentReplyTo = null;
+            document.getElementById('reply-preview').style.display = 'none';
+        }
         
         input.value = '';
         input.style.height = 'auto'; // 重置高度
@@ -4229,6 +4318,24 @@
     }
 
     document.getElementById('chat-container').addEventListener('click', function(e) {
+        if (isMultiSelectMode) {
+            const row = e.target.closest('.chat-msg-row');
+            if (row && row.dataset.msgId) {
+                e.preventDefault();
+                e.stopPropagation();
+                const msgId = row.dataset.msgId;
+                if (selectedMsgIds.has(msgId)) {
+                    selectedMsgIds.delete(msgId);
+                    row.style.backgroundColor = '';
+                } else {
+                    selectedMsgIds.add(msgId);
+                    row.style.backgroundColor = '#e5f1ff';
+                }
+                updateMultiSelectCount();
+            }
+            return;
+        }
+        
         if (document.getElementById('attachment-panel').classList.contains('active')) {
             toggleAttachmentPanel();
         }
@@ -4498,10 +4605,10 @@
         const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
         const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${currentActionMsgId}"]`);
         if (msgRow) {
-            const cardEl = msgRow.querySelector('.card-payment-v2');
+            const cardEl = msgRow.querySelector('.card-payment-v2') || msgRow.querySelector('.redpacket-card');
             if (cardEl) {
                 cardEl.classList.add('finished');
-                const statusEl = cardEl.querySelector('.cpv-status');
+                const statusEl = cardEl.querySelector('.cpv-status') || cardEl.querySelector('.rp-bottom');
                 if (statusEl) {
                     statusEl.innerText = action === 'accepted' ? '已领取' : '已退回';
                 }
@@ -4564,6 +4671,7 @@
                     pack.stickers.forEach(s => { stickerPrompt += `- [表情:${s.meaning}]\n`; });
                 }
             });
+            stickerPrompt += `\n你可以使用 [语音] 前缀来发送语音消息，例如：[语音] 你好呀。\n`;
         }
 
         bookWorldBooks.forEach(b => {
@@ -4622,14 +4730,20 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); 
             let replyText = data.choices[0].message.content;
+            let replyType = 'text';
+
+            if (replyText.startsWith('[语音]')) {
+                replyType = 'voice';
+                replyText = replyText.replace('[语音]', '').trim();
+            }
 
             if (replyText.includes('[发起通话]')) {
                 replyText = replyText.replace('[发起通话]', '').trim();
                 if (replyText) {
                     if (container.contains(loadingRow)) container.removeChild(loadingRow); 
                     const msgId = Date.now().toString();
-                    await renderChatMessage(replyText, false, true, null, 'text', null, '', msgId, targetId);
-                    history.push({ id: msgId, type: 'text', text: replyText, isSelf: false, time: Date.now() }); 
+                    await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
+                    history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
                     try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
                 }
                 showIncomingCall();
@@ -4638,8 +4752,8 @@
 
             if (container.contains(loadingRow)) container.removeChild(loadingRow); 
             const msgId = Date.now().toString();
-            await renderChatMessage(replyText, false, true, null, 'text', null, '', msgId, targetId);
-            history.push({ id: msgId, type: 'text', text: replyText, isSelf: false, time: Date.now() }); 
+            await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
+            history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
             try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
 
             if (document.visibilityState === 'hidden') {
@@ -4705,6 +4819,7 @@
             container.style.paddingTop = '20px';
             document.getElementById('chat-search-input').value = ''; 
             filterChatMessages(); 
+            container.scrollTop = container.scrollHeight; // 回到最后一条消息
         }
         closeChatDetailModal();
     }
@@ -4981,6 +5096,169 @@
         } else {
             addBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
+        }
+    }
+
+    // ==========================================
+    // 🌟 7. 消息操作逻辑（引用、撤回、删除、收藏、多选）
+    // ==========================================
+    let currentMsgId = null;
+    let currentMsgRow = null;
+    let currentReplyTo = null;
+
+    function openMsgActionModal(msgId, rowElement) {
+        if (!msgId) return;
+        currentMsgId = msgId;
+        currentMsgRow = rowElement;
+        document.getElementById('msg-action-modal').classList.add('active');
+    }
+    function closeMsgActionModal() {
+        document.getElementById('msg-action-modal').classList.remove('active');
+        currentMsgId = null;
+        currentMsgRow = null;
+    }
+
+    function quoteMessage() {
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg) return;
+        currentReplyTo = msg;
+        document.getElementById('reply-preview').style.display = 'flex';
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const senderName = msg.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
+        document.getElementById('reply-text').innerText = `${senderName}: ${msg.text ? msg.text.substring(0, 20) : '[图片/语音]'}`;
+        closeMsgActionModal();
+        document.getElementById('chat-input-field').focus();
+    }
+
+    function cancelReply() {
+        currentReplyTo = null;
+        document.getElementById('reply-preview').style.display = 'none';
+    }
+
+    async function recallMessage() {
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg) return;
+        
+        if (msg.isSelf) {
+            // 用户撤回
+            msg.type = 'system';
+            msg.text = `[用户撤回了一条消息，原内容是: ${msg.text}]`;
+            msg.isSelf = false;
+            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            
+            currentMsgRow.innerHTML = `<div style="text-align:center; width:100%; color:#999; font-size:12px;">你撤回了一条消息</div>`;
+        } else {
+            // 角色撤回
+            const newHistory = history.filter(m => m.id !== currentMsgId);
+            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(newHistory));
+            
+            currentMsgRow.innerHTML = `<div style="text-align:center; width:100%; color:#999; font-size:12px;">对方撤回了一条消息</div>`;
+        }
+        closeMsgActionModal();
+    }
+
+    async function deleteMessage() {
+        if(!confirm('确定要删除这条消息吗？删除后对方将不再记得此内容。')) return;
+        
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        history = history.filter(m => m.id !== currentMsgId);
+        localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+        
+        currentMsgRow.remove();
+        closeMsgActionModal();
+    }
+
+    async function favoriteMessage() {
+        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg) return;
+        
+        let favorites = safeParseJSON(localStorage.getItem('chat_favorites'), []);
+        favorites.push({ ...msg, charId: currentChatCharId, charName: contacts.find(c => c.id === currentChatCharId)?.remark || '未知' });
+        localStorage.setItem('chat_favorites', JSON.stringify(favorites));
+        alert('已收藏');
+        closeMsgActionModal();
+    }
+
+    // 多选模式
+    let isMultiSelectMode = false;
+    let selectedMsgIds = new Set();
+
+    function toggleMultiSelectMode() {
+        isMultiSelectMode = !isMultiSelectMode;
+        if (isMultiSelectMode) {
+            document.getElementById('multi-select-bar').style.display = 'flex';
+            document.getElementById('chat-input-bar').style.display = 'none';
+            document.getElementById('multi-select-toggle-btn').style.color = '#007aff';
+        } else {
+            cancelMultiSelect();
+        }
+    }
+
+    function cancelMultiSelect() {
+        isMultiSelectMode = false;
+        selectedMsgIds.clear();
+        document.getElementById('multi-select-bar').style.display = 'none';
+        document.getElementById('chat-input-bar').style.display = 'flex';
+        document.getElementById('multi-select-toggle-btn').style.color = '#333';
+        document.querySelectorAll('.chat-msg-row').forEach(row => {
+            row.style.backgroundColor = '';
+        });
+        updateMultiSelectCount();
+    }
+
+    function updateMultiSelectCount() {
+        const btn = document.querySelector('#multi-select-bar button:nth-child(2)');
+        btn.innerText = `收藏选中 (${selectedMsgIds.size})`;
+    }
+
+    async function favoriteSelectedMessages() {
+        if (selectedMsgIds.size === 0) {
+            alert('请先选择消息');
+            return;
+        }
+        let favorites = safeParseJSON(localStorage.getItem('chat_favorites'), []);
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        selectedMsgIds.forEach(id => {
+            const msg = history.find(m => m.id === id);
+            if (msg) {
+                favorites.push({ ...msg, charId: currentChatCharId, charName: contacts.find(c => c.id === currentChatCharId)?.remark || '未知' });
+            }
+        });
+        localStorage.setItem('chat_favorites', JSON.stringify(favorites));
+        alert(`已收藏 ${selectedMsgIds.size} 条消息`);
+        cancelMultiSelect();
+    }
+
+    // 语音消息切换文字
+    function toggleVoiceText(e, el) {
+        e.stopPropagation();
+        const voiceText = el.dataset.voiceText;
+        if (el.classList.contains('showing-text')) {
+            el.classList.remove('showing-text');
+            el.innerHTML = `<svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg><span class="voice-duration">${Math.max(1, Math.floor(voiceText.length / 5))}"</span>`;
+        } else {
+            el.classList.add('showing-text');
+            el.innerHTML = `<span class="voice-text">${voiceText}</span>`;
+        }
+    }
+
+    function editVoiceText(e, msgId, el) {
+        e.stopPropagation();
+        const newText = prompt("修改语音内容（对方无感知）：", el.dataset.voiceText);
+        if (newText !== null && newText.trim() !== '') {
+            el.dataset.voiceText = newText;
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            const msg = history.find(m => m.id === msgId);
+            if (msg) {
+                msg.text = newText;
+                localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            }
+            if (el.classList.contains('showing-text')) {
+                el.innerHTML = `<span class="voice-text">${newText}</span>`;
+            }
         }
     }
 
