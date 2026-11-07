@@ -396,11 +396,36 @@
     #offline-char-modal { z-index: 4700 !important; }
 
     /* ==================================================== */
-    /* 🌟 设置 App 界面样式 (整体下移) */
+    /* 🌟 设置 App 界面样式 (彻底修复顶部漏出 bug) */
     /* ==================================================== */
-    #settings-screen { background-color: #f2f2f7; z-index: 5000; padding: 0; position: fixed; top: 40px; left: 0; width: 100vw; height: calc(100vh - 40px); overflow-y: auto; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); display: none; flex-direction: column; }
+    #settings-screen { 
+        background-color: rgba(0,0,0,0.4); /* 半透明黑底遮罩 */
+        z-index: 5000; 
+        padding: 0; 
+        position: fixed; 
+        top: 0; left: 0; width: 100vw; height: 100vh; 
+        display: none; 
+        justify-content: center; 
+        align-items: flex-end; 
+        overflow: hidden; 
+    }
     #settings-screen.active { display: flex; }
-    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+    .settings-content-wrap { 
+        background-color: #f2f2f7; 
+        width: 100%; 
+        max-width: 400px; 
+        height: 92vh; 
+        border-top-left-radius: 24px; 
+        border-top-right-radius: 24px; 
+        display: flex; 
+        flex-direction: column; 
+        overflow-y: auto; 
+        position: relative;
+        animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; border-top-left-radius: 24px; border-top-right-radius: 24px; }
     .settings-header-bar .back-icon { position: absolute; left: 20px; width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .settings-header-bar .back-icon svg { width: 20px; height: 20px; stroke: #333; stroke-width: 2; fill: none; }
     .settings-title { font-size: 20px; font-weight: 600; color: #000; }
@@ -423,15 +448,15 @@
     .settings-switch.on::after { transform: translateX(20px); }
 
     /* ==================================================== */
-    /* 🌟 全新仿图 API 设置全屏界面 (黑白灰极简风) */
+    /* 🌟 全新仿图 API 设置全屏界面 (补全模型选择、最大Token等) */
     /* ==================================================== */
     #api-screen { background-color: #e0e0e0; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; overflow: hidden; }
-    #api-screen.active { display: flex; } /* 修复：必须加上 .active 才会显示 */
+    #api-screen.active { display: flex; }
     
     .api-main-card {
         width: 92%;
         max-width: 380px;
-        height: 88vh;
+        height: 92vh;
         background: #ffffff;
         border-radius: 36px;
         display: flex;
@@ -439,7 +464,7 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     .api-black-header {
@@ -491,14 +516,14 @@
     }
 
     .api-avatar-container {
-        width: 100px;
-        height: 100px;
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
         background-color: #e5e5ea;
         background-size: cover;
         background-position: center;
         cursor: pointer;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         flex-shrink: 0;
         display: flex;
         justify-content: center;
@@ -509,7 +534,7 @@
 
     .api-input-group {
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
         position: relative;
     }
 
@@ -518,8 +543,8 @@
         background-color: #f4f4f5;
         border: none;
         border-radius: 30px;
-        padding: 18px 24px;
-        font-size: 16px;
+        padding: 16px 24px;
+        font-size: 15px;
         color: #333;
         outline: none;
         box-sizing: border-box;
@@ -541,27 +566,66 @@
         fill: #b0b0b5;
     }
 
-    .api-action-row {
-        width: 100%;
+    /* 模型输入框与拉取按钮并列 */
+    .api-input-row {
         display: flex;
-        justify-content: flex-end;
-        padding-right: 15px;
-        margin-bottom: 15px;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    .api-input-row .api-input {
+        flex-grow: 1;
+        margin-bottom: 0;
+    }
+    .api-btn-pull {
+        background-color: #f4f4f5;
+        border: none;
+        border-radius: 30px;
+        padding: 0 20px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        font-weight: 500;
+        white-space: nowrap;
+        outline: none;
     }
 
-    .api-link-text {
-        font-size: 15px;
-        color: #888;
+    /* 下拉列表 */
+    .api-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 100;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #eee;
+        margin-top: 5px;
+    }
+    .api-dropdown-item {
+        padding: 12px 20px;
+        font-size: 14px;
+        color: #333;
+        border-bottom: 1px solid #f0f0f0;
         cursor: pointer;
-        text-decoration: none;
+    }
+    .api-dropdown-item:last-child {
+        border-bottom: none;
+    }
+    .api-dropdown-item:active {
+        background-color: #f9f9f9;
     }
 
     .api-slider-container {
         width: 100%;
-        padding: 10px 10px 20px;
+        padding: 5px 10px 15px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
     
     .api-slider-label {
@@ -594,7 +658,7 @@
         display: flex;
         justify-content: space-between;
         gap: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .api-preset-btn {
@@ -609,28 +673,31 @@
         font-weight: 500;
     }
 
-    .api-submit-btn {
+    .api-action-btns {
+        display: flex;
         width: 100%;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .api-submit-btn {
+        flex: 1;
         background-color: #111111;
         color: #ffffff;
         border: none;
         border-radius: 20px;
-        padding: 18px;
-        font-size: 16px;
+        padding: 16px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: auto; 
-        margin-bottom: 10px;
-        flex-shrink: 0;
     }
-
-    .api-submit-btn svg {
-        width: 24px;
-        height: 24px;
-        fill: #ffffff;
+    .api-submit-btn.outline {
+        background-color: #ffffff;
+        color: #111111;
+        border: 1px solid #ddd;
     }
 
     /* ==================================================== */
@@ -887,7 +954,7 @@
         </div>
     </div>
 
-    <!-- 新增：完全匹配图1的底部美化组件卡片 -->
+    <!-- 🌟 新增：完全匹配图1的底部美化组件卡片 -->
     <div class="new-widget-card">
         <div class="new-widget-img" id="mgr-widget-img" onclick="document.getElementById('mgr-widget-upload').click()"></div>
         <div class="new-widget-info">
@@ -900,7 +967,7 @@
     </div>
 </div>
 
-<!-- 全新音乐 App 结构 -->
+<!-- 🌟 全新音乐 App 结构 -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
@@ -973,53 +1040,55 @@
     </div>
 </div>
 
-<!-- 设置 App (仿 iOS) -->
+<!-- 设置 App (已修复顶部背景漏出问题，改为底部卡片弹出) -->
 <div class="fullscreen-screen" id="settings-screen">
-    <div class="settings-header-bar">
-        <div class="back-icon" onclick="closeScreen('settings-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
-        <div class="settings-title">设置</div>
-        <div style="width:36px;"></div>
-    </div>
-    <div class="settings-account">
-        <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
-        <div class="settings-account-info">
-            <div class="settings-account-name" id="settings-account-name" ondblclick="editAccountName()">默认昵称</div>
-            <div class="settings-account-sub">Apple账户、iCloud 等</div>
+    <div class="settings-content-wrap">
+        <div class="settings-header-bar">
+            <div class="back-icon" onclick="closeScreen('settings-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+            <div class="settings-title">设置</div>
+            <div style="width:36px;"></div>
         </div>
-        <div class="settings-list-arrow"></div>
-    </div>
-    <div class="settings-group-list">
-        <div class="settings-list-item" onclick="toggleFullscreenMode()">
-            <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
-            <div class="settings-list-text">全屏模式</div>
-            <div class="settings-switch" id="toggle-fullscreen"></div>
-        </div>
-        <div class="settings-list-item" onclick="openApiScreen()">
-            <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
-            <div class="settings-list-text">API 接口</div>
-            <div class="settings-list-value" id="api-status-text">未连接</div>
+        <div class="settings-account">
+            <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
+            <div class="settings-account-info">
+                <div class="settings-account-name" id="settings-account-name" ondblclick="editAccountName()">默认昵称</div>
+                <div class="settings-account-sub">Apple账户、iCloud 等</div>
+            </div>
             <div class="settings-list-arrow"></div>
         </div>
-        <div class="settings-list-item">
-            <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
-            <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
-            <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg></div>
-            <div class="settings-list-arrow" onclick="document.getElementById('ringtone-upload').click()"></div>
-        </div>
-        <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
-            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
-            <div class="settings-list-text">导入全局数据</div>
-            <div class="settings-list-arrow"></div>
-        </div>
-        <div class="settings-list-item" onclick="exportGlobalData()">
-            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
-            <div class="settings-list-text">导出全局数据</div>
-            <div class="settings-list-arrow"></div>
+        <div class="settings-group-list">
+            <div class="settings-list-item" onclick="toggleFullscreenMode()">
+                <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
+                <div class="settings-list-text">全屏模式</div>
+                <div class="settings-switch" id="toggle-fullscreen"></div>
+            </div>
+            <div class="settings-list-item" onclick="openApiScreen()">
+                <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
+                <div class="settings-list-text">API 接口</div>
+                <div class="settings-list-value" id="api-status-text">未连接</div>
+                <div class="settings-list-arrow"></div>
+            </div>
+            <div class="settings-list-item">
+                <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+                <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
+                <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="settings-list-arrow" onclick="document.getElementById('ringtone-upload').click()"></div>
+            </div>
+            <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
+                <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
+                <div class="settings-list-text">导入全局数据</div>
+                <div class="settings-list-arrow"></div>
+            </div>
+            <div class="settings-list-item" onclick="exportGlobalData()">
+                <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
+                <div class="settings-list-text">导出全局数据</div>
+                <div class="settings-list-arrow"></div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 全新仿图 API 设置界面 -->
+<!-- 全新仿图 API 设置界面 (补齐所有要求功能) -->
 <div class="fullscreen-screen" id="api-screen">
     <div class="api-main-card">
         <!-- 黑色顶部区域 -->
@@ -1047,11 +1116,20 @@
                 </svg>
             </div>
 
-            <!-- 拉取模型与温度调节 -->
-            <div class="api-action-row">
-                <span class="api-link-text" onclick="fetchApiModels()">Pull the model</span>
+            <!-- 模型名称与拉取 -->
+            <div class="api-input-row" style="position: relative;">
+                <input type="text" class="api-input" id="api-model-manual" placeholder="模型名称">
+                <button class="api-btn-pull" id="btn-pull-model" onclick="fetchApiModels()">拉取模型</button>
+                <!-- 下拉列表容器 -->
+                <div class="api-dropdown" id="api-model-dropdown"></div>
+            </div>
+
+            <!-- 最大 Token -->
+            <div class="api-input-group">
+                <input type="number" class="api-input" id="api-max-tokens" placeholder="最大 Token (默认 2048)">
             </div>
             
+            <!-- 温度调节 -->
             <div class="api-slider-container">
                 <div class="api-slider-label">
                     <span>温度 (Temperature)</span>
@@ -1066,16 +1144,11 @@
                 <button class="api-preset-btn" onclick="loadApiPresetFromModal()">运用预设</button>
             </div>
 
-            <!-- 隐藏的模型选择和手动输入区 (保持原逻辑可用) -->
-            <div style="display:none;">
-                <select id="api-model-select" class="api-input" style="margin-bottom:10px;"></select>
-                <input type="text" class="api-input" id="api-model-manual" placeholder="手动输入模型名称">
+            <!-- 操作按钮行 (保存 & 测试) -->
+            <div class="api-action-btns">
+                <button class="api-submit-btn outline" onclick="testApiConnection(this)">测试连接</button>
+                <button class="api-submit-btn" onclick="saveApiConfig()">保存配置</button>
             </div>
-
-            <!-- 底部保存按钮 (相当于箭头) -->
-            <button class="api-submit-btn" onclick="saveApiConfig()">
-                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-            </button>
         </div>
     </div>
 </div>
@@ -2684,7 +2757,7 @@
     }
 
     // ==========================================
-    // 5. 设置 App 及全新 API 界面逻辑
+    // 5. 设置 App 及全新 API 界面逻辑 (包含拉取模型列表、最大Token、测试连接)
     // ==========================================
     async function openSettingsApp() {
         openScreen('settings-screen');
@@ -2732,7 +2805,7 @@
         }
     }
 
-    // 🌟 全新 API 界面逻辑
+    // 全新 API 界面逻辑
     async function openApiScreen() {
         openScreen('api-screen');
         
@@ -2752,14 +2825,18 @@
         }
 
         // 3. 加载配置
-        const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), { url: '', key: '', model: '', temp: 0.7 });
+        const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), { url: '', key: '', model: '', temp: 0.7, maxTokens: 2048 });
         document.getElementById('api-url').value = apiConf.url || '';
         document.getElementById('api-key').value = apiConf.key || '';
         document.getElementById('api-model-manual').value = apiConf.model || '';
+        document.getElementById('api-max-tokens').value = apiConf.maxTokens || 2048;
         
         const tempVal = apiConf.temp !== undefined ? apiConf.temp : 0.7;
         document.getElementById('api-temp').value = tempVal;
         document.getElementById('api-temp-val').innerText = tempVal;
+        
+        // 隐藏下拉框
+        document.getElementById('api-model-dropdown').style.display = 'none';
     }
 
     function saveApiTopTitle(val) {
@@ -2796,17 +2873,26 @@
         }
     }
 
+    // 改进后的拉取模型逻辑：不再使用丑陋的 prompt
     async function fetchApiModels() {
-        const url = document.getElementById('api-url').value.trim().replace(/\/+$/, ''); // 去掉末尾斜杠
+        const url = document.getElementById('api-url').value.trim().replace(/\/+$/, ''); 
         const key = document.getElementById('api-key').value.trim();
+        const btn = document.getElementById('btn-pull-model');
+        const dropdown = document.getElementById('api-model-dropdown');
+        
         if (!url || !key) { alert("请填写 API URL 和 API key"); return; }
         
+        const origText = btn.innerText;
+        btn.innerText = '拉取中...';
+        btn.disabled = true;
+        
+        dropdown.innerHTML = '<div style="padding:15px; text-align:center; color:#888; font-size:14px;">正在拉取，请稍候...</div>';
+        dropdown.style.display = 'block';
+
         try {
             const res = await fetch(`${url}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
-            const select = document.getElementById('api-model-select');
-            select.innerHTML = '<option value="">请选择模型...</option>';
             
             let modelList = [];
             if (data && data.data && Array.isArray(data.data)) { 
@@ -2816,43 +2902,84 @@
             }
 
             if(modelList.length === 0) {
-                alert("拉取成功，但未找到可用模型列表。请手动填写。");
+                dropdown.innerHTML = '<div style="padding:15px; text-align:center; color:#888;">拉取成功，但未找到模型</div>';
                 return;
             }
 
-            modelList.forEach(m => { 
+            dropdown.innerHTML = '';
+            modelList.forEach(m => {
                 const modelId = m.id || m.name || m;
-                select.innerHTML += `<option value="${modelId}">${modelId}</option>`; 
+                const div = document.createElement('div');
+                div.className = 'api-dropdown-item';
+                div.innerText = modelId;
+                div.onclick = () => {
+                    document.getElementById('api-model-manual').value = modelId;
+                    dropdown.style.display = 'none';
+                };
+                dropdown.appendChild(div);
             });
             
-            // 弹出选择框让用户选（为了不破坏新UI，使用prompt或者简单的自定义逻辑）
-            const optionsText = modelList.map(m => m.id || m.name || m).join('\n');
-            const userChoice = prompt(`拉取成功！请从下方复制或输入您要使用的模型名称：\n\n${optionsText}`, modelList[0].id || modelList[0].name || modelList[0]);
-            if (userChoice) {
-                document.getElementById('api-model-manual').value = userChoice.trim();
-            }
-            
         } catch (err) { 
-            alert("拉取模型失败 (可能是网络或跨域限制): " + err.message + "\n\n您可以直接在输入框中手动填写模型名称。"); 
+            dropdown.innerHTML = `<div style="padding:15px; text-align:center; color:#ff3b30;">拉取失败，请直接手动输入。(${err.message})</div>`;
+        } finally {
+            btn.innerText = origText;
+            btn.disabled = false;
         }
     }
+
+    // 点击空白处关闭下拉列表
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('api-model-dropdown');
+        const input = document.getElementById('api-model-manual');
+        const btn = document.getElementById('btn-pull-model');
+        if(dropdown && dropdown.style.display === 'block' && !dropdown.contains(e.target) && e.target !== input && e.target !== btn) {
+            dropdown.style.display = 'none';
+        }
+    });
 
     function saveApiConfig() {
         const url = document.getElementById('api-url').value.trim();
         const key = document.getElementById('api-key').value.trim();
-        let model = document.getElementById('api-model-select').value;
-        if (!model) model = document.getElementById('api-model-manual').value.trim();
+        const model = document.getElementById('api-model-manual').value.trim();
         const temp = parseFloat(document.getElementById('api-temp').value);
+        const maxTokens = parseInt(document.getElementById('api-max-tokens').value) || 2048;
         
         if (!url || !key || !model) { 
-            alert("URL, Key 和 模型名称 不能为空！如果您拉取不到模型，请直接手动在模型框填写。"); 
+            alert("URL, Key 和 模型名称 不能为空！"); 
             return; 
         }
-        const config = { url, key, model, temp };
+        const config = { url, key, model, temp, maxTokens };
         localStorage.setItem('settings_api_config', JSON.stringify(config));
         document.getElementById('api-status-text').innerText = '已配置';
         closeScreen('api-screen');
-        alert("API 配置已保存并应用！");
+        alert("API 配置已保存！");
+    }
+
+    async function testApiConnection(btn) {
+        const url = document.getElementById('api-url').value.trim().replace(/\/+$/, '');
+        const key = document.getElementById('api-key').value.trim();
+        const model = document.getElementById('api-model-manual').value.trim();
+        
+        if (!url || !key || !model) { alert("请先填写 URL, Key 和 模型名称"); return; }
+        
+        const origText = btn.innerText;
+        btn.innerText = "测试中...";
+        btn.disabled = true;
+        
+        try {
+            const res = await fetch(`${url}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+                body: JSON.stringify({ model: model, messages: [{role: 'user', content: 'Hi'}], max_tokens: 5 })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            alert("测试连接成功！");
+        } catch (err) {
+            alert("测试连接失败：" + err.message);
+        } finally {
+            btn.innerText = origText;
+            btn.disabled = false;
+        }
     }
 
     // 预设管理
@@ -2870,12 +2997,13 @@
         if (!name) { alert("请输入预设名称！"); return; }
         const url = document.getElementById('api-url').value.trim();
         const key = document.getElementById('api-key').value.trim();
-        let model = document.getElementById('api-model-select').value;
-        if (!model) model = document.getElementById('api-model-manual').value.trim();
+        const model = document.getElementById('api-model-manual').value.trim();
         const temp = parseFloat(document.getElementById('api-temp').value);
+        const maxTokens = parseInt(document.getElementById('api-max-tokens').value) || 2048;
+        
         if (!url || !key || !model) { alert("URL, Key 和 模型 不能为空！"); return; }
         const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
-        presets[name] = { url, key, model, temp };
+        presets[name] = { url, key, model, temp, maxTokens };
         localStorage.setItem('settings_api_presets', JSON.stringify(presets));
         const sel = document.getElementById('preset-select-list'); 
         sel.innerHTML += `<option value="${name}">${name}</option>`; 
@@ -2896,6 +3024,7 @@
             document.getElementById('api-model-manual').value = p.model; 
             document.getElementById('api-temp').value = p.temp;
             document.getElementById('api-temp-val').innerText = p.temp;
+            if(p.maxTokens) document.getElementById('api-max-tokens').value = p.maxTokens;
             alert("预设已应用！");
         } else { alert("预设不存在！"); }
     }
@@ -2908,6 +3037,7 @@
             document.getElementById('api-model-manual').value = p.model; 
             document.getElementById('api-temp').value = p.temp;
             document.getElementById('api-temp-val').innerText = p.temp;
+            if(p.maxTokens) document.getElementById('api-max-tokens').value = p.maxTokens;
             closePresetManageModal(); 
             alert("预设已成功应用！");
         } else { alert("预设不存在！"); }
@@ -3257,7 +3387,16 @@
         const config = safeParseJSON(configStr, null); if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
         const originalText = btnElement.innerText; btnElement.innerText = "总结中..."; btnElement.style.pointerEvents = 'none'; btnElement.style.opacity = '0.5';
         try {
-            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` }, body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: "你是一个剧情记录总结助手。请将以下线下聊天记录提炼成一段精炼的总结（150字以内），提取关键事件和情感走向，作为后续角色记忆。" }, { role: "user", content: savedContent }], temperature: config.temp }) });
+            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` }, 
+                body: JSON.stringify({ 
+                    model: config.model, 
+                    messages: [{ role: "system", content: "你是一个剧情记录总结助手。请将以下线下聊天记录提炼成一段精炼的总结（150字以内），提取关键事件和情感走向，作为后续角色记忆。" }, { role: "user", content: savedContent }], 
+                    temperature: config.temp,
+                    max_tokens: config.maxTokens || 2048
+                }) 
+            });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); let summaryText = data.choices[0].message.content;
             const newContent = savedContent + `\n\n【线下总结】\n${summaryText}`; localStorage.setItem('offline_content', newContent);
@@ -3645,7 +3784,12 @@
         try {
             const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` },
-                body: JSON.stringify({ model: config.model, messages: messages, temperature: config.temp })
+                body: JSON.stringify({ 
+                    model: config.model, 
+                    messages: messages, 
+                    temperature: config.temp,
+                    max_tokens: config.maxTokens || 2048 
+                })
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); const replyText = data.choices[0].message.content;
