@@ -292,7 +292,7 @@
     .chat-more-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
     .chat-more-btn svg { width: 24px; height: 24px; fill: #333; }
 
-    .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; transition: padding-top 0.3s; }
+    .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; transition: padding-top 0.3s; will-change: transform; }
     .chat-msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 100%; }
     .chat-msg-row.left { flex-direction: row; justify-content: flex-start; }
     .chat-msg-row.right { flex-direction: row-reverse; justify-content: flex-start; }
@@ -325,26 +325,27 @@
     
     .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; white-space: pre-wrap; }
 
-    /* 底部输入框 */
+    /* 底部输入框 (已重构，去除蓝色突兀按钮，平铺排列) */
     .chat-input-bar {
-        flex-shrink: 0; background-color: #ffffff; padding: 8px 12px; 
-        display: flex; align-items: flex-end; gap: 8px; box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
-        border-radius: 24px; margin: 10px 15px 20px;
+        flex-shrink: 0; background-color: #f5f5f7; padding: 10px 15px; 
+        display: flex; align-items: flex-end; gap: 8px; 
+        box-shadow: 0 -1px 2px rgba(0,0,0,0.02); border-top: 1px solid #eaeaea;
         z-index: 4005; position: relative;
     }
-    .chat-input-icon-btn { background: none; border: none; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 2px; }
-    .chat-input-icon-btn svg { width: 24px; height: 24px; fill: #666; }
+    .chat-input-icon-btn { background: none; border: none; padding: 8px 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 2px; }
+    .chat-input-icon-btn svg { width: 26px; height: 26px; fill: #333; }
     
+    .chat-input-wrapper { flex-grow: 1; background-color: #ffffff; border-radius: 8px; display: flex; align-items: center; padding: 0 8px; border: 1px solid #e5e5ea; }
     .chat-input-field { 
-        flex-grow: 1; background-color: #f2f2f2; border: none; outline: none; 
-        border-radius: 20px; padding: 10px 16px; font-size: 15px; color: #333; 
+        flex-grow: 1; background-color: transparent; border: none; outline: none; 
+        padding: 10px 4px; font-size: 15px; color: #333; 
         resize: none; max-height: 100px; line-height: 1.4; font-family: inherit;
-        overflow-y: hidden; margin-bottom: 0;
+        overflow-y: hidden; 
     }
-    .chat-input-field::placeholder { color: #aaa; }
+    .chat-input-field::placeholder { color: #999; }
 
-    .chat-send-btn { background: #007aff; border-radius: 50%; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; border: none; cursor: pointer; margin-bottom: 1px; }
-    .chat-send-btn svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
+    .chat-send-btn-inline { background: none; border: none; padding: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .chat-send-btn-inline svg { width: 20px; height: 20px; fill: #007aff; }
 
     /* 🌟 全新附件面板 */
     #attachment-panel {
@@ -358,8 +359,22 @@
     .attach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; justify-items: center; }
     .attach-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
     .attach-icon { width: 60px; height: 60px; background: #fff; border-radius: 16px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .attach-icon svg { width: 28px; height: 28px; fill: #666; }
+    .attach-icon svg { width: 28px; height: 28px; }
     .attach-label { font-size: 12px; color: #666; margin-top: 8px; }
+    
+    /* 附件图标颜色，统一柔和色调 */
+    .icon-photo { fill: #555; }
+    .icon-camera { fill: #555; }
+    .icon-call { fill: #555; }
+    .icon-location { fill: #555; }
+    .icon-redpacket { fill: #3b88f6; }
+    .icon-transfer { fill: #ff5e6a; }
+    .icon-gift { fill: #ff4d4f; }
+    .icon-beautify { fill: #555; }
+
+    .bg-redpacket { background: #e6f3ff; }
+    .bg-transfer { background: #ffe8eb; }
+    .bg-gift { background: #ffecec; }
 
     /* --- 🌟 聊天详情弹窗 --- */
     #chat-detail-modal { z-index: 5000; } 
@@ -951,26 +966,38 @@
     /* 🌟 聊天特殊卡片样式 (转账、红包、礼物) */
     
     /* 转账/红包卡片 (图1样式) */
-    .card-payment-v2 { border-radius: 12px; padding: 16px; width: 220px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #fff; position: relative; overflow: hidden; }
-    .card-payment-v2.transfer { background: #f4d4d7; } /* 浅粉色 */
-    .card-payment-v2.redpacket { background: #cce5f0; } /* 浅蓝色 */
-    .cpv-icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #fff; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-    .cpv-icon svg { width: 26px; height: 26px; fill: #fff; }
+    .card-payment-v2 { border-radius: 12px; padding: 16px; width: 220px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #fff; position: relative; overflow: hidden; transition: opacity 0.3s; }
+    .card-payment-v2.transfer { background: #ffe8eb; color: #ff5e6a; } /* 清透粉色 */
+    .card-payment-v2.redpacket { background: #e6f3ff; color: #3b88f6; } /* 清透浅蓝 */
+    
+    /* 已完成状态，颜色变浅、去色 */
+    .card-payment-v2.finished { opacity: 0.6; background: #f2f2f7; color: #888; }
+    .card-payment-v2.finished .cpv-icon { border-color: #ccc; }
+    .card-payment-v2.finished .cpv-icon svg { fill: #ccc; }
+
+    .cpv-icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .cpv-icon svg { width: 26px; height: 26px; fill: currentColor; }
     .cpv-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
     .cpv-amount { font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cpv-desc { font-size: 13px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cpv-status { font-size: 11px; opacity: 0.7; margin-top: 2px; }
     
     /* 礼物卡片 (图2样式) */
-    .card-gift-v2 { background: #fff; border-radius: 16px; width: 240px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-    .gift-v2-top { padding: 20px 15px 15px; text-align: center; position: relative; z-index: 1; }
+    .card-gift-v2 { background: #fff; border-radius: 16px; width: 240px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #eaeaea; }
+    .gift-v2-top { padding: 20px 15px 15px; text-align: center; position: relative; z-index: 1; background: #f9f9f9; border-bottom: 1px dashed #e0e0e0; }
     .gift-v2-title { font-size: 20px; font-weight: 700; color: #000; margin-bottom: 8px; }
-    .gift-v2-remark { font-size: 13px; color: #888; background: #f2f2f7; padding: 6px 16px; border-radius: 12px; display: inline-block; max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gift-v2-remark { font-size: 13px; color: #888; background: #eee; padding: 6px 16px; border-radius: 12px; display: inline-block; max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .gift-v2-bottom { background: #1c1c1e; padding: 25px 20px 20px; color: #fff; border-radius: 16px; position: relative; margin-top: -10px; z-index: 2; box-shadow: 0 -5px 10px rgba(0,0,0,0.02); }
-    /* 模拟缺口，由于聊天背景复杂，这里用与顶部卡片同色覆盖来伪造 */
-    .gift-v2-bottom::before, .gift-v2-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #fff; border-radius: 50%; }
-    .gift-v2-bottom::before { left: -10px; }
-    .gift-v2-bottom::after { right: -10px; }
+    .gift-v2-bottom { background: #1c1c1e; padding: 20px 20px 20px; color: #fff; border-radius: 0 0 16px 16px; position: relative; z-index: 2; }
+    /* 模拟切角 */
+    .gift-v2-bottom::before, .gift-v2-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border-bottom: 1px solid #eaeaea; }
+    .gift-v2-bottom::before { left: -10px; transform: rotate(45deg); }
+    .gift-v2-bottom::after { right: -10px; transform: rotate(-45deg); }
+    
+    /* 修正切角被遮挡的样式 */
+    .gift-v2-bottom { border-radius: 0 0 16px 16px; margin-top: -10px; }
+    .gift-v2-bottom::before { box-shadow: 2px 2px 0 #f9f9f9; }
+    .gift-v2-bottom::after { box-shadow: -2px 2px 0 #f9f9f9; }
 
     .gift-v2-list { border-bottom: 2px dotted #444; padding-bottom: 15px; margin-bottom: 15px; }
     .gift-v2-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #ddd; }
@@ -981,15 +1008,18 @@
     #gift-create-screen { background-color: #f5f5f7; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow-y: auto; }
     #gift-create-screen.active { display: flex; }
     .gift-edit-container { width: 90%; max-width: 340px; margin: 20px auto; position: relative; }
-    .gift-edit-top { background: #fff; border-radius: 20px; padding: 30px 20px 20px; text-align: center; position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    
+    .gift-edit-top { background: #fff; border-radius: 20px 20px 0 0; padding: 30px 20px 20px; text-align: center; position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-bottom: 1px dashed #eee; }
     .gift-edit-title { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 15px; }
     .gift-edit-remark-input { border: none; background: #f2f2f7; border-radius: 12px; padding: 10px 16px; font-size: 14px; text-align: center; width: 80%; outline: none; color: #333; }
     .gift-edit-add-btn { position: absolute; right: 15px; top: 15px; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: none; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #000; z-index: 10; }
     
-    .gift-edit-bottom { background: #1c1c1e; border-radius: 20px; padding: 25px 20px 20px; color: #fff; position: relative; z-index: 2; margin-top: -10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .gift-edit-bottom::before, .gift-edit-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #f5f5f7; border-radius: 50%; }
-    .gift-edit-bottom::before { left: -10px; }
-    .gift-edit-bottom::after { right: -10px; }
+    .gift-edit-bottom { background: #1c1c1e; border-radius: 0 0 20px 20px; padding: 20px 20px 20px; color: #fff; position: relative; z-index: 2; margin-top: -10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .gift-edit-bottom::before, .gift-edit-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #f5f5f7; border-radius: 50%; border-bottom: 1px dashed #eee; }
+    .gift-edit-bottom::before { left: -10px; transform: rotate(45deg); }
+    .gift-edit-bottom::after { right: -10px; transform: rotate(-45deg); }
+    .gift-edit-bottom::before { box-shadow: 2px 2px 0 #fff; }
+    .gift-edit-bottom::after { box-shadow: -2px 2px 0 #fff; }
     
     .gift-edit-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
     .gift-input-name, .gift-input-price { background: transparent; border: none; color: #fff; outline: none; font-size: 15px; }
@@ -1678,12 +1708,14 @@
     <div class="chat-input-bar">
         <!-- 麦克风触发回复 -->
         <button class="chat-input-icon-btn" onclick="triggerCharReply()" title="触发AI回复"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
-        <!-- 文本输入，多行 textarea，回车换行 -->
-        <textarea class="chat-input-field" id="chat-input-field" placeholder="输入消息..." rows="1"></textarea>
+        
+        <div class="chat-input-wrapper">
+            <textarea class="chat-input-field" id="chat-input-field" placeholder="输入消息..." rows="1"></textarea>
+            <button class="chat-send-btn-inline" onclick="sendTextMessage()" title="发送文字"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+        </div>
+        
         <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
         <button class="chat-input-icon-btn" onclick="toggleAttachmentPanel()"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
-        <!-- 发送文字按钮 -->
-        <button class="chat-send-btn" onclick="sendTextMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>
 </div>
 
@@ -1691,35 +1723,35 @@
 <div id="attachment-panel">
     <div class="attach-grid">
         <div class="attach-item" onclick="document.getElementById('chat-photo-upload').click()">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+            <div class="attach-icon"><svg class="icon-photo" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
             <span class="attach-label">照片</span>
         </div>
         <div class="attach-item" onclick="document.getElementById('chat-camera-upload').click()">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M12 15.2c1.77 0 3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2 1.43 3.2 3.2 3.2zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg></div>
+            <div class="attach-icon"><svg class="icon-camera" viewBox="0 0 24 24"><path d="M12 15.2c1.77 0 3.2-1.43 3.2-3.2s-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2 1.43 3.2 3.2 3.2zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg></div>
             <span class="attach-label">拍摄</span>
         </div>
         <div class="attach-item" onclick="startOutgoingCall()">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
+            <div class="attach-icon"><svg class="icon-call" viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
             <span class="attach-label">通话</span>
         </div>
         <div class="attach-item" onclick="openLocationModal()">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+            <div class="attach-icon"><svg class="icon-location" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
             <span class="attach-label">位置</span>
         </div>
         <div class="attach-item" onclick="openPaymentModal('redpacket')">
-            <div class="attach-icon" style="background:#e6f3f9;"><svg viewBox="0 0 24 24" style="fill:#3498db;"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
+            <div class="attach-icon bg-redpacket"><svg class="icon-redpacket" viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
             <span class="attach-label">红包</span>
         </div>
         <div class="attach-item" onclick="openPaymentModal('transfer')">
-            <div class="attach-icon" style="background:#fcecf0;"><svg viewBox="0 0 24 24" style="fill:#e74c3c;"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
+            <div class="attach-icon bg-transfer"><svg class="icon-transfer" viewBox="0 0 24 24"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
             <span class="attach-label">转账</span>
         </div>
         <div class="attach-item" onclick="openGiftCreateScreen()">
-            <div class="attach-icon" style="background:#ffe6eb;"><svg viewBox="0 0 24 24" style="fill:#ff3b30;"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+            <div class="attach-icon bg-gift"><svg class="icon-gift" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
             <span class="attach-label">礼物</span>
         </div>
         <div class="attach-item" onclick="openManager(); toggleAttachmentPanel();">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+            <div class="attach-icon"><svg class="icon-beautify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
             <span class="attach-label">美化</span>
         </div>
     </div>
@@ -3961,7 +3993,6 @@
         const hasHistory = localStorage.getItem(`chat_history_${charId}`);
         if(hasHistory) { const history = safeParseJSON(hasHistory, []); for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); } }
         
-        // 调整输入框高度
         const inputField = document.getElementById('chat-input-field');
         inputField.value = '';
         inputField.style.height = 'auto';
@@ -3969,11 +4000,12 @@
         container.scrollTop = container.scrollHeight; openScreen('chat-screen');
     }
 
+    // 优化后的渲染函数，不再每次都计算复杂的 DOM，减少卡顿
     async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null, msgType = 'text', msgData = null, msgStatus = '', msgId = null, targetId = 'chat-container') {
         const container = document.getElementById(targetId); 
         if (!container) return;
 
-        // 系统提示样式 (居中小字，参考图1)
+        // 系统提示样式
         if (!isSelf && (msgType === 'system' || text.startsWith('[系统]') || text.includes('正在呼叫你') || text.includes('已拒绝'))) {
             const sysMsg = document.createElement('div');
             sysMsg.style.textAlign = 'center';
@@ -4035,7 +4067,17 @@
             </div>`;
         } else if (msgType === 'redpacket' || msgType === 'transfer') {
             const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
-            let statusText = pData.status === 'pending' ? (isSelf ? '等待对方领取' : '点击领取') : (pData.status === 'accepted' ? '已领取' : '已退回');
+            let statusText = '';
+            let isFinished = pData.status !== 'pending';
+            
+            if (pData.status === 'pending') {
+                statusText = isSelf ? '等待对方领取' : '点击领取';
+            } else if (pData.status === 'accepted') {
+                statusText = '已领取';
+            } else if (pData.status === 'rejected') {
+                statusText = '已退回';
+            }
+            
             let iconSvg = '';
             if (msgType === 'transfer') {
                 iconSvg = `<svg viewBox="0 0 24 24"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg>`;
@@ -4043,11 +4085,12 @@
                 iconSvg = `<svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>`;
             }
             
-            bubbleHtml = `<div class="card-payment-v2 ${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
+            bubbleHtml = `<div class="card-payment-v2 ${msgType} ${isFinished ? 'finished' : ''}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
                 <div class="cpv-icon">${iconSvg}</div>
                 <div class="cpv-info">
                     <div class="cpv-amount">¥${pData.amount}</div>
                     <div class="cpv-desc">${pData.remark || (isSelf ? '你发起了一笔' + (msgType==='transfer'?'转账':'红包') : '对方发起了' + (msgType==='transfer'?'转账':'红包'))}</div>
+                    <div class="cpv-status">${statusText}</div>
                 </div>
             </div>`;
         } else if (msgType === 'gift') {
@@ -4245,7 +4288,6 @@
             history.push({ id: msgId, type: 'location', text: `[位置] ${title} - ${address}`, data: msgData, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        // 移除自动触发回复
     }
 
     function openPaymentModal(type) {
@@ -4276,7 +4318,6 @@
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        // 移除自动触发回复
     }
 
     // 礼物定制逻辑
@@ -4340,7 +4381,6 @@
             history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        // 移除自动触发回复
     }
 
     // 处理领取/退回
@@ -4358,7 +4398,7 @@
         if (msgIndex === -1) return;
         const msg = history[msgIndex];
 
-        if (msg.data.status !== 'pending') return; // 已处理过
+        if (msg.data.status !== 'pending') return; 
         
         if (isSelf) {
             alert('等待对方处理哦~');
@@ -4417,9 +4457,22 @@
             sysText += ` (地址：${address})`;
         }
 
-        // 重新渲染历史
-        await reRenderChatHistory();
-        
+        // 局部更新 DOM，避免整体重绘卡顿
+        const isCallActive = document.getElementById('call-screen').classList.contains('active');
+        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
+        const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${currentActionMsgId}"]`);
+        if (msgRow) {
+            const cardEl = msgRow.querySelector('.card-payment-v2');
+            if (cardEl) {
+                cardEl.classList.add('finished');
+                const statusEl = cardEl.querySelector('.cpv-status');
+                if (statusEl) {
+                    statusEl.innerText = action === 'accepted' ? '已领取' : '已退回';
+                }
+            }
+            const giftEl = msgRow.querySelector('.card-gift-v2'); // 如果以后需要处理礼物卡片的DOM更新
+        }
+
         // 添加系统消息
         await addSystemMessage(sysText);
     }
@@ -4436,7 +4489,17 @@
         const charName = char ? (char.remark || char.name) : '对方';
         const sysText = action === 'accept' ? `你同意了${charName}的位置共享` : `你拒绝了${charName}的位置共享`;
         
-        await reRenderChatHistory();
+        // 同样局部更新 DOM
+        const isCallActive = document.getElementById('call-screen').classList.contains('active');
+        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
+        const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${msgId}"]`);
+        if (msgRow) {
+            const locActions = msgRow.querySelector('.loc-actions');
+            if (locActions) {
+                locActions.innerHTML = action === 'accept' ? `<div style="font-size:12px; color:#34c759; text-align:center; width:100%;">已同意共享</div>` : `<div style="font-size:12px; color:#ff3b30; text-align:center; width:100%;">已拒绝共享</div>`;
+            }
+        }
+
         await addSystemMessage(sysText);
     }
 
@@ -4615,10 +4678,10 @@
         const keyword = document.getElementById('chat-search-input').value.trim().toLowerCase();
         const rows = document.querySelectorAll('#chat-container .chat-msg-row');
         rows.forEach(row => {
-            // 系统消息不参与搜索 (根据要求)
+            // 系统消息不参与搜索
             const isSysMsg = row.querySelector('.chat-system-msg') !== null;
             if (isSysMsg) {
-                row.style.display = keyword ? 'none' : 'flex'; // 搜索时隐藏系统消息
+                row.style.display = keyword ? 'none' : 'flex'; 
                 return;
             }
             const text = row.querySelector('.chat-bubble, .chat-bubble-plain, img')?.innerText.toLowerCase() || '';
@@ -4899,12 +4962,16 @@
             if(el) el.style.backgroundImage = `url(${mgrWidgetImg})`;
         }
 
-        // 聊天输入框自适应高度
+        // 聊天输入框自适应高度 (使用防抖解决卡顿)
         const chatInput = document.getElementById('chat-input-field');
+        let inputTimeout;
         chatInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-            if(this.value === '') this.style.height = 'auto';
+            clearTimeout(inputTimeout);
+            inputTimeout = setTimeout(() => {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                if(this.value === '') this.style.height = 'auto';
+            }, 50);
         });
     }
 
