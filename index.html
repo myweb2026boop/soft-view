@@ -297,12 +297,12 @@
     .chat-msg-row.left { flex-direction: row; justify-content: flex-start; }
     .chat-msg-row.right { flex-direction: row-reverse; justify-content: flex-start; }
     .chat-msg-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .chat-msg-content { display: flex; flex-direction: column; max-width: 65%; }
+    .chat-msg-content { display: flex; flex-direction: column; max-width: 70%; }
     .chat-msg-row.left .chat-msg-content { align-items: flex-start; }
     .chat-msg-row.right .chat-msg-content { align-items: flex-end; }
     .chat-sender-name { font-size: 12px; color: #999; margin-bottom: 4px; padding: 0 4px; }
 
-    .chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: pre-wrap; }
     .chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
     .chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
     
@@ -323,19 +323,28 @@
         margin: 0 2px; 
     }
     
-    .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; }
+    .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; white-space: pre-wrap; }
 
     /* 底部输入框 */
     .chat-input-bar {
-        flex-shrink: 0; background-color: #ffffff; padding: 10px 15px; 
-        display: flex; align-items: center; gap: 10px; box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
-        border-radius: 30px; margin: 10px 15px 20px;
+        flex-shrink: 0; background-color: #ffffff; padding: 8px 12px; 
+        display: flex; align-items: flex-end; gap: 8px; box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
+        border-radius: 24px; margin: 10px 15px 20px;
         z-index: 4005; position: relative;
     }
-    .chat-input-icon-btn { background: none; border: none; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .chat-input-icon-btn { background: none; border: none; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 2px; }
     .chat-input-icon-btn svg { width: 24px; height: 24px; fill: #666; }
-    .chat-input-field { flex-grow: 1; background-color: #f2f2f2; border: none; outline: none; border-radius: 20px; padding: 10px 16px; font-size: 15px; color: #333; }
+    
+    .chat-input-field { 
+        flex-grow: 1; background-color: #f2f2f2; border: none; outline: none; 
+        border-radius: 20px; padding: 10px 16px; font-size: 15px; color: #333; 
+        resize: none; max-height: 100px; line-height: 1.4; font-family: inherit;
+        overflow-y: hidden; margin-bottom: 0;
+    }
     .chat-input-field::placeholder { color: #aaa; }
+
+    .chat-send-btn { background: #007aff; border-radius: 50%; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; border: none; cursor: pointer; margin-bottom: 1px; }
+    .chat-send-btn svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
 
     /* 🌟 全新附件面板 */
     #attachment-panel {
@@ -451,7 +460,7 @@
     .settings-switch.on::after { transform: translateX(20px); }
 
     /* ==================================================== */
-    /* 🌟 全新仿图 API 设置全屏界面 (移除运用预设，补全功能) */
+    /* 🌟 全新仿图 API 设置全屏界面 */
     /* ==================================================== */
     #api-screen { background-color: #e0e0e0; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; overflow: hidden; }
     #api-screen.active { display: flex; }
@@ -939,32 +948,59 @@
         box-shadow: 0 2px 8px rgba(255,59,48,0.3);
     }
 
-    /* 🌟 聊天特殊卡片样式 (位置、红包、转账、礼物) */
-    .chat-card { border-radius: 12px; overflow: hidden; width: 220px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: left; }
+    /* 🌟 聊天特殊卡片样式 (转账、红包、礼物) */
     
-    /* 位置卡片 (参考图2) */
-    .card-location .loc-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #f0f0f0; }
-    .card-location .loc-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; }
-    .card-location .loc-address { font-size: 12px; color: #888; line-height: 1.4; }
-    .card-location .loc-map-placeholder { height: 100px; background: #e5f0e5 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20 80 Q 40 50 60 60 T 90 20" stroke="%23a0c8a0" stroke-width="8" fill="none"/><circle cx="60" cy="60" r="8" fill="%2334c759" stroke="white" stroke-width="2"/></svg>') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
-    .card-location .loc-map-icon { width: 30px; height: 30px; background: #34c759; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .card-location .loc-actions { padding: 10px; display: flex; gap: 10px; border-top: 1px solid #f0f0f0; }
-    .loc-btn { flex: 1; padding: 6px 0; border-radius: 6px; font-size: 13px; border: none; cursor: pointer; text-align: center; }
-    .loc-btn.accept { background: #34c759; color: white; }
-    .loc-btn.reject { background: #f2f2f7; color: #666; }
+    /* 转账/红包卡片 (图1样式) */
+    .card-payment-v2 { border-radius: 12px; padding: 16px; width: 220px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #fff; position: relative; overflow: hidden; }
+    .card-payment-v2.transfer { background: #f4d4d7; } /* 浅粉色 */
+    .card-payment-v2.redpacket { background: #cce5f0; } /* 浅蓝色 */
+    .cpv-icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #fff; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .cpv-icon svg { width: 26px; height: 26px; fill: #fff; }
+    .cpv-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+    .cpv-amount { font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cpv-desc { font-size: 13px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 红包/转账卡片 */
-    .card-redpacket, .card-transfer { background: linear-gradient(135deg, #ff6b00, #ff3b30); color: #fff; border-radius: 12px; padding: 15px; width: 220px; position: relative; }
-    .card-transfer { background: linear-gradient(135deg, #ff9500, #ff5e00); }
-    .card-redpacket .rp-icon, .card-transfer .tp-icon { font-size: 40px; margin-bottom: 10px; line-height: 1; display: flex; align-items: center; gap: 10px; }
-    .card-redpacket .rp-remark, .card-transfer .tp-remark { font-size: 14px; opacity: 0.9; margin-bottom: 4px; word-break: break-all; }
-    .card-redpacket .rp-status, .card-transfer .tp-status { font-size: 12px; opacity: 0.7; }
+    /* 礼物卡片 (图2样式) */
+    .card-gift-v2 { background: #fff; border-radius: 16px; width: 240px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+    .gift-v2-top { padding: 20px 15px 15px; text-align: center; position: relative; z-index: 1; }
+    .gift-v2-title { font-size: 20px; font-weight: 700; color: #000; margin-bottom: 8px; }
+    .gift-v2-remark { font-size: 13px; color: #888; background: #f2f2f7; padding: 6px 16px; border-radius: 12px; display: inline-block; max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 礼物卡片 */
-    .card-gift { background: #fff; border: 1px solid #ffccd5; padding: 15px; border-radius: 12px; width: 220px; }
-    .card-gift .gift-title { font-size: 16px; font-weight: 600; color: #ff3b30; margin-bottom: 8px; }
-    .card-gift .gift-remark { font-size: 13px; color: #666; margin-bottom: 10px; line-height: 1.4; word-break: break-all; }
-    .card-gift .gift-price { font-size: 14px; color: #ff3b30; font-weight: 600; }
+    .gift-v2-bottom { background: #1c1c1e; padding: 25px 20px 20px; color: #fff; border-radius: 16px; position: relative; margin-top: -10px; z-index: 2; box-shadow: 0 -5px 10px rgba(0,0,0,0.02); }
+    /* 模拟缺口，由于聊天背景复杂，这里用与顶部卡片同色覆盖来伪造 */
+    .gift-v2-bottom::before, .gift-v2-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #fff; border-radius: 50%; }
+    .gift-v2-bottom::before { left: -10px; }
+    .gift-v2-bottom::after { right: -10px; }
+
+    .gift-v2-list { border-bottom: 2px dotted #444; padding-bottom: 15px; margin-bottom: 15px; }
+    .gift-v2-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #ddd; }
+    .gift-v2-item:last-child { margin-bottom: 0; }
+    .gift-v2-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+
+    /* 🌟 礼物定制界面 (全屏图2) */
+    #gift-create-screen { background-color: #f5f5f7; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow-y: auto; }
+    #gift-create-screen.active { display: flex; }
+    .gift-edit-container { width: 90%; max-width: 340px; margin: 20px auto; position: relative; }
+    .gift-edit-top { background: #fff; border-radius: 20px; padding: 30px 20px 20px; text-align: center; position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .gift-edit-title { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 15px; }
+    .gift-edit-remark-input { border: none; background: #f2f2f7; border-radius: 12px; padding: 10px 16px; font-size: 14px; text-align: center; width: 80%; outline: none; color: #333; }
+    .gift-edit-add-btn { position: absolute; right: 15px; top: 15px; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: none; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #000; z-index: 10; }
+    
+    .gift-edit-bottom { background: #1c1c1e; border-radius: 20px; padding: 25px 20px 20px; color: #fff; position: relative; z-index: 2; margin-top: -10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .gift-edit-bottom::before, .gift-edit-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #f5f5f7; border-radius: 50%; }
+    .gift-edit-bottom::before { left: -10px; }
+    .gift-edit-bottom::after { right: -10px; }
+    
+    .gift-edit-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .gift-input-name, .gift-input-price { background: transparent; border: none; color: #fff; outline: none; font-size: 15px; }
+    .gift-input-name { width: 60%; }
+    .gift-input-name::placeholder { color: #666; }
+    .gift-input-price { width: 40%; text-align: right; }
+    .gift-input-price::placeholder { color: #666; }
+    
+    .gift-edit-dashed { border-top: 2px dotted #444; margin: 15px 0; }
+    .gift-edit-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; }
+    .gift-total-input { background: transparent; border: none; color: #fff; outline: none; font-size: 16px; font-weight: 600; text-align: right; width: 40%; }
 
     /* 隐藏 input */
     .hidden-input { display: none; }
@@ -1640,10 +1676,14 @@
     </div>
     <div class="chat-container" id="chat-container"></div>
     <div class="chat-input-bar">
-        <button class="chat-input-icon-btn" onclick="triggerCharReply()"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
-        <input type="text" class="chat-input-field" id="chat-input-field" placeholder="输入消息...">
+        <!-- 麦克风触发回复 -->
+        <button class="chat-input-icon-btn" onclick="triggerCharReply()" title="触发AI回复"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
+        <!-- 文本输入，多行 textarea，回车换行 -->
+        <textarea class="chat-input-field" id="chat-input-field" placeholder="输入消息..." rows="1"></textarea>
         <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
         <button class="chat-input-icon-btn" onclick="toggleAttachmentPanel()"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+        <!-- 发送文字按钮 -->
+        <button class="chat-send-btn" onclick="sendTextMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>
 </div>
 
@@ -1667,14 +1707,14 @@
             <span class="attach-label">位置</span>
         </div>
         <div class="attach-item" onclick="openPaymentModal('redpacket')">
-            <div class="attach-icon" style="background:#ffebeb;"><svg viewBox="0 0 24 24" style="fill:#ff3b30;"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
+            <div class="attach-icon" style="background:#e6f3f9;"><svg viewBox="0 0 24 24" style="fill:#3498db;"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
             <span class="attach-label">红包</span>
         </div>
         <div class="attach-item" onclick="openPaymentModal('transfer')">
-            <div class="attach-icon" style="background:#fff3e0;"><svg viewBox="0 0 24 24" style="fill:#ff9500;"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
+            <div class="attach-icon" style="background:#fcecf0;"><svg viewBox="0 0 24 24" style="fill:#e74c3c;"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
             <span class="attach-label">转账</span>
         </div>
-        <div class="attach-item" onclick="openPaymentModal('gift')">
+        <div class="attach-item" onclick="openGiftCreateScreen()">
             <div class="attach-icon" style="background:#ffe6eb;"><svg viewBox="0 0 24 24" style="fill:#ff3b30;"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
             <span class="attach-label">礼物</span>
         </div>
@@ -1742,7 +1782,7 @@
 </div>
 
 <!-- ========================================== -->
-<!-- 新增功能弹窗：位置、红包、转账、礼物 -->
+<!-- 新增功能弹窗：位置、红包、转账 -->
 <!-- ========================================== -->
 <div class="modal-overlay" id="location-modal">
     <div class="modal-content">
@@ -1768,7 +1808,6 @@
         <div class="modal-input-group">
             <input type="number" id="payment-amount" placeholder="金额 (¥)" step="0.01">
             <input type="text" id="payment-remark" placeholder="备注/赠言">
-            <input type="text" id="payment-gift-name" placeholder="礼物名称 (仅礼物需要)" style="display:none;">
         </div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closePaymentModal()">取消</button>
@@ -1788,6 +1827,47 @@
             <button class="modal-btn cancel" id="action-btn-cancel">取消</button>
             <button class="modal-btn confirm" id="action-btn-confirm">确定</button>
         </div>
+    </div>
+</div>
+
+<!-- 赠送礼物定制界面 (全屏图2) -->
+<div class="fullscreen-screen" id="gift-create-screen">
+    <div class="ce-header" style="background: transparent; position: absolute; width: 100%; z-index: 10;">
+        <div class="ce-icon-btn" onclick="closeScreen('gift-create-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+        <div class="ce-title" style="font-size:18px; font-weight:600; color:#000;">赠送礼物</div>
+        <div style="width:36px;"></div>
+    </div>
+    <div class="ce-body" style="display:flex; flex-direction:column; align-items:center; padding-top:80px; padding-bottom:40px;">
+        
+        <div class="gift-edit-container">
+            <!-- 白色卡片部分 -->
+            <div class="gift-edit-top">
+                <div class="gift-edit-title">마음</div>
+                <input type="text" id="gift-edit-remark" class="gift-edit-remark-input" placeholder="비고/호칭">
+                <!-- 添加按钮 -->
+                <button class="gift-edit-add-btn" onclick="addGiftItemRow()">+</button>
+            </div>
+            
+            <!-- 黑色收据部分 -->
+            <div class="gift-edit-bottom">
+                <div id="gift-items-list">
+                    <!-- 动态行 -->
+                    <div class="gift-edit-row">
+                        <input type="text" class="gift-input-name" placeholder="선물 이름">
+                        <input type="text" class="gift-input-price" placeholder="0.00" value="0.00" oninput="updateGiftTotal()">
+                    </div>
+                </div>
+                
+                <div class="gift-edit-dashed"></div>
+                
+                <div class="gift-edit-total-row">
+                    <span>총 판매가</span>
+                    <input type="text" id="gift-edit-total" class="gift-total-input" placeholder="0.00" value="0.00" readonly>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="confirmSendGift()" style="margin-top:40px; width:80%; max-width:300px; padding:16px; border-radius:30px; background:#1c1c1e; color:#fff; font-size:18px; font-weight:600; border:none; cursor:pointer;">确认赠送</button>
     </div>
 </div>
 
@@ -2471,10 +2551,11 @@
 
     async function sendSticker(sticker) {
         closeStickerPanel();
-        await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image);
+        const msgId = Date.now().toString();
+        await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image, 'sticker', null, '', msgId);
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ id: Date.now().toString(), type: 'sticker', text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
+            history.push({ id: msgId, type: 'sticker', text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
     }
@@ -3879,6 +3960,12 @@
 
         const hasHistory = localStorage.getItem(`chat_history_${charId}`);
         if(hasHistory) { const history = safeParseJSON(hasHistory, []); for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); } }
+        
+        // 调整输入框高度
+        const inputField = document.getElementById('chat-input-field');
+        inputField.value = '';
+        inputField.style.height = 'auto';
+        
         container.scrollTop = container.scrollHeight; openScreen('chat-screen');
     }
 
@@ -3948,32 +4035,38 @@
             </div>`;
         } else if (msgType === 'redpacket' || msgType === 'transfer') {
             const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
-            let statusText = pData.status === 'pending' ? '未领取' : (pData.status === 'accepted' ? '已领取' : '已退回');
-            let actionHtml = '';
-            if (pData.status === 'pending' && !isSelf) {
-                bubbleHtml = `<div class="chat-card card-${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-icon">
-                        <svg style="width:40px;height:40px;fill:#fff;" viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>
-                    </div>
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-remark">${pData.remark || (msgType==='redpacket'?'恭喜发财':'转账')}</div>
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-status">${statusText}</div>
-                </div>`;
+            let statusText = pData.status === 'pending' ? (isSelf ? '等待对方领取' : '点击领取') : (pData.status === 'accepted' ? '已领取' : '已退回');
+            let iconSvg = '';
+            if (msgType === 'transfer') {
+                iconSvg = `<svg viewBox="0 0 24 24"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg>`;
             } else {
-                bubbleHtml = `<div class="chat-card card-${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-icon">
-                        <svg style="width:40px;height:40px;fill:#fff;" viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>
-                    </div>
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-remark">${pData.remark || (msgType==='redpacket'?'恭喜发财':'转账')}</div>
-                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-status">${statusText}</div>
-                </div>`;
+                iconSvg = `<svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>`;
             }
+            
+            bubbleHtml = `<div class="card-payment-v2 ${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
+                <div class="cpv-icon">${iconSvg}</div>
+                <div class="cpv-info">
+                    <div class="cpv-amount">¥${pData.amount}</div>
+                    <div class="cpv-desc">${pData.remark || (isSelf ? '你发起了一笔' + (msgType==='transfer'?'转账':'红包') : '对方发起了' + (msgType==='transfer'?'转账':'红包'))}</div>
+                </div>
+            </div>`;
         } else if (msgType === 'gift') {
-            const gData = msgData || { name: '神秘礼物', amount: '0.00', remark: '一点心意', status: 'pending' };
-            let statusText = gData.status === 'pending' ? '待接收' : (gData.status === 'accepted' ? '已收下' : '已退回');
-            bubbleHtml = `<div class="chat-card card-gift" onclick="handlePaymentAction('${msgId}', 'gift')">
-                <div class="gift-title">🎁 ${gData.name}</div>
-                <div class="gift-remark">${gData.remark}</div>
-                <div class="gift-price">¥${gData.amount} <span style="font-size:12px; color:#888; float:right;">${statusText}</span></div>
+            const gData = msgData || { title: '마음', remark: '비고/호칭', items: [], total: '0.00', status: 'pending' };
+            let itemsHtml = '';
+            if (gData.items && gData.items.length > 0) {
+                gData.items.forEach(item => {
+                    itemsHtml += `<div class="gift-v2-item"><span>${item.name || '선물 이름'}</span><span>$${item.price || '0.00'}</span></div>`;
+                });
+            }
+            bubbleHtml = `<div class="card-gift-v2">
+                <div class="gift-v2-top">
+                    <div class="gift-v2-title">마음</div>
+                    <div class="gift-v2-remark">${gData.remark || '비고/호칭'}</div>
+                </div>
+                <div class="gift-v2-bottom">
+                    <div class="gift-v2-list">${itemsHtml || '<div class="gift-v2-item"><span>선물 없음</span><span>$0.00</span></div>'}</div>
+                    <div class="gift-v2-total"><span>총 판매가</span><span>$${gData.total || '0.00'}</span></div>
+                </div>
             </div>`;
         } else if (imageBase64) {
             bubbleHtml = `<img src="${imageBase64}" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px;" alt="${text}" onerror="this.src=''">`;
@@ -4022,18 +4115,23 @@
         if (scroll) container.scrollTop = container.scrollHeight;
     }
 
-    document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
-        if (e.key === 'Enter' && this.value.trim() !== '') {
-            const msgText = this.value.trim(); this.value = '';
-            const msgId = Date.now().toString();
-            await renderChatMessage(msgText, true, true, null, 'text', null, '', msgId);
-            if(currentChatCharId) { 
-                const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); 
-                history.push({ id: msgId, type: 'text', text: msgText, isSelf: true, time: Date.now() }); 
-                try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) { alert("存储空间不足！"); }
-            }
+    // 发送文字消息 (点击发送按钮触发)
+    async function sendTextMessage() {
+        const input = document.getElementById('chat-input-field');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        input.value = '';
+        input.style.height = 'auto'; // 重置高度
+        
+        const msgId = Date.now().toString();
+        await renderChatMessage(text, true, true, null, 'text', null, '', msgId);
+        if(currentChatCharId) { 
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); 
+            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() }); 
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) { alert("存储空间不足！"); }
         }
-    });
+    }
 
     // 附件面板逻辑
     function toggleAttachmentPanel() {
@@ -4108,7 +4206,9 @@
     document.getElementById('chat-photo-upload').addEventListener('change', function() { handleImageUpload(this); });
     document.getElementById('chat-camera-upload').addEventListener('change', function() { handleImageUpload(this); });
 
-    // 新增功能逻辑：位置、红包、转账、礼物
+    // ==========================================
+    // 位置、红包、转账、礼物逻辑
+    // ==========================================
     let currentPaymentType = '';
     function openLocationModal() {
         toggleAttachmentPanel();
@@ -4145,25 +4245,22 @@
             history.push({ id: msgId, type: 'location', text: `[位置] ${title} - ${address}`, data: msgData, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        triggerCharReply();
+        // 移除自动触发回复
     }
 
     function openPaymentModal(type) {
         toggleAttachmentPanel();
         currentPaymentType = type;
-        document.getElementById('payment-modal-title').innerText = type === 'redpacket' ? '发红包' : (type === 'transfer' ? '转账' : '送礼物');
+        document.getElementById('payment-modal-title').innerText = type === 'redpacket' ? '发红包' : '转账';
         document.getElementById('payment-amount').value = '';
         document.getElementById('payment-remark').value = '';
-        document.getElementById('payment-gift-name').style.display = type === 'gift' ? 'block' : 'none';
-        document.getElementById('payment-gift-name').value = '';
         document.getElementById('payment-modal').classList.add('active');
     }
     function closePaymentModal() { document.getElementById('payment-modal').classList.remove('active'); }
 
     async function sendPaymentMessage() {
         const amount = document.getElementById('payment-amount').value.trim();
-        const remark = document.getElementById('payment-remark').value.trim() || (currentPaymentType === 'redpacket' ? '恭喜发财' : (currentPaymentType === 'transfer' ? '转账' : '一点心意'));
-        const giftName = document.getElementById('payment-gift-name').value.trim() || '神秘礼物';
+        const remark = document.getElementById('payment-remark').value.trim() || (currentPaymentType === 'redpacket' ? '恭喜发财' : '转账');
         if (!amount || isNaN(amount)) { alert('请输入有效金额'); return; }
         
         closePaymentModal();
@@ -4172,7 +4269,6 @@
         let msgData = { amount, remark, status: 'pending' };
         if (currentPaymentType === 'redpacket') msgText = `[红包] ${remark}`;
         else if (currentPaymentType === 'transfer') msgText = `[转账] ¥${amount}`;
-        else { msgText = `[礼物] ${giftName}`; msgData.name = giftName; }
 
         await renderChatMessage(msgText, true, true, null, currentPaymentType, msgData, '', msgId);
         if(currentChatCharId) {
@@ -4180,7 +4276,71 @@
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        triggerCharReply();
+        // 移除自动触发回复
+    }
+
+    // 礼物定制逻辑
+    function openGiftCreateScreen() {
+        toggleAttachmentPanel();
+        document.getElementById('gift-edit-remark').value = '';
+        document.getElementById('gift-items-list').innerHTML = `
+            <div class="gift-edit-row">
+                <input type="text" class="gift-input-name" placeholder="선물 이름">
+                <input type="text" class="gift-input-price" placeholder="0.00" value="0.00" oninput="updateGiftTotal()">
+            </div>
+        `;
+        document.getElementById('gift-edit-total').value = '0.00';
+        openScreen('gift-create-screen');
+    }
+
+    function addGiftItemRow() {
+        const list = document.getElementById('gift-items-list');
+        const row = document.createElement('div');
+        row.className = 'gift-edit-row';
+        row.innerHTML = `
+            <input type="text" class="gift-input-name" placeholder="선물 이름">
+            <input type="text" class="gift-input-price" placeholder="0.00" value="0.00" oninput="updateGiftTotal()">
+        `;
+        list.appendChild(row);
+    }
+
+    function updateGiftTotal() {
+        const prices = document.querySelectorAll('#gift-items-list .gift-input-price');
+        let total = 0;
+        prices.forEach(input => {
+            const val = parseFloat(input.value);
+            if (!isNaN(val)) total += val;
+        });
+        document.getElementById('gift-edit-total').value = total.toFixed(2);
+    }
+
+    async function confirmSendGift() {
+        const remark = document.getElementById('gift-edit-remark').value.trim();
+        const rows = document.querySelectorAll('#gift-items-list .gift-edit-row');
+        const items = [];
+        rows.forEach(row => {
+            const name = row.querySelector('.gift-input-name').value.trim();
+            const price = row.querySelector('.gift-input-price').value.trim();
+            if (name || parseFloat(price) > 0) {
+                items.push({ name: name || '선물 이름', price: price || '0.00' });
+            }
+        });
+
+        if (items.length === 0) { alert('请至少填写一项礼物'); return; }
+        
+        const total = document.getElementById('gift-edit-total').value;
+        const msgId = Date.now().toString();
+        const msgData = { title: '마음', remark: remark || '비고/호칭', items, total, status: 'pending' };
+        
+        closeScreen('gift-create-screen');
+        await renderChatMessage(`[礼物] 마음`, true, true, null, 'gift', msgData, '', msgId);
+        
+        if(currentChatCharId) {
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        }
+        // 移除自动触发回复
     }
 
     // 处理领取/退回
@@ -4208,30 +4368,25 @@
         currentActionMsgId = msgId;
         currentActionType = type;
         
-        if (type === 'gift') {
-            document.getElementById('action-modal-title').innerText = '收下礼物';
-            document.getElementById('action-address-group').style.display = 'block';
-            document.getElementById('action-address-input').value = '';
-            document.getElementById('action-btn-confirm').onclick = async () => {
-                const address = document.getElementById('action-address-input').value.trim();
+        document.getElementById('action-modal-title').innerText = type === 'gift' ? '收下礼物' : '领取 / 退回';
+        document.getElementById('action-address-group').style.display = type === 'gift' ? 'block' : 'none';
+        document.getElementById('action-address-input').value = '';
+        
+        document.getElementById('action-btn-confirm').innerText = type === 'gift' ? '确认收下' : '领取';
+        document.getElementById('action-btn-cancel').innerText = type === 'gift' ? '退回' : '退回';
+        
+        document.getElementById('action-btn-confirm').onclick = async () => {
+            let address = '';
+            if (type === 'gift') {
+                address = document.getElementById('action-address-input').value.trim();
                 if (!address) { alert('请填写收货地址'); return; }
-                await processPaymentAction('accepted', address);
-            };
-            document.getElementById('action-btn-cancel').onclick = async () => {
-                await processPaymentAction('rejected');
-            };
-        } else {
-            document.getElementById('action-modal-title').innerText = '领取 / 退回';
-            document.getElementById('action-address-group').style.display = 'none';
-            document.getElementById('action-btn-confirm').innerText = '领取';
-            document.getElementById('action-btn-confirm').onclick = async () => {
-                await processPaymentAction('accepted');
-            };
-            document.getElementById('action-btn-cancel').innerText = '退回';
-            document.getElementById('action-btn-cancel').onclick = async () => {
-                await processPaymentAction('rejected');
-            };
-        }
+            }
+            await processPaymentAction('accepted', address);
+        };
+        document.getElementById('action-btn-cancel').onclick = async () => {
+            await processPaymentAction('rejected');
+        };
+        
         document.getElementById('action-modal').classList.add('active');
     }
 
@@ -4267,9 +4422,6 @@
         
         // 添加系统消息
         await addSystemMessage(sysText);
-        
-        // 触发AI回复
-        triggerCharReply();
     }
 
     async function handleLocationAction(msgId, action) {
@@ -4286,7 +4438,6 @@
         
         await reRenderChatHistory();
         await addSystemMessage(sysText);
-        triggerCharReply();
     }
 
     async function triggerCharReply() {
@@ -4336,7 +4487,7 @@
             if (msg.type === 'location') contentText = `[发送了位置共享：${msg.data.address}，状态：${msg.data.status}]`;
             else if (msg.type === 'redpacket') contentText = `[发了一个红包，备注：${msg.data.remark}，状态：${msg.data.status}]`;
             else if (msg.type === 'transfer') contentText = `[发起转账 ¥${msg.data.amount}，状态：${msg.data.status}]`;
-            else if (msg.type === 'gift') contentText = `[赠送了礼物 ${msg.data.name}，赠言：${msg.data.remark}，状态：${msg.data.status}]`;
+            else if (msg.type === 'gift') contentText = `[赠送了礼物 ${msg.data.title}，赠言：${msg.data.remark}，状态：${msg.data.status}]`;
 
             if (msg.image) {
                 messages.push({ 
@@ -4556,7 +4707,7 @@
     }
 
     // ==========================================
-    // 🌟 6. 通话功能逻辑 (修复与增强)
+    // 🌟 6. 通话功能逻辑
     // ==========================================
     let callTimer = null;
     let callSeconds = 0;
@@ -4671,7 +4822,7 @@
             history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
-        // 自动呼叫AI回复
+        // 自动呼叫AI回复 (通话内逻辑保持不变)
         triggerCharReply();
     }
 
@@ -4747,6 +4898,14 @@
             const el = document.getElementById('mgr-widget-img');
             if(el) el.style.backgroundImage = `url(${mgrWidgetImg})`;
         }
+
+        // 聊天输入框自适应高度
+        const chatInput = document.getElementById('chat-input-field');
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value === '') this.style.height = 'auto';
+        });
     }
 
     initApp();
