@@ -1702,6 +1702,7 @@
         </div>
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
+            <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>绑定用户人设</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
             <div class="chat-detail-item" onclick="togglePinChat()"><span>置顶聊天</span><div class="chat-detail-switch" id="pin-switch"></div></div>
@@ -1712,6 +1713,17 @@
             <div class="chat-detail-item danger" onclick="deleteChatSession()"><span>删除该聊天</span></div>
         </div>
         <div class="modal-actions" style="margin-top: 10px; padding: 0 20px 20px;"><button class="modal-btn cancel" onclick="closeChatDetailModal()">关闭</button></div>
+    </div>
+</div>
+
+<!-- 选择绑定的用户人设弹窗 -->
+<div class="modal-overlay high-z-modal" id="chat-user-persona-select-modal">
+    <div class="modal-content">
+        <div class="modal-title">选择绑定的用户人设</div>
+        <div class="modal-list" id="chat-user-persona-select-list"></div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeChatUserPersonaSelectModal()">取消</button>
+        </div>
     </div>
 </div>
 
@@ -1795,6 +1807,7 @@
         <div class="ce-card">
             <div class="ce-input-row"><input type="text" class="ce-input" id="user-remark" placeholder="网名"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="user-name" placeholder="真实姓名"></div>
+            <div class="ce-input-row"><input type="text" class="ce-input" id="user-gender" placeholder="性别"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="user-identity" placeholder="身份"></div>
             <div class="ce-input-row"><textarea class="ce-input" id="user-signature" placeholder="个性签名" rows="1" style="resize:none;"></textarea></div>
         </div>
@@ -2177,19 +2190,39 @@
     }
 
     // ==========================================
-    // 1. 数据库与存储封装
+    // 1. 数据库与存储封装 (解决存储空间不足问题)
     // ==========================================
     const DB_NAME = 'AppImageDB'; const DB_VERSION = 2; const STORE_NAME = 'images';
     function initDB() { return new Promise((resolve, reject) => { const request = indexedDB.open(DB_NAME, DB_VERSION); request.onupgradeneeded = (e) => { const db = e.target.result; if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME); }; request.onsuccess = (e) => resolve(e.target.result); request.onerror = (e) => reject(e.target.error); }); }
-    async function saveImageToDB(key, data) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.put(data, key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
+    async function saveImageToDB(key, data) { 
+        try {
+            const db = await initDB(); 
+            return new Promise((resolve, reject) => { 
+                const tx = db.transaction(STORE_NAME, 'readwrite'); 
+                const store = tx.objectStore(STORE_NAME); 
+                const req = store.put(data, key); 
+                req.onsuccess = () => resolve(); 
+                req.onerror = (e) => {
+                    console.error('IndexedDB write error:', e.target.error);
+                    // 如果超出配额，尝试清理旧的聊天记录
+                    if (e.target.error && e.target.error.name === 'QuotaExceededError') {
+                        console.warn('Storage quota exceeded!');
+                        alert('存储空间已满，系统将尝试清理部分老旧数据。建议您清理不常用的聊天记录。');
+                        // 实际应用中这里可以加清理逻辑，这里为避免过度复杂仅提示
+                    }
+                    reject(e.target.error); 
+                }; 
+            }); 
+        } catch (e) {
+            console.error(e);
+        }
+    }
     async function getImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.get(key); req.onsuccess = () => resolve(req.result); req.onerror = (e) => reject(e.target.error); }); }
     async function deleteImageFromDB(key) { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.delete(key); req.onsuccess = () => resolve(); req.onerror = (e) => reject(e.target.error); }); }
     async function getAllImagesFromDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.getAll(); const keysReq = store.getAllKeys(); tx.oncomplete = () => { const result = {}; for(let i=0; i<keysReq.result.length; i++) result[keysReq.result[i]] = req.result[i]; resolve(result); }; tx.onerror = (e) => reject(e.target.error); }); }
     async function clearImageDB() { const db = await initDB(); return new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); store.clear(); tx.oncomplete = () => resolve(); tx.onerror = (e) => reject(e.target.error); }); }
 
-    // ==========================================
-    // 全新聊天记录存储架构 (内存缓存 + IndexedDB)
-    // ==========================================
+    // 内存缓存控制
     let chatHistoryCache = {};
     
     async function getChatHistory(charId) {
@@ -2232,6 +2265,10 @@
         if (id === 'chat-screen') {
             cancelMultiSelect();
             cancelReply();
+            document.getElementById('attachment-panel').classList.remove('active');
+            setTimeout(() => { document.getElementById('attachment-panel').style.display = 'none'; }, 300);
+            document.getElementById('sticker-panel').classList.remove('active');
+            document.getElementById('msg-action-menu').style.display = 'none';
         }
         document.getElementById(id).classList.remove('active'); 
     }
@@ -2362,7 +2399,7 @@
                 document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'CustomOfflineFont, sans-serif');
             } catch (e) { console.error("线下字体加载失败", e); }
         } else {
-            document.getElementById('contact-offline-screen').setProperty('--offline-font', 'var(--global-font)');
+            document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'var(--global-font)');
         }
     }
     document.getElementById('global-font-upload').addEventListener('change', function(e) {
@@ -3939,7 +3976,7 @@
 
     if (!Array.isArray(userPersonas) || userPersonas.length === 0) {
         const defaultId = 'u_' + Date.now();
-        userPersonas = [{ id: defaultId, remark: 'Alex Morgan', name: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '0', followers: '0', following: '0', relations: [] }];
+        userPersonas = [{ id: defaultId, remark: 'Alex Morgan', name: '', gender: '', identity: 'Product Designer', signature: 'Designing digital experiences<br>that are intuitive and impactful.', bio: '', posts: '0', followers: '0', following: '0', relations: [] }];
         localStorage.setItem('user_personas', JSON.stringify(userPersonas)); activeUserPersonaId = defaultId; localStorage.setItem('active_user_persona_id', defaultId);
     } else if (!activeUserPersonaId || !userPersonas.find(p => p.id === activeUserPersonaId)) {
         activeUserPersonaId = userPersonas[0].id; localStorage.setItem('active_user_persona_id', activeUserPersonaId);
@@ -3974,7 +4011,13 @@
     }
     async function openUserPersonaEdit(id = null) {
         currentUserEditId = id; const p = id ? userPersonas.find(x => x.id === id) : null;
-        document.getElementById('user-remark').value = p ? (p.remark || '') : ''; document.getElementById('user-name').value = p ? (p.name || '') : ''; document.getElementById('user-identity').value = p ? (p.identity || '') : ''; document.getElementById('user-signature').value = p ? (p.signature || '').replace(/<br>/g, '\n') : ''; document.getElementById('user-bio').value = p ? (p.bio || '').replace(/<br>/g, '\n') : ''; document.getElementById('user-delete-btn').style.display = id ? 'block' : 'none';
+        document.getElementById('user-remark').value = p ? (p.remark || '') : ''; 
+        document.getElementById('user-name').value = p ? (p.name || '') : ''; 
+        document.getElementById('user-gender').value = p ? (p.gender || '') : ''; 
+        document.getElementById('user-identity').value = p ? (p.identity || '') : ''; 
+        document.getElementById('user-signature').value = p ? (p.signature || '').replace(/<br>/g, '\n') : ''; 
+        document.getElementById('user-bio').value = p ? (p.bio || '').replace(/<br>/g, '\n') : ''; 
+        document.getElementById('user-delete-btn').style.display = id ? 'block' : 'none';
         const avatarEl = document.getElementById('user-avatar'); avatarEl.style.backgroundImage = 'none'; avatarEl.innerText = '?'; avatarEl.style.color = '#fff';
         if (p) { const initial = (p.remark || p.name || '?').charAt(0); avatarEl.innerText = initial; const savedImg = await getImageFromDB(`user_avatar_${id}`); if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; } }
         checkUserSaveBtnState(); openScreen('user-persona-edit-screen');
@@ -4002,14 +4045,19 @@
         reader.readAsArrayBuffer(file); this.value = ''; 
     });
     async function saveUserPersona() {
-        const remark = document.getElementById('user-remark').value.trim(); const name = document.getElementById('user-name').value.trim(); const identity = document.getElementById('user-identity').value.trim(); const signature = document.getElementById('user-signature').value.trim().replace(/\n/g, '<br>'); const bio = document.getElementById('user-bio').value.trim().replace(/\n/g, '<br>');
+        const remark = document.getElementById('user-remark').value.trim(); 
+        const name = document.getElementById('user-name').value.trim(); 
+        const gender = document.getElementById('user-gender').value.trim(); 
+        const identity = document.getElementById('user-identity').value.trim(); 
+        const signature = document.getElementById('user-signature').value.trim().replace(/\n/g, '<br>'); 
+        const bio = document.getElementById('user-bio').value.trim().replace(/\n/g, '<br>');
         if (!remark) { alert("请填写网名！"); return; }
         let id = currentUserEditId;
         if (!id) {
             id = 'u_' + Date.now();
             if (window.tempUserAvatarId) { const imgData = await getImageFromDB(`user_avatar_${window.tempUserAvatarId}`); if (imgData) { await saveImageToDB(`user_avatar_${id}`, imgData); await deleteImageFromDB(`user_avatar_${window.tempUserAvatarId}`); } window.tempUserAvatarId = null; }
-            userPersonas.push({ id, remark, name, identity, signature, bio, posts: '0', followers: '0', following: '0', relations: [] }); activeUserPersonaId = id; localStorage.setItem('active_user_persona_id', id);
-        } else { const index = userPersonas.findIndex(x => x.id === id); if (index > -1) { userPersonas[index] = { ...userPersonas[index], remark, name, identity, signature, bio }; } }
+            userPersonas.push({ id, remark, name, gender, identity, signature, bio, posts: '0', followers: '0', following: '0', relations: [] }); activeUserPersonaId = id; localStorage.setItem('active_user_persona_id', id);
+        } else { const index = userPersonas.findIndex(x => x.id === id); if (index > -1) { userPersonas[index] = { ...userPersonas[index], remark, name, gender, identity, signature, bio }; } }
         localStorage.setItem('user_personas', JSON.stringify(userPersonas)); alert("保存成功！"); closeScreen('user-persona-edit-screen'); renderUserPersonaList(); if(activeUserPersonaId === id) renderBlogPage();
     }
     async function deleteUserPersona() {
@@ -4194,6 +4242,7 @@
         // 彻底关闭弹层，防止遮挡和卡顿
         document.getElementById('attachment-panel').classList.remove('active');
         document.getElementById('attachment-panel').style.display = 'none';
+        document.getElementById('sticker-panel').classList.remove('active');
         document.getElementById('call-screen').classList.remove('active');
         document.getElementById('incoming-call-modal').classList.remove('active');
         document.getElementById('msg-action-menu').style.display = 'none';
@@ -4203,13 +4252,19 @@
         if (customBg) { chatScreen.style.backgroundImage = `url(${customBg})`; } else { chatScreen.style.backgroundImage = 'none'; }
         
         currentCharAvatarCache = await getImageFromDB(`contact_avatar_${charId}`);
-        const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
+        
+        // 获取绑定的 user 人设
+        let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${charId}`) || activeUserPersonaId;
+        const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
+        
         const chatUserImg = await getImageFromDB(`chat_user_avatar_${charId}`);
         const globalUserImg = activeP ? await getImageFromDB(`user_avatar_${activeP.id}`) : null;
         currentUserAvatarCache = chatUserImg || globalUserImg;
 
         const history = await getChatHistory(charId);
-        for (const msg of history) { 
+        // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
+        const recentHistory = history.slice(-100);
+        for (const msg of recentHistory) { 
             await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
         }
         
@@ -4246,7 +4301,9 @@
 
         let avatarHtml = ''; let nameHtml = '';
         if (isSelf) {
-            const activeP = userPersonas.find(p => p.id === activeUserPersonaId); const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
+            let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
+            const activeP = userPersonas.find(p => p.id === chatUserPersonaId); 
+            const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
             const finalImg = currentUserAvatarCache;
             let style = `background-color:#d8b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`; if(finalImg) style = `background-image:url(${finalImg}); background-size:cover;`;
             avatarHtml = `<div class="chat-msg-avatar" style="${style}">${finalImg ? '' : name.charAt(0)}</div>`; nameHtml = `<div class="chat-sender-name">${name}</div>`;
@@ -4402,17 +4459,16 @@
             const startPress = (e) => {
                 if (isMultiSelectMode) return;
                 isLongPressed = false;
-                if(e.touches) {
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                } else {
-                    startX = e.clientX;
-                    startY = e.clientY;
-                }
-                pressTimer = setTimeout(() => {
+                const touch = e.touches ? e.touches[0] : e;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                
+                clearTimeout(pressTimer);
+                pressTimer = setTimeout(async () => {
                     isLongPressed = true;
-                    showMsgActionMenu(e, msgRow);
-                }, 600);
+                    if (e && e.cancelable) e.preventDefault();
+                    await showMsgActionMenu(e, msgRow);
+                }, 500);
             };
 
             const cancelPress = () => {
@@ -4426,17 +4482,17 @@
                 }
             };
 
-            msgRow.addEventListener('touchstart', startPress, {passive: true});
+            // passive: false 必须设置，否则 preventDefault 不生效
+            msgRow.addEventListener('touchstart', startPress, {passive: false}); 
             msgRow.addEventListener('touchmove', movePress, {passive: true});
             msgRow.addEventListener('touchend', cancelPress);
-            
             msgRow.addEventListener('mousedown', startPress);
             msgRow.addEventListener('mouseup', cancelPress);
             msgRow.addEventListener('mouseleave', cancelPress);
             
             msgRow.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                showMsgActionMenu(e, msgRow);
+                if (!isMultiSelectMode) showMsgActionMenu(e, msgRow);
             });
 
             msgRow.addEventListener('click', (e) => {
@@ -4459,7 +4515,9 @@
         
         if (currentReplyTo) {
             const char = contacts.find(c => c.id === currentChatCharId);
-            const senderName = currentReplyTo.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
+            let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
+            const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
+            const senderName = currentReplyTo.isSelf ? (activeP?.remark || '我') : (char?.remark || char?.name || '对方');
             let quoteText = `[引用: ${senderName}: ${currentReplyTo.text ? currentReplyTo.text.substring(0, 20) : '[图片/语音]'}] `;
             text = quoteText + text;
             currentReplyTo = null;
@@ -4550,7 +4608,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             // 极致压缩，防止卡顿和超限
-            callback(canvas.toDataURL('image/jpeg', 0.5)); 
+            callback(canvas.toDataURL('image/jpeg', 0.4)); 
         };
         img.src = base64;
     }
@@ -4561,7 +4619,7 @@
         const reader = new FileReader();
         reader.onload = function(event) {
             const base64Data = event.target.result;
-            compressImage(base64Data, 300, async function(compressedBase64) { 
+            compressImage(base64Data, 200, async function(compressedBase64) { 
                 const msgId = Date.now().toString();
                 await renderChatMessage("[发送了一张图片]", true, true, compressedBase64, 'image', null, '', msgId);
                 if(currentChatCharId) {
@@ -4835,11 +4893,26 @@
         if (!currentChatCharId) return;
         const configStr = localStorage.getItem('settings_api_config'); if (!configStr) { alert("请先在 设置 -> API接口 中配置并保存模型参数！"); return; }
         const config = safeParseJSON(configStr, null); if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
-        const char = contacts.find(c => c.id === currentChatCharId); const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
+        const char = contacts.find(c => c.id === currentChatCharId); 
+        
+        // 获取绑定的用户人设
+        let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
+        const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
         
         let systemPrompt = localStorage.getItem('global_system_prompt') || "你是一个真实的聊天对象。";
         let charPersona = `【角色设定】\n名字: ${char.remark || char.name || '未命名'}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
-        let userPersona = activeP ? `【用户设定】\n名字: ${activeP.remark || activeP.name || '我'}\n身份: ${activeP.identity || '未知'}\n` : '';
+        
+        let userPersona = '';
+        if (activeP) {
+            userPersona = `【用户设定】\n名字: ${activeP.name || '未知'}\n网名: ${activeP.remark || '未知'}\n性别: ${activeP.gender || '未知'}\n身份: ${activeP.identity || '未知'}\n生平: ${(activeP.bio || '').replace(/<br>/g, '\n')}\n`;
+            if (activeP.relations && activeP.relations.length > 0) {
+                activeP.relations.forEach(rel => {
+                    if (rel.targetId === char.id) {
+                        userPersona += `与你的关系: ${rel.relationDesc}\n`;
+                    }
+                });
+            }
+        }
 
         let memories = safeParseJSON(localStorage.getItem(`char_memory_${char.id}`), []);
         let memoryPrompt = '';
@@ -4964,14 +5037,57 @@
         const pinnedIds = safeParseJSON(localStorage.getItem('chat_pinned_ids'), []);
         const pinSwitch = document.getElementById('pin-switch');
         if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on'); else pinSwitch.classList.remove('on');
+        
+        // 更新绑定用户人设显示
+        const boundUserId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`);
+        const boundP = userPersonas.find(p => p.id === boundUserId);
+        document.getElementById('chat-user-persona-display').innerText = boundP ? (boundP.remark || boundP.name || '未命名') : '未绑定(使用当前)';
+        
         loadDetailAvatars(); document.getElementById('chat-detail-modal').classList.add('active');
     }
     function closeChatDetailModal() { document.getElementById('chat-detail-modal').classList.remove('active'); }
 
+    function openChatUserPersonaSelectModal() {
+        const listContainer = document.getElementById('chat-user-persona-select-list');
+        listContainer.innerHTML = '';
+        const boundUserId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`);
+        
+        const defaultItem = document.createElement('div');
+        defaultItem.className = `modal-item ${!boundUserId ? 'selected' : ''}`;
+        defaultItem.innerHTML = `<span class="modal-item-name">使用当前展示人设</span><div class="modal-check"></div>`;
+        defaultItem.onclick = () => {
+            localStorage.removeItem(`chat_user_persona_${currentChatCharId}`);
+            closeChatUserPersonaSelectModal();
+            openChatDetailModal();
+            reRenderChatHistory();
+        };
+        listContainer.appendChild(defaultItem);
+
+        userPersonas.forEach(p => {
+            const displayName = p.remark || p.name || '未命名';
+            const div = document.createElement('div');
+            div.className = `modal-item ${boundUserId === p.id ? 'selected' : ''}`;
+            div.innerHTML = `<span class="modal-item-name">${displayName}</span><div class="modal-check"></div>`;
+            div.onclick = () => {
+                localStorage.setItem(`chat_user_persona_${currentChatCharId}`, p.id);
+                closeChatUserPersonaSelectModal();
+                openChatDetailModal();
+                reRenderChatHistory();
+            };
+            listContainer.appendChild(div);
+        });
+        document.getElementById('chat-user-persona-select-modal').classList.add('active');
+    }
+    function closeChatUserPersonaSelectModal() { document.getElementById('chat-user-persona-select-modal').classList.remove('active'); }
+
     async function loadDetailAvatars() {
-        const char = contacts.find(c => c.id === currentChatCharId); const charAvatarEl = document.getElementById('chat-detail-char-avatar');
+        const char = contacts.find(c => c.id === currentChatCharId); 
+        const charAvatarEl = document.getElementById('chat-detail-char-avatar');
         if (char) { const img = currentCharAvatarCache; if (img) { charAvatarEl.style.backgroundImage = `url(${img})`; charAvatarEl.innerText = ''; } else { charAvatarEl.style.backgroundImage = 'none'; charAvatarEl.innerText = (char.remark||char.name||'?').charAt(0); } }
-        const activeP = userPersonas.find(p => p.id === activeUserPersonaId); const userAvatarEl = document.getElementById('chat-detail-user-avatar');
+        
+        let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
+        const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
+        const userAvatarEl = document.getElementById('chat-detail-user-avatar');
         const finalImg = currentUserAvatarCache;
         if (finalImg) { userAvatarEl.style.backgroundImage = `url(${finalImg})`; userAvatarEl.innerText = ''; } else { userAvatarEl.style.backgroundImage = 'none'; userAvatarEl.innerText = activeP ? (activeP.remark||activeP.name||'我').charAt(0) : '我'; }
     }
@@ -5021,7 +5137,6 @@
         const keyword = document.getElementById('chat-search-input').value.trim().toLowerCase();
         const rows = document.querySelectorAll('#chat-container .chat-msg-row');
         rows.forEach(row => {
-            // 系统消息不参与搜索
             const isSysMsg = row.querySelector('.chat-system-msg') !== null;
             if (isSysMsg) {
                 row.style.display = keyword ? 'none' : 'flex'; 
@@ -5106,9 +5221,13 @@
     }
 
     async function reRenderChatHistory() {
-        const container = document.getElementById('chat-container'); container.innerHTML = '';
+        const container = document.getElementById('chat-container'); 
+        if(!container) return;
+        container.innerHTML = '';
         const history = await getChatHistory(currentChatCharId);
-        for(const msg of history) { 
+        // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
+        const recentHistory = history.slice(-100);
+        for(const msg of recentHistory) { 
             await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
         } 
         container.scrollTop = container.scrollHeight;
@@ -5298,12 +5417,14 @@
     let currentMsgRow = null;
     let currentReplyTo = null;
 
-    function showMsgActionMenu(e, msgRow) {
+    async function showMsgActionMenu(e, msgRow) {
         if (isMultiSelectMode) return;
-        e.preventDefault();
+        if (e && e.cancelable) e.preventDefault();
         currentMsgId = msgRow.dataset.msgId;
         currentMsgRow = msgRow;
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        
+        // 修复：必须从 IndexedDB 读取，而不是 localStorage
+        const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
 
@@ -5314,14 +5435,20 @@
         const rect = msgRow.getBoundingClientRect();
         menu.classList.remove('arrow-top');
         
-        let top = rect.top - menu.offsetHeight - 10;
+        // 强制重绘以获取准确尺寸
+        menu.style.visibility = 'hidden';
+        const menuHeight = menu.offsetHeight;
+        const menuWidth = menu.offsetWidth;
+        menu.style.visibility = 'visible';
+        
+        let top = rect.top - menuHeight - 10;
         if (top < 50) {
             top = rect.bottom + 10;
             menu.classList.add('arrow-top');
         }
-        let left = rect.left + rect.width / 2 - menu.offsetWidth / 2;
+        let left = rect.left + rect.width / 2 - menuWidth / 2;
         if (left < 10) left = 10;
-        if (left + menu.offsetWidth > window.innerWidth - 10) left = window.innerWidth - menu.offsetWidth - 10;
+        if (left + menuWidth > window.innerWidth - 10) left = window.innerWidth - menuWidth - 10;
         
         menu.style.top = `${top}px`;
         menu.style.left = `${left}px`;
@@ -5343,8 +5470,8 @@
         currentMsgRow = null;
     }
 
-    function msgActionCopy() {
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+    async function msgActionCopy() {
+        const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentMsgId);
         if (msg && msg.text) {
             navigator.clipboard.writeText(msg.text).then(() => alert('已复制')).catch(() => alert('复制失败'));
@@ -5361,14 +5488,16 @@
         closeMsgActionMenu();
     }
 
-    function msgActionQuote() {
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+    async function msgActionQuote() {
+        const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
         currentReplyTo = msg;
         document.getElementById('reply-preview').style.display = 'flex';
         const char = contacts.find(c => c.id === currentChatCharId);
-        const senderName = msg.isSelf ? (userPersonas.find(p => p.id === activeUserPersonaId)?.remark || '我') : (char?.remark || char?.name || '对方');
+        let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
+        const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
+        const senderName = msg.isSelf ? (activeP?.remark || '我') : (char?.remark || char?.name || '对方');
         document.getElementById('reply-text').innerText = `${senderName}: ${msg.text ? msg.text.substring(0, 20) : '[图片/语音]'}`;
         closeMsgActionMenu();
         document.getElementById('chat-input-field').focus();
@@ -5491,6 +5620,11 @@
     }
 
     async function initApp() {
+        // 请求持久化存储，避免被浏览器清理
+        if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist().catch(() => {});
+        }
+
         // 静音保活机制
         try {
             const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
