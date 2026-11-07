@@ -396,36 +396,21 @@
     #offline-char-modal { z-index: 4700 !important; }
 
     /* ==================================================== */
-    /* 🌟 设置 App 界面样式 (彻底修复顶部漏出 bug) */
+    /* 🌟 设置 App 界面样式 (恢复全屏) */
     /* ==================================================== */
     #settings-screen { 
-        background-color: rgba(0,0,0,0.4); /* 半透明黑底遮罩 */
+        background-color: #f2f2f7; 
         z-index: 5000; 
         padding: 0; 
         position: fixed; 
         top: 0; left: 0; width: 100vw; height: 100vh; 
         display: none; 
-        justify-content: center; 
-        align-items: flex-end; 
-        overflow: hidden; 
-    }
-    #settings-screen.active { display: flex; }
-    .settings-content-wrap { 
-        background-color: #f2f2f7; 
-        width: 100%; 
-        max-width: 400px; 
-        height: 92vh; 
-        border-top-left-radius: 24px; 
-        border-top-right-radius: 24px; 
-        display: flex; 
         flex-direction: column; 
         overflow-y: auto; 
-        position: relative;
-        animation: slideUp 0.3s ease-out;
     }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    #settings-screen.active { display: flex; }
     
-    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; border-top-left-radius: 24px; border-top-right-radius: 24px; }
+    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; }
     .settings-header-bar .back-icon { position: absolute; left: 20px; width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .settings-header-bar .back-icon svg { width: 20px; height: 20px; stroke: #333; stroke-width: 2; fill: none; }
     .settings-title { font-size: 20px; font-weight: 600; color: #000; }
@@ -448,7 +433,7 @@
     .settings-switch.on::after { transform: translateX(20px); }
 
     /* ==================================================== */
-    /* 🌟 全新仿图 API 设置全屏界面 (补全模型选择、最大Token等) */
+    /* 🌟 全新仿图 API 设置全屏界面 (移除运用预设，补全功能) */
     /* ==================================================== */
     #api-screen { background-color: #e0e0e0; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; overflow: hidden; }
     #api-screen.active { display: flex; }
@@ -656,19 +641,18 @@
     .api-preset-row {
         width: 100%;
         display: flex;
-        justify-content: space-between;
-        gap: 10px;
+        justify-content: center;
         margin-bottom: 15px;
     }
 
     .api-preset-btn {
-        flex: 1;
+        width: 100%;
         background: #f4f4f5;
         color: #333;
         border: none;
         border-radius: 20px;
-        padding: 10px;
-        font-size: 13px;
+        padding: 12px;
+        font-size: 14px;
         cursor: pointer;
         font-weight: 500;
     }
@@ -954,7 +938,7 @@
         </div>
     </div>
 
-    <!-- 🌟 新增：完全匹配图1的底部美化组件卡片 -->
+    <!-- 新增：完全匹配图1的底部美化组件卡片 -->
     <div class="new-widget-card">
         <div class="new-widget-img" id="mgr-widget-img" onclick="document.getElementById('mgr-widget-upload').click()"></div>
         <div class="new-widget-info">
@@ -967,7 +951,7 @@
     </div>
 </div>
 
-<!-- 🌟 全新音乐 App 结构 -->
+<!-- 全新音乐 App 结构 -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
     <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
@@ -1040,55 +1024,53 @@
     </div>
 </div>
 
-<!-- 设置 App (已修复顶部背景漏出问题，改为底部卡片弹出) -->
+<!-- 设置 App (已彻底恢复全屏) -->
 <div class="fullscreen-screen" id="settings-screen">
-    <div class="settings-content-wrap">
-        <div class="settings-header-bar">
-            <div class="back-icon" onclick="closeScreen('settings-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
-            <div class="settings-title">设置</div>
-            <div style="width:36px;"></div>
+    <div class="settings-header-bar">
+        <div class="back-icon" onclick="closeScreen('settings-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+        <div class="settings-title">设置</div>
+        <div style="width:36px;"></div>
+    </div>
+    <div class="settings-account">
+        <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
+        <div class="settings-account-info">
+            <div class="settings-account-name" id="settings-account-name" ondblclick="editAccountName()">默认昵称</div>
+            <div class="settings-account-sub">Apple账户、iCloud 等</div>
         </div>
-        <div class="settings-account">
-            <div class="settings-account-avatar-container" id="settings-avatar" onclick="document.getElementById('settings-avatar-upload').click()"></div>
-            <div class="settings-account-info">
-                <div class="settings-account-name" id="settings-account-name" ondblclick="editAccountName()">默认昵称</div>
-                <div class="settings-account-sub">Apple账户、iCloud 等</div>
-            </div>
+        <div class="settings-list-arrow"></div>
+    </div>
+    <div class="settings-group-list">
+        <div class="settings-list-item" onclick="toggleFullscreenMode()">
+            <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
+            <div class="settings-list-text">全屏模式</div>
+            <div class="settings-switch" id="toggle-fullscreen"></div>
+        </div>
+        <div class="settings-list-item" onclick="openApiScreen()">
+            <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
+            <div class="settings-list-text">API 接口</div>
+            <div class="settings-list-value" id="api-status-text">未连接</div>
             <div class="settings-list-arrow"></div>
         </div>
-        <div class="settings-group-list">
-            <div class="settings-list-item" onclick="toggleFullscreenMode()">
-                <div class="settings-list-icon" style="background-color: #ff9500;"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
-                <div class="settings-list-text">全屏模式</div>
-                <div class="settings-switch" id="toggle-fullscreen"></div>
-            </div>
-            <div class="settings-list-item" onclick="openApiScreen()">
-                <div class="settings-list-icon" style="background-color: #007aff;"><svg viewBox="0 0 24 24"><path d="M12 21L2 7c5.5-4 15.5-4 20 0L12 21z"></path></svg></div>
-                <div class="settings-list-text">API 接口</div>
-                <div class="settings-list-value" id="api-status-text">未连接</div>
-                <div class="settings-list-arrow"></div>
-            </div>
-            <div class="settings-list-item">
-                <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
-                <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
-                <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg></div>
-                <div class="settings-list-arrow" onclick="document.getElementById('ringtone-upload').click()"></div>
-            </div>
-            <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
-                <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
-                <div class="settings-list-text">导入全局数据</div>
-                <div class="settings-list-arrow"></div>
-            </div>
-            <div class="settings-list-item" onclick="exportGlobalData()">
-                <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
-                <div class="settings-list-text">导出全局数据</div>
-                <div class="settings-list-arrow"></div>
-            </div>
+        <div class="settings-list-item">
+            <div class="settings-list-icon" style="background-color: #34c759;" onclick="document.getElementById('ringtone-upload').click()"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <div class="settings-list-text" onclick="document.getElementById('ringtone-upload').click()">自定义新消息铃声</div>
+            <div id="ringtone-play-btn" style="display:none; cursor:pointer; padding:5px; margin-right:5px;" onclick="playRingtone()"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#007aff;"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="settings-list-arrow" onclick="document.getElementById('ringtone-upload').click()"></div>
+        </div>
+        <div class="settings-list-item" onclick="document.getElementById('import-data-file').click()">
+            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></div>
+            <div class="settings-list-text">导入全局数据</div>
+            <div class="settings-list-arrow"></div>
+        </div>
+        <div class="settings-list-item" onclick="exportGlobalData()">
+            <div class="settings-list-icon" style="background-color: #34c759;"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
+            <div class="settings-list-text">导出全局数据</div>
+            <div class="settings-list-arrow"></div>
         </div>
     </div>
 </div>
 
-<!-- 全新仿图 API 设置界面 (补齐所有要求功能) -->
+<!-- 全新仿图 API 设置界面 (已删除“运用预设”按钮) -->
 <div class="fullscreen-screen" id="api-screen">
     <div class="api-main-card">
         <!-- 黑色顶部区域 -->
@@ -1138,10 +1120,9 @@
                 <input type="range" class="api-slider" id="api-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('api-temp-val').innerText = this.value">
             </div>
 
-            <!-- 预设操作 -->
+            <!-- 预设操作 (删除了运用预设按钮) -->
             <div class="api-preset-row">
                 <button class="api-preset-btn" onclick="openPresetManageModal()">管理预设</button>
-                <button class="api-preset-btn" onclick="loadApiPresetFromModal()">运用预设</button>
             </div>
 
             <!-- 操作按钮行 (保存 & 测试) -->
@@ -1712,7 +1693,7 @@
     });
     setupEditableText(document.querySelectorAll('.editable'));
 
-    // 🌟 新增：底部组件文字的双击编辑逻辑
+    // 新增：底部组件文字的双击编辑逻辑
     document.querySelectorAll('.mgr-widget-editable').forEach(el => {
         const key = el.dataset.key;
         const saved = localStorage.getItem(key);
@@ -1737,7 +1718,7 @@
         });
     });
 
-    // 🌟 新增：底部组件图片上传逻辑
+    // 新增：底部组件图片上传逻辑
     document.getElementById('mgr-widget-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -2757,7 +2738,7 @@
     }
 
     // ==========================================
-    // 5. 设置 App 及全新 API 界面逻辑 (包含拉取模型列表、最大Token、测试连接)
+    // 5. 设置 App 及全新 API 界面逻辑
     // ==========================================
     async function openSettingsApp() {
         openScreen('settings-screen');
@@ -2873,7 +2854,7 @@
         }
     }
 
-    // 改进后的拉取模型逻辑：不再使用丑陋的 prompt
+    // 拉取模型逻辑
     async function fetchApiModels() {
         const url = document.getElementById('api-url').value.trim().replace(/\/+$/, ''); 
         const key = document.getElementById('api-key').value.trim();
