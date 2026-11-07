@@ -396,10 +396,10 @@
     #offline-char-modal { z-index: 4700 !important; }
 
     /* ==================================================== */
-    /* 🌟 设置 App 界面样式 */
+    /* 🌟 设置 App 界面样式 (整体下移) */
     /* ==================================================== */
-    #settings-screen { background-color: #f2f2f7; z-index: 5000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow-y: auto; }
-    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; }
+    #settings-screen { background-color: #f2f2f7; z-index: 5000; padding: 0; position: fixed; top: 40px; left: 0; width: 100vw; height: calc(100vh - 40px); overflow-y: auto; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); }
+    .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; border-top-left-radius: 20px; border-top-right-radius: 20px; }
     .settings-header-bar .back-icon { position: absolute; left: 20px; width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .settings-header-bar .back-icon svg { width: 20px; height: 20px; stroke: #333; stroke-width: 2; fill: none; }
     .settings-title { font-size: 20px; font-weight: 600; color: #000; }
@@ -422,26 +422,219 @@
     .settings-switch.on::after { transform: translateX(20px); }
 
     /* ==================================================== */
-    /* 🌟 Ins 风 API 设置全屏界面 */
+    /* 🌟 全新仿图 API 设置全屏界面 (黑白灰极简风) */
     /* ==================================================== */
-    #api-screen { background-color: #fcfcfc; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow-y: auto; }
-    .ins-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #fcfcfc; position: sticky; top: 0; z-index: 10; }
-    .ins-header .back-icon { width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .ins-header .back-icon svg { width: 20px; height: 20px; stroke: #333; stroke-width: 2; fill: none; }
-    .ins-header .title { font-size: 18px; font-weight: 600; color: #000; }
-    .ins-header .save-btn { font-weight: 600; color: #000; cursor: pointer; font-size: 16px; }
-    .ins-card { background: #fff; border-radius: 20px; margin: 0 20px 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-    .ins-input-group { margin-bottom: 15px; }
-    .ins-input-group label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; }
-    .ins-input { width: 100%; border: none; background: #f5f5f7; padding: 14px 16px; border-radius: 14px; font-size: 15px; outline: none; color: #333; font-family: inherit; transition: background 0.3s; }
-    .ins-input:focus { background: #ebebeb; }
-    .ins-select { width: 100%; border: none; background: #f5f5f7; padding: 14px 16px; border-radius: 14px; font-size: 15px; outline: none; color: #333; font-family: inherit; appearance: none; -webkit-appearance: none; }
-    .ins-btn-text { background: none; border: none; color: #007aff; font-size: 14px; cursor: pointer; padding: 0; margin-top: 5px; }
+    #api-screen { background-color: #e0e0e0; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+    
+    .api-main-card {
+        width: 92%;
+        max-width: 380px;
+        height: 88vh;
+        background: #ffffff;
+        border-radius: 36px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+
+    .api-black-header {
+        background: linear-gradient(to bottom, #111111, #333333);
+        height: 120px;
+        border-top-left-radius: 36px;
+        border-top-right-radius: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 25px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .api-back-btn {
+        position: absolute;
+        left: 20px;
+        top: 25px;
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .api-login-title {
+        color: #ffffff;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        outline: none;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .api-white-body {
+        background: #ffffff;
+        flex-grow: 1;
+        border-top-left-radius: 36px;
+        border-top-right-radius: 36px;
+        margin-top: -30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 25px 20px;
+        overflow-y: auto;
+        z-index: 2;
+    }
+
+    .api-avatar-container {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #e5e5ea;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        margin-bottom: 30px;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #999;
+        font-size: 14px;
+    }
+
+    .api-input-group {
+        width: 100%;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .api-input {
+        width: 100%;
+        background-color: #f4f4f5;
+        border: none;
+        border-radius: 30px;
+        padding: 18px 24px;
+        font-size: 16px;
+        color: #333;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+    .api-input::placeholder {
+        color: #b0b0b5;
+    }
+
+    .api-eye-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        fill: #b0b0b5;
+    }
+
+    .api-action-row {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 15px;
+        margin-bottom: 15px;
+    }
+
+    .api-link-text {
+        font-size: 15px;
+        color: #888;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .api-slider-container {
+        width: 100%;
+        padding: 10px 10px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .api-slider-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #888;
+    }
+    
+    .api-slider {
+        width: 100%;
+        -webkit-appearance: none;
+        height: 6px;
+        background: #e5e5ea;
+        border-radius: 3px;
+        outline: none;
+    }
+    
+    .api-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #111;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .api-preset-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .api-preset-btn {
+        flex: 1;
+        background: #f4f4f5;
+        color: #333;
+        border: none;
+        border-radius: 20px;
+        padding: 10px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .api-submit-btn {
+        width: 100%;
+        background-color: #111111;
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        padding: 18px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: auto; 
+        margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+
+    .api-submit-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: #ffffff;
+    }
 
     /* ==================================================== */
     /* 🌟 优化后的预设管理界面 */
     /* ==================================================== */
-    #preset-manage-modal { z-index: 5500; }
+    #preset-manage-modal { z-index: 6500; }
     .preset-container { background: #ffffff; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .preset-title { font-size: 18px; font-weight: 600; color: #1c1c1e; margin-bottom: 4px; text-align: center; }
     .preset-input { width: 100%; padding: 14px 16px; border: none; background: #f2f2f7; border-radius: 12px; font-size: 15px; outline: none; color: #1c1c1e; }
@@ -824,26 +1017,81 @@
     </div>
 </div>
 
-<!-- Ins 风 API 设置 -->
+<!-- 🌟 全新仿图 API 设置界面 -->
 <div class="fullscreen-screen" id="api-screen">
-    <div class="ins-header">
-        <div class="back-icon" onclick="closeScreen('api-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
-        <div class="title">API 接口</div>
-        <div class="save-btn" onclick="saveApiConfig()">保存</div>
+    <div class="api-main-card">
+        <!-- 黑色顶部区域 -->
+        <div class="api-black-header">
+            <button class="api-back-btn" onclick="closeScreen('api-screen')">
+                <svg style="width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+            </button>
+            <div class="api-login-title" id="api-top-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveApiTopTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Log in</div>
+        </div>
+        
+        <!-- 白色圆角主体 -->
+        <div class="api-white-body">
+            <!-- 头像 -->
+            <div class="api-avatar-container" id="api-avatar" onclick="document.getElementById('api-avatar-upload').click()"></div>
+
+            <!-- 输入区 -->
+            <div class="api-input-group">
+                <input type="text" class="api-input" id="api-url" placeholder="API URL">
+            </div>
+            
+            <div class="api-input-group">
+                <input type="password" class="api-input" id="api-key" placeholder="API key">
+                <svg class="api-eye-icon" id="api-eye-icon" onclick="toggleApiPasswordVisibility()" viewBox="0 0 24 24">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+            </div>
+
+            <!-- 拉取模型与温度调节 -->
+            <div class="api-action-row">
+                <span class="api-link-text" onclick="fetchApiModels()">Pull the model</span>
+            </div>
+            
+            <div class="api-slider-container">
+                <div class="api-slider-label">
+                    <span>温度 (Temperature)</span>
+                    <span id="api-temp-val">0.7</span>
+                </div>
+                <input type="range" class="api-slider" id="api-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('api-temp-val').innerText = this.value">
+            </div>
+
+            <!-- 预设操作 -->
+            <div class="api-preset-row">
+                <button class="api-preset-btn" onclick="openPresetManageModal()">管理预设</button>
+                <button class="api-preset-btn" onclick="loadApiPresetFromModal()">运用预设</button>
+            </div>
+
+            <!-- 隐藏的模型选择和手动输入区 (保持原逻辑可用) -->
+            <div style="display:none;">
+                <select id="api-model-select" class="api-input" style="margin-bottom:10px;"></select>
+                <input type="text" class="api-input" id="api-model-manual" placeholder="手动输入模型名称">
+            </div>
+
+            <!-- 底部保存按钮 (相当于箭头) -->
+            <button class="api-submit-btn" onclick="saveApiConfig()">
+                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+            </button>
+        </div>
     </div>
-    <div class="ins-card">
-        <div class="ins-input-group"><label>API URL</label><input type="text" class="ins-input" id="api-url" placeholder="如: https://api.openai.com/v1"></div>
-        <div class="ins-input-group"><label>API 密钥</label><input type="password" class="ins-input" id="api-key" placeholder="sk-..."></div>
-        <button class="ins-btn-text" onclick="fetchApiModels()">拉取可用模型列表</button>
-    </div>
-    <div class="ins-card">
-        <div class="ins-input-group"><label>模型选择</label><select id="api-model-select" class="ins-select"><option value="">请先拉取模型或手动输入</option></select></div>
-        <div class="ins-input-group"><label>手动输入模型名称</label><input type="text" class="ins-input" id="api-model-manual" placeholder="如: gpt-3.5-turbo"></div>
-        <div class="ins-input-group"><label>温度 (0.0 - 2.0)</label><input type="number" id="api-temp" class="ins-input" value="0.7" step="0.1" min="0" max="2"></div>
-    </div>
-    <div class="ins-card">
-        <div class="ins-input-group"><label>配置预设</label><select id="api-preset-select" class="ins-select" onchange="loadApiPreset()"><option value="">选择预设...</option></select></div>
-        <button class="ins-btn-text" onclick="saveApiPreset()">将当前配置保存为预设</button>
+</div>
+
+<!-- 优化后的预设管理弹窗 -->
+<div class="modal-overlay" id="preset-manage-modal">
+    <div class="preset-container">
+        <div class="preset-title">预设管理</div>
+        <input type="text" class="preset-input" id="new-preset-name" placeholder="输入预设名称（如：模型A）">
+        <button class="preset-btn green" onclick="saveCurrentPreset()">保存为当前预设</button>
+        <select class="preset-select" id="preset-select-list">
+            <option value="">-- 选择预设 --</option>
+        </select>
+        <div class="preset-row">
+            <button class="preset-btn blue" onclick="applySelectedPreset()">应用</button>
+            <button class="preset-btn red" onclick="deleteSelectedPreset()">删除</button>
+        </div>
+        <div class="preset-close-btn" onclick="closePresetManageModal()">取消</div>
     </div>
 </div>
 
@@ -1055,23 +1303,6 @@
             <button class="modal-btn cancel" onclick="closeGlobalBookBindModal()">取消</button>
             <button class="modal-btn confirm" onclick="saveGlobalBookBind()">保存</button>
         </div>
-    </div>
-</div>
-
-<!-- 优化后的预设管理弹窗 -->
-<div class="modal-overlay" id="preset-manage-modal">
-    <div class="preset-container">
-        <div class="preset-title">预设管理</div>
-        <input type="text" class="preset-input" id="new-preset-name" placeholder="输入预设名称（如：粉色主题）">
-        <button class="preset-btn green" onclick="saveCurrentPreset()">保存为当前预设</button>
-        <select class="preset-select" id="preset-select-list">
-            <option value="">-- 选择预设 --</option>
-        </select>
-        <div class="preset-row">
-            <button class="preset-btn blue" onclick="applySelectedPreset()">应用</button>
-            <button class="preset-btn red" onclick="deleteSelectedPreset()">删除</button>
-        </div>
-        <div class="preset-close-btn" onclick="closePresetManageModal()">取消</div>
     </div>
 </div>
 
@@ -1336,6 +1567,8 @@
 <input type="file" id="music-decoration-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <!-- 新增：底部组件图片上传 -->
 <input type="file" id="mgr-widget-upload" accept="image/*">
+<!-- 新增：API界面头像上传 -->
+<input type="file" id="api-avatar-upload" accept="image/*">
 
 
 <script>
@@ -2449,7 +2682,7 @@
     }
 
     // ==========================================
-    // 5. 设置 App 及其他原有逻辑
+    // 5. 设置 App 及全新 API 界面逻辑
     // ==========================================
     async function openSettingsApp() {
         openScreen('settings-screen');
@@ -2496,48 +2729,143 @@
             el.classList.remove('on'); localStorage.setItem('settings_fullscreen', 'false');
         }
     }
-    function openApiScreen() {
+
+    // 🌟 全新 API 界面逻辑
+    async function openApiScreen() {
         openScreen('api-screen');
+        
+        // 1. 加载顶部标题
+        const savedTitle = localStorage.getItem('api_top_title') || 'Log in';
+        document.getElementById('api-top-title').innerText = savedTitle;
+
+        // 2. 加载头像
+        const apiAvatar = await getImageFromDB('api_avatar');
+        const avatarEl = document.getElementById('api-avatar');
+        if (apiAvatar) {
+            avatarEl.style.backgroundImage = `url(${apiAvatar})`;
+            avatarEl.innerText = '';
+        } else {
+            avatarEl.style.backgroundImage = 'none';
+            avatarEl.innerText = '';
+        }
+
+        // 3. 加载配置
         const apiConf = safeParseJSON(localStorage.getItem('settings_api_config'), { url: '', key: '', model: '', temp: 0.7 });
-        document.getElementById('api-url').value = apiConf.url;
-        document.getElementById('api-key').value = apiConf.key;
-        document.getElementById('api-model-manual').value = apiConf.model;
-        document.getElementById('api-temp').value = apiConf.temp;
-        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
-        const sel = document.getElementById('api-preset-select');
-        sel.innerHTML = '<option value="">选择预设...</option>';
-        Object.keys(presets).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+        document.getElementById('api-url').value = apiConf.url || '';
+        document.getElementById('api-key').value = apiConf.key || '';
+        document.getElementById('api-model-manual').value = apiConf.model || '';
+        
+        const tempVal = apiConf.temp !== undefined ? apiConf.temp : 0.7;
+        document.getElementById('api-temp').value = tempVal;
+        document.getElementById('api-temp-val').innerText = tempVal;
     }
+
+    function saveApiTopTitle(val) {
+        val = val.trim() || 'Log in';
+        document.getElementById('api-top-title').innerText = val;
+        localStorage.setItem('api_top_title', val);
+    }
+
+    document.getElementById('api-avatar-upload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const base64Data = event.target.result;
+                await saveImageToDB('api_avatar', base64Data);
+                const avatarEl = document.getElementById('api-avatar');
+                avatarEl.style.backgroundImage = `url(${base64Data})`;
+                avatarEl.innerText = '';
+            };
+            reader.readAsDataURL(file);
+        }
+        this.value = '';
+    });
+
+    function toggleApiPasswordVisibility() {
+        const input = document.getElementById('api-key');
+        const icon = document.getElementById('api-eye-icon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+        } else {
+            input.type = 'password';
+            icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+        }
+    }
+
     async function fetchApiModels() {
-        const url = document.getElementById('api-url').value.trim().replace(/\/$/, '');
+        const url = document.getElementById('api-url').value.trim().replace(/\/+$/, ''); // 去掉末尾斜杠
         const key = document.getElementById('api-key').value.trim();
-        if (!url || !key) { alert("请填写 API URL 和 Key"); return; }
+        if (!url || !key) { alert("请填写 API URL 和 API key"); return; }
+        
         try {
             const res = await fetch(`${url}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             const select = document.getElementById('api-model-select');
             select.innerHTML = '<option value="">请选择模型...</option>';
-            if (data && data.data && Array.isArray(data.data)) { data.data.forEach(m => { select.innerHTML += `<option value="${m.id}">${m.id}</option>`; }); } 
-            else { select.innerHTML = '<option value="">无法解析模型列表</option>'; }
-            alert("拉取成功！");
-        } catch (err) { alert("拉取模型失败: " + err.message); }
+            
+            let modelList = [];
+            if (data && data.data && Array.isArray(data.data)) { 
+                modelList = data.data;
+            } else if (Array.isArray(data)) {
+                modelList = data;
+            }
+
+            if(modelList.length === 0) {
+                alert("拉取成功，但未找到可用模型列表。请手动填写。");
+                return;
+            }
+
+            modelList.forEach(m => { 
+                const modelId = m.id || m.name || m;
+                select.innerHTML += `<option value="${modelId}">${modelId}</option>`; 
+            });
+            
+            // 弹出选择框让用户选（为了不破坏新UI，使用prompt或者简单的自定义逻辑）
+            const optionsText = modelList.map(m => m.id || m.name || m).join('\n');
+            const userChoice = prompt(`拉取成功！请从下方复制或输入您要使用的模型名称：\n\n${optionsText}`, modelList[0].id || modelList[0].name || modelList[0]);
+            if (userChoice) {
+                document.getElementById('api-model-manual').value = userChoice.trim();
+            }
+            
+        } catch (err) { 
+            alert("拉取模型失败 (可能是网络或跨域限制): " + err.message + "\n\n您可以直接在输入框中手动填写模型名称。"); 
+        }
     }
+
     function saveApiConfig() {
         const url = document.getElementById('api-url').value.trim();
         const key = document.getElementById('api-key').value.trim();
         let model = document.getElementById('api-model-select').value;
         if (!model) model = document.getElementById('api-model-manual').value.trim();
         const temp = parseFloat(document.getElementById('api-temp').value);
-        if (!url || !key || !model) { alert("URL, Key 和 模型 不能为空！"); return; }
+        
+        if (!url || !key || !model) { 
+            alert("URL, Key 和 模型名称 不能为空！如果您拉取不到模型，请直接手动在模型框填写。"); 
+            return; 
+        }
         const config = { url, key, model, temp };
         localStorage.setItem('settings_api_config', JSON.stringify(config));
         document.getElementById('api-status-text').innerText = '已配置';
         closeScreen('api-screen');
         alert("API 配置已保存并应用！");
     }
-    function saveApiPreset() {
-        const name = prompt("请输入预设名称:"); if (!name) return;
+
+    // 预设管理
+    function openPresetManageModal() {
+        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
+        const sel = document.getElementById('preset-select-list');
+        sel.innerHTML = '<option value="">-- 选择预设 --</option>';
+        Object.keys(presets).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+        document.getElementById('new-preset-name').value = '';
+        document.getElementById('preset-manage-modal').classList.add('active');
+    }
+    function closePresetManageModal() { document.getElementById('preset-manage-modal').classList.remove('active'); }
+    function saveCurrentPreset() {
+        const name = document.getElementById('new-preset-name').value.trim(); 
+        if (!name) { alert("请输入预设名称！"); return; }
         const url = document.getElementById('api-url').value.trim();
         const key = document.getElementById('api-key').value.trim();
         let model = document.getElementById('api-model-select').value;
@@ -2547,18 +2875,50 @@
         const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
         presets[name] = { url, key, model, temp };
         localStorage.setItem('settings_api_presets', JSON.stringify(presets));
-        document.getElementById('api-preset-select').innerHTML += `<option value="${name}">${name}</option>`;
+        const sel = document.getElementById('preset-select-list'); 
+        sel.innerHTML += `<option value="${name}">${name}</option>`; 
         alert("预设保存成功！");
     }
-    function loadApiPreset() {
-        const name = document.getElementById('api-preset-select').value; if (!name) return;
+    function loadApiPresetFromModal() {
         const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {});
+        if(Object.keys(presets).length === 0) {
+            alert('暂无保存的预设');
+            return;
+        }
+        const name = prompt("请输入或复制要使用的预设名称：\n\n可用预设：\n" + Object.keys(presets).join('\n'));
+        if (!name) return;
         const p = presets[name];
         if (p) {
-            document.getElementById('api-url').value = p.url; document.getElementById('api-key').value = p.key;
-            document.getElementById('api-model-manual').value = p.model; document.getElementById('api-temp').value = p.temp;
+            document.getElementById('api-url').value = p.url; 
+            document.getElementById('api-key').value = p.key;
+            document.getElementById('api-model-manual').value = p.model; 
+            document.getElementById('api-temp').value = p.temp;
+            document.getElementById('api-temp-val').innerText = p.temp;
+            alert("预设已应用！");
+        } else { alert("预设不存在！"); }
+    }
+    function applySelectedPreset() {
+        const name = document.getElementById('preset-select-list').value; if (!name) { alert("请先选择一个预设！"); return; }
+        const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {}); const p = presets[name];
+        if (p) {
+            document.getElementById('api-url').value = p.url; 
+            document.getElementById('api-key').value = p.key;
+            document.getElementById('api-model-manual').value = p.model; 
+            document.getElementById('api-temp').value = p.temp;
+            document.getElementById('api-temp-val').innerText = p.temp;
+            closePresetManageModal(); 
+            alert("预设已成功应用！");
+        } else { alert("预设不存在！"); }
+    }
+    function deleteSelectedPreset() {
+        const name = document.getElementById('preset-select-list').value; if (!name) { alert("请先选择一个预设！"); return; }
+        if (confirm(`确定要删除预设 "${name}" 吗？`)) {
+            const presets = safeParseJSON(localStorage.getItem('settings_api_presets'), {}); delete presets[name]; localStorage.setItem('settings_api_presets', JSON.stringify(presets));
+            const sel = document.getElementById('preset-select-list'); sel.innerHTML = '<option value="">-- 选择预设 --</option>';
+            Object.keys(presets).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; }); alert("预设已删除！");
         }
     }
+
     function toggleBackgroundKeepAlive() {
         const el = document.getElementById('toggle-bg-keepalive');
         if (!el.classList.contains('on')) {
@@ -2895,7 +3255,7 @@
         const config = safeParseJSON(configStr, null); if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
         const originalText = btnElement.innerText; btnElement.innerText = "总结中..."; btnElement.style.pointerEvents = 'none'; btnElement.style.opacity = '0.5';
         try {
-            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` }, body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: "你是一个剧情记录总结助手。请将以下线下聊天记录提炼成一段精炼的总结（150字以内），提取关键事件和情感走向，作为后续角色记忆。" }, { role: "user", content: savedContent }], temperature: 0.3 }) });
+            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` }, body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: "你是一个剧情记录总结助手。请将以下线下聊天记录提炼成一段精炼的总结（150字以内），提取关键事件和情感走向，作为后续角色记忆。" }, { role: "user", content: savedContent }], temperature: config.temp }) });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); let summaryText = data.choices[0].message.content;
             const newContent = savedContent + `\n\n【线下总结】\n${summaryText}`; localStorage.setItem('offline_content', newContent);
@@ -2903,39 +3263,6 @@
         } catch (err) { alert("总结失败: " + err.message); } finally { btnElement.innerText = originalText; btnElement.style.pointerEvents = 'auto'; btnElement.style.opacity = '1'; }
     }
     function openOfflineBookBindModal() { openGlobalBookBindModal('offline', null, '挂专属世界书 (线下)'); }
-    function openPresetManageModal() {
-        const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
-        const sel = document.getElementById('preset-select-list');
-        sel.innerHTML = '<option value="">-- 选择预设 --</option>';
-        Object.keys(presets).forEach(name => { sel.innerHTML += `<option value="${name}">${name}</option>`; });
-        document.getElementById('new-preset-name').value = ''; 
-        document.getElementById('preset-manage-modal').classList.add('active');
-    }
-    function closePresetManageModal() { document.getElementById('preset-manage-modal').classList.remove('active'); }
-    function saveCurrentPreset() {
-        const name = document.getElementById('new-preset-name').value.trim(); if (!name) { alert("请输入预设名称！"); return; }
-        const presets = safeParseJSON(localStorage.getItem('offline_presets'), {});
-        presets[name] = { bg: document.getElementById('contact-offline-screen').style.backgroundImage, css: localStorage.getItem('offline_custom_css') || '', content: localStorage.getItem('offline_content') || '', style: localStorage.getItem('offline_style') || '', books: localStorage.getItem('offline_worldbook') || '[]' };
-        localStorage.setItem('offline_presets', JSON.stringify(presets));
-        const sel = document.getElementById('preset-select-list'); sel.innerHTML += `<option value="${name}">${name}</option>`; alert("预设已保存！");
-    }
-    function applySelectedPreset() {
-        const name = document.getElementById('preset-select-list').value; if (!name) { alert("请先选择一个预设！"); return; }
-        const presets = safeParseJSON(localStorage.getItem('offline_presets'), {}); const p = presets[name];
-        if (p) {
-            document.getElementById('contact-offline-screen').style.backgroundImage = p.bg; localStorage.setItem('offline_custom_css', p.css); localStorage.setItem('offline_content', p.content); localStorage.setItem('offline_style', p.style || ''); localStorage.setItem('offline_worldbook', p.books || '[]');
-            let styleEl = document.getElementById('offline-custom-style'); if(!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'offline-custom-style'; document.head.appendChild(styleEl); } styleEl.innerHTML = p.css;
-            closePresetManageModal(); openContactOffline(); alert("预设已成功应用！");
-        } else { alert("预设不存在！"); }
-    }
-    function deleteSelectedPreset() {
-        const name = document.getElementById('preset-select-list').value; if (!name) { alert("请先选择一个预设！"); return; }
-        if (confirm(`确定要删除预设 "${name}" 吗？`)) {
-            const presets = safeParseJSON(localStorage.getItem('offline_presets'), {}); delete presets[name]; localStorage.setItem('offline_presets', JSON.stringify(presets));
-            const sel = document.getElementById('preset-select-list'); sel.innerHTML = '<option value="">-- 选择预设 --</option>';
-            Object.keys(presets).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; }); alert("预设已删除！");
-        }
-    }
 
     let userPersonas = safeParseJSON(localStorage.getItem('user_personas'), []);
     let activeUserPersonaId = localStorage.getItem('active_user_persona_id');
