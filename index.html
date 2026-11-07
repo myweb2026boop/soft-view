@@ -1780,7 +1780,7 @@
             pack.name = newName.trim();
             localStorage.setItem('sticker_packs', JSON.stringify(stickerPacks));
         } else {
-            renderStickerPackList(); // revert if empty
+            renderStickerPackList();
         }
     }
 
@@ -2019,7 +2019,7 @@
 
     async function sendSticker(sticker) {
         closeStickerPanel();
-        await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image);
+        await renderNormalChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image);
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
             history.push({ text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
@@ -2382,7 +2382,7 @@
                 alert("未找到该歌曲的音频文件");
             }
             renderLyrics(song.lyrics);
-            document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; // 默认播放图标
+            document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; 
             document.getElementById('music-progress-fill').style.width = '0%';
             document.getElementById('music-progress-dot').style.left = '0%';
             document.getElementById('music-time-current').innerText = '00:00';
@@ -2909,7 +2909,7 @@
         const reader = new FileReader();
         reader.onload = async function(event) {
             const base64 = event.target.result;
-            await renderChatMessage(`[图片]`, true, true, base64);
+            await renderNormalChatMessage(`[图片]`, true, true, base64);
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
             history.push({ text: `[图片]`, image: base64, isSelf: true, time: Date.now() });
             localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
@@ -2929,7 +2929,7 @@
         const reader = new FileReader();
         reader.onload = async function(event) {
             const base64 = event.target.result;
-            await renderChatMessage(`[照片]`, true, true, base64);
+            await renderNormalChatMessage(`[照片]`, true, true, base64);
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
             history.push({ text: `[照片]`, image: base64, isSelf: true, time: Date.now() });
             localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
@@ -3168,14 +3168,12 @@
         
         await renderSpecialMessage(type, data, true);
         
-        // 模拟对方处理 (简单实现，实际应结合API判断)
         setTimeout(() => {
             handleSpecialMessageResponse(type, data);
         }, 2000);
     }
 
     async function handleSpecialMessageResponse(type, data) {
-        // 此处可加入 API 判断，目前简单随机处理
         const isAccept = Math.random() > 0.3;
         data.status = isAccept ? 'accepted' : 'rejected';
         
@@ -3188,10 +3186,6 @@
             addSystemMessage(`xxx 已${isAccept ? '同意' : '拒绝'}您的位置共享请求`);
         }
 
-        // 更新UI
-        const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-        // 这里只是内存中更新，最好能在历史里找到并更新
-        // 为了简单，刷新聊天记录
         reRenderChatHistory();
     }
 
@@ -3297,55 +3291,6 @@
         container.appendChild(msgRow);
         container.scrollTop = container.scrollHeight;
     }
-
-    // 渲染聊天记录需要处理特殊消息
-    const originalRenderChatMessage = renderChatMessage;
-    renderChatMessage = async function(text, isSelf, scroll = true, imageBase64 = null) {
-        // 拦截并处理普通消息
-        return originalRenderChatMessage(text, isSelf, scroll, imageBase64);
-    };
-    
-    // 需要重写一个完整的渲染逻辑来兼容特殊消息
-    async function renderAllChatHistory() {
-        const container = document.getElementById('chat-container');
-        container.innerHTML = '';
-        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
-        if(hasHistory) {
-            const history = safeParseJSON(hasHistory, []);
-            for(const msg of history) {
-                if(msg.isSystem) {
-                    const div = document.createElement('div');
-                    div.className = 'chat-system-msg';
-                    div.innerText = msg.text;
-                    container.appendChild(div);
-                } else if (msg.specialType) {
-                    await renderSpecialMessage(msg.specialType, msg.specialData, msg.isSelf);
-                } else {
-                    await originalRenderChatMessage(msg.text, msg.isSelf, false, msg.image);
-                }
-            }
-        }
-        container.scrollTop = container.scrollHeight;
-    }
-
-    // 重写 openChatScreen 和 reRenderChatHistory 使用新的渲染
-    openChatScreen = async function(charId) {
-        currentChatCharId = charId; const char = contacts.find(c => c.id === charId); if (!char) return;
-        document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'}`;
-        
-        const customBg = await getImageFromDB(`chat_bg_${charId}`);
-        const chatScreen = document.getElementById('chat-screen');
-        if (customBg) { chatScreen.style.backgroundImage = `url(${customBg})`; } else { chatScreen.style.backgroundImage = 'none'; }
-        
-        applyChatUiStyles(charId);
-        await renderAllChatHistory();
-        openScreen('chat-screen');
-    }
-
-    reRenderChatHistory = async function() {
-        await renderAllChatHistory();
-    }
-
 
     // ==========================================
     // 8. 其他功能逻辑 (Book, Contact, Blog等)
@@ -3913,7 +3858,7 @@
         openScreen('chat-screen');
     }
 
-    async function originalRenderChatMessage(text, isSelf, scroll = true, imageBase64 = null) {
+    async function renderNormalChatMessage(text, isSelf, scroll = true, imageBase64 = null) {
         const container = document.getElementById('chat-container'); let avatarHtml = ''; let nameHtml = '';
         if (isSelf) {
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId); const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
@@ -3978,10 +3923,36 @@
         if (scroll) container.scrollTop = container.scrollHeight;
     }
 
+    async function renderAllChatHistory() {
+        const container = document.getElementById('chat-container');
+        container.innerHTML = '';
+        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
+        if(hasHistory) {
+            const history = safeParseJSON(hasHistory, []);
+            for(const msg of history) {
+                if(msg.isSystem) {
+                    const div = document.createElement('div');
+                    div.className = 'chat-system-msg';
+                    div.innerText = msg.text;
+                    container.appendChild(div);
+                } else if (msg.specialType) {
+                    await renderSpecialMessage(msg.specialType, msg.specialData, msg.isSelf);
+                } else {
+                    await renderNormalChatMessage(msg.text, msg.isSelf, false, msg.image);
+                }
+            }
+        }
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function reRenderChatHistory() {
+        await renderAllChatHistory();
+    }
+
     document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim(); this.value = '';
-            await originalRenderChatMessage(msgText, true, true);
+            await renderNormalChatMessage(msgText, true, true);
             if(currentChatCharId) { const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); history.push({ text: msgText, isSelf: true, time: Date.now() }); localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); }
         }
     });
@@ -4017,7 +3988,6 @@
             }
         });
         
-        // 添加记忆
         const mems = safeParseJSON(localStorage.getItem('char_memories'), {});
         if(mems[char.id] && mems[char.id].length > 0) {
             systemPrompt += `\n【过往记忆】\n` + mems[char.id].map(m => m.summary).join('\n');
@@ -4030,7 +4000,7 @@
         const recentHistory = history.slice(-15);
         
         recentHistory.forEach(msg => {
-            if(msg.specialType) return; // 忽略特殊消息
+            if(msg.specialType) return;
             if(msg.image) {
                 messages.push({ role: msg.isSelf ? "user" : "assistant", content: [
                     { type: "text", text: msg.text },
@@ -4054,7 +4024,7 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); const replyText = data.choices[0].message.content;
 
-            container.removeChild(loadingRow); await originalRenderChatMessage(replyText, false, true);
+            container.removeChild(loadingRow); await renderNormalChatMessage(replyText, false, true);
             history.push({ text: replyText, isSelf: false, time: Date.now() }); localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history));
 
             if (document.visibilityState === 'hidden') {
@@ -4154,13 +4124,6 @@
         if(confirm("确定要清空聊天背景，恢复为纯白吗？")) { await deleteImageFromDB(`chat_bg_${currentChatCharId}`); document.getElementById('chat-screen').style.backgroundImage = 'none'; closeChatDetailModal(); }
     }
 
-    async function reRenderChatHistory() {
-        const container = document.getElementById('chat-container'); container.innerHTML = '';
-        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
-        if(hasHistory) { const history = safeParseJSON(hasHistory, []); for(const msg of history) { await originalRenderChatMessage(msg.text, msg.isSelf, false, msg.image); } }
-        container.scrollTop = container.scrollHeight;
-    }
-
     async function initApp() {
         try {
             const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
@@ -4175,7 +4138,7 @@
         } catch (e) {}
 
         await renderApps(); await applyGlobalFont(); 
-        await initDCW(); // 初始化图1组件
+        await initDCW(); 
         const wallpaperImg = await getImageFromDB('app_wallpaper');
         if (wallpaperImg) { document.body.style.backgroundImage = `url(${wallpaperImg})`; const preview = document.getElementById('wallpaper-preview'); if(preview) preview.style.backgroundImage = `url(${wallpaperImg})`; }
         const savedLabel = localStorage.getItem('wallpaper_custom_label');
@@ -4186,7 +4149,6 @@
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
         
-        // 初始化聊天UI默认代码
         if(!localStorage.getItem('chat_ui_default_code')) {
             localStorage.setItem('chat_ui_default_code', `/* 默认聊天界面样式 */\n.chat-header { background-color: #fff; }\n.chat-bubble { background-color: #333; color: #fff; }`);
         }
