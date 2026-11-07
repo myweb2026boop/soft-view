@@ -1702,7 +1702,8 @@
         </div>
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
-            <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>绑定用户人设</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
+            <!-- 修改点：绑定用户人设改为 user -->
+            <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>user</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
             <div class="chat-detail-item" onclick="togglePinChat()"><span>置顶聊天</span><div class="chat-detail-switch" id="pin-switch"></div></div>
@@ -1840,8 +1841,8 @@
         <button onclick="cancelReply()" style="background: none; border: none; font-size: 16px; color: #999; cursor: pointer;">×</button>
     </div>
 
-    <!-- 🌟 底栏变回图二样式 -->
-    <div class="chat-input-bar">
+    <!-- 🌟 底栏变回图二样式 (注意这里加了 id="chat-input-bar") -->
+    <div class="chat-input-bar" id="chat-input-bar">
         <!-- 麦克风触发AI回复 -->
         <button class="chat-input-icon-btn" onclick="triggerCharReply()" title="触发AI回复"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
         
@@ -1895,7 +1896,6 @@
         </div>
         <div class="attach-item" onclick="openPaymentModal('transfer')">
             <div class="attach-icon">
-                <!-- 🌟 转账图标修改为黑色 -->
                 <svg viewBox="0 0 24 24" style="width: 32px; height: 32px;">
                     <circle cx="12" cy="12" r="10" fill="#333" />
                     <path d="M12.5 6v2.2c-1.4 0-2.5.9-2.5 2.1s.9 1.9 2.5 2.3c1 .3 1.5.6 1.5 1.3 0 .6-.5 1.1-1.4 1.1s-1.6-.5-1.6-1.4h-1.8c0 1.6 1.1 2.7 2.8 2.9V18h1.5v-2.2c1.5 0 2.6-.9 2.6-2.2s-.9-2-2.6-2.4c-.9-.2-1.4-.5-1.4-1.2 0-.6.5-1 1.3-1s1.5.4 1.5 1.3h1.8c0-1.5-1-2.6-2.7-2.8V6h-1.5z" fill="white"/>
@@ -2204,11 +2204,9 @@
                 req.onsuccess = () => resolve(); 
                 req.onerror = (e) => {
                     console.error('IndexedDB write error:', e.target.error);
-                    // 如果超出配额，尝试清理旧的聊天记录
                     if (e.target.error && e.target.error.name === 'QuotaExceededError') {
                         console.warn('Storage quota exceeded!');
                         alert('存储空间已满，系统将尝试清理部分老旧数据。建议您清理不常用的聊天记录。');
-                        // 实际应用中这里可以加清理逻辑，这里为避免过度复杂仅提示
                     }
                     reject(e.target.error); 
                 }; 
@@ -2263,14 +2261,23 @@
     function openScreen(id) { document.getElementById(id).classList.add('active'); }
     function closeScreen(id) {
         if (id === 'chat-screen') {
-            cancelMultiSelect();
-            cancelReply();
-            document.getElementById('attachment-panel').classList.remove('active');
-            setTimeout(() => { document.getElementById('attachment-panel').style.display = 'none'; }, 300);
-            document.getElementById('sticker-panel').classList.remove('active');
-            document.getElementById('msg-action-menu').style.display = 'none';
+            if (typeof cancelMultiSelect === 'function') cancelMultiSelect();
+            if (typeof cancelReply === 'function') cancelReply();
+            
+            const attachPanel = document.getElementById('attachment-panel');
+            if(attachPanel) {
+                attachPanel.classList.remove('active');
+                setTimeout(() => { attachPanel.style.display = 'none'; }, 300);
+            }
+            
+            const stickerPanel = document.getElementById('sticker-panel');
+            if(stickerPanel) stickerPanel.classList.remove('active');
+            
+            const msgMenu = document.getElementById('msg-action-menu');
+            if(msgMenu) msgMenu.style.display = 'none';
         }
-        document.getElementById(id).classList.remove('active'); 
+        const screenEl = document.getElementById(id);
+        if(screenEl) screenEl.classList.remove('active'); 
     }
     function openManager() { openScreen('manager-screen'); }
     function openXunyan() { renderXunyanMessages(); openScreen('xunyan-screen'); }
@@ -4236,7 +4243,10 @@
         document.getElementById('chat-search-bar').style.display = 'none';
         document.getElementById('chat-search-input').value = '';
         document.querySelector('.chat-header').style.display = 'flex';
-        document.querySelector('.chat-input-bar').style.display = 'flex';
+        
+        const chatInputBar = document.getElementById('chat-input-bar');
+        if(chatInputBar) chatInputBar.style.display = 'flex';
+        
         document.getElementById('chat-container').style.paddingTop = '20px';
         
         // 彻底关闭弹层，防止遮挡和卡顿
@@ -5112,19 +5122,19 @@
     function toggleChatSearch() {
         const searchBar = document.getElementById('chat-search-bar');
         const chatHeader = document.querySelector('.chat-header');
-        const chatInputBar = document.querySelector('.chat-input-bar');
+        const chatInputBar = document.getElementById('chat-input-bar');
         const container = document.getElementById('chat-container');
         
         if (searchBar.style.display === 'none' || !searchBar.style.display) { 
             searchBar.style.display = 'flex'; 
             chatHeader.style.display = 'none';
-            chatInputBar.style.display = 'none';
+            if(chatInputBar) chatInputBar.style.display = 'none';
             container.style.paddingTop = '80px'; 
             document.getElementById('chat-search-input').focus(); 
         } else { 
             searchBar.style.display = 'none'; 
             chatHeader.style.display = 'flex';
-            chatInputBar.style.display = 'flex';
+            if(chatInputBar) chatInputBar.style.display = 'flex';
             container.style.paddingTop = '20px';
             document.getElementById('chat-search-input').value = ''; 
             filterChatMessages(); 
@@ -5569,7 +5579,8 @@
         if (!isMultiSelectMode) {
             isMultiSelectMode = true;
             document.getElementById('multi-select-bar').style.display = 'flex';
-            document.getElementById('chat-input-bar').style.display = 'none';
+            const chatInputBar = document.getElementById('chat-input-bar');
+            if(chatInputBar) chatInputBar.style.display = 'none';
             document.querySelectorAll('.chat-msg-row').forEach(row => {
                 row.classList.add('multi-selectable');
                 row.classList.remove('multi-selected');
@@ -5582,8 +5593,13 @@
     function cancelMultiSelect() {
         isMultiSelectMode = false;
         selectedMsgIds.clear();
-        document.getElementById('multi-select-bar').style.display = 'none';
-        document.getElementById('chat-input-bar').style.display = 'flex';
+        
+        const multiSelectBar = document.getElementById('multi-select-bar');
+        if(multiSelectBar) multiSelectBar.style.display = 'none';
+        
+        const chatInputBar = document.getElementById('chat-input-bar');
+        if(chatInputBar) chatInputBar.style.display = 'flex';
+        
         document.querySelectorAll('.chat-msg-row').forEach(row => {
             row.classList.remove('multi-selectable', 'multi-selected');
         });
@@ -5592,7 +5608,7 @@
 
     function updateMultiSelectCount() {
         const countEl = document.getElementById('multi-select-count');
-        countEl.innerText = `已选 ${selectedMsgIds.size} 条`;
+        if(countEl) countEl.innerText = `已选 ${selectedMsgIds.size} 条`;
     }
 
     async function deleteSelectedMessages() {
