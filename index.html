@@ -200,6 +200,33 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
+    /* 美化便利贴区 */
+    .beautify-note-card {
+        margin: 20px 20px;
+        background: #fffdf5;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #f0eadd;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .beautify-note-card textarea {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 12px;
+        resize: vertical;
+        background: #fff;
+        outline: none;
+        line-height: 1.4;
+        color: #333;
+    }
+
     /* --- 通讯录/用户人设 列表界面 --- */
     #contact-list-screen { background-color: #ffffff; z-index: 2000; padding: 0; }
     #user-persona-list-screen { background-color: #ffffff; z-index: 2500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
@@ -321,26 +348,11 @@
     .chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
     .chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
     
-    /* 🌟 修复表情包过大问题，全局限制表情包大小 */
-    .chat-msg-content img.sticker-img { 
-        width: 120px; 
-        height: 120px; 
-        object-fit: contain; 
-        border-radius: 8px; 
-        display: block; 
-        margin: 0;
-    }
-    /* 如果在气泡内部的小表情 */
-    .chat-bubble img.sticker-img { 
-        width: 60px; 
-        height: 60px; 
-        vertical-align: middle; 
-        margin: 0 2px; 
-    }
+    .chat-msg-content img.sticker-img { width: 120px; height: 120px; object-fit: contain; border-radius: 8px; display: block; margin: 0; }
+    .chat-bubble img.sticker-img { width: 60px; height: 60px; vertical-align: middle; margin: 0 2px; }
     
     .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; white-space: pre-wrap; }
 
-    /* 🌟 底栏变回图二样式 */
     .chat-input-bar {
         flex-shrink: 0; background-color: #ffffff; padding: 10px 15px 25px; 
         display: flex; align-items: center; gap: 8px; 
@@ -349,45 +361,21 @@
     .chat-input-icon-btn { background: none; border: none; padding: 8px 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .chat-input-icon-btn svg { width: 26px; height: 26px; fill: #333; }
     
-    /* 包裹输入框的胶囊体 */
-    .chat-input-wrapper { 
-        flex-grow: 1; background-color: #F2F2F7; border-radius: 20px; 
-        display: flex; align-items: center; padding: 8px 16px; 
-        border: none; box-sizing: border-box; 
-    }
-    .chat-input-field { 
-        flex-grow: 1; background-color: transparent; border: none; outline: none; 
-        padding: 0; font-size: 15px; color: #333; 
-        resize: none; max-height: 100px; line-height: 1.4; font-family: inherit;
-        overflow-y: hidden; 
-    }
+    .chat-input-wrapper { flex-grow: 1; background-color: #F2F2F7; border-radius: 20px; display: flex; align-items: center; padding: 8px 16px; border: none; box-sizing: border-box; }
+    .chat-input-field { flex-grow: 1; background-color: transparent; border: none; outline: none; padding: 0; font-size: 15px; color: #333; resize: none; max-height: 100px; line-height: 1.4; font-family: inherit; overflow-y: hidden; }
     .chat-input-field::placeholder { color: #999; }
 
-    /* 发送按钮 (蓝色圆底白纸飞机) */
-    .chat-send-btn-inline { 
-        background: #007aff; border: none; border-radius: 50%; 
-        width: 36px; height: 36px; cursor: pointer; 
-        display: flex; justify-content: center; align-items: center; 
-        flex-shrink: 0; padding: 0; margin-left: 4px;
-    }
+    .chat-send-btn-inline { background: #007aff; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; padding: 0; margin-left: 4px; }
     .chat-send-btn-inline svg { width: 20px; height: 20px; fill: #ffffff; margin-left: 2px;}
 
-    /* 🌟 全新附件面板 (图标统一灰黑色调) */
-    #attachment-panel {
-        position: fixed; bottom: 0; left: 0; width: 100vw; height: 260px;
-        background: #f2f2f7; border-top-left-radius: 20px; border-top-right-radius: 20px;
-        z-index: 4001; display: none; flex-direction: column; padding: 20px 10px; box-sizing: border-box;
-        transition: transform 0.3s ease-out; transform: translateY(100%);
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-    }
+    #attachment-panel { position: fixed; bottom: 0; left: 0; width: 100vw; height: 260px; background: #f2f2f7; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 4001; display: none; flex-direction: column; padding: 20px 10px; box-sizing: border-box; transition: transform 0.3s ease-out; transform: translateY(100%); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
     #attachment-panel.active { display: flex; transform: translateY(0); }
     .attach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; justify-items: center; }
     .attach-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
     .attach-icon { width: 60px; height: 60px; background: #fff; border-radius: 16px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .attach-icon svg { width: 28px; height: 28px; fill: #333; } /* 统一改为深灰色/黑色 */
+    .attach-icon svg { width: 28px; height: 28px; fill: #333; }
     .attach-label { font-size: 12px; color: #666; margin-top: 8px; }
 
-    /* --- 🌟 聊天详情弹窗 --- */
     #chat-detail-modal { z-index: 5000; } 
     #chat-detail-modal .modal-content { max-height: 90vh; }
     .chat-detail-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 16px; color: #1c1c1e; }
@@ -398,7 +386,6 @@
     .chat-detail-switch.on { background-color: var(--green); }
     .chat-detail-switch.on::after { transform: translateX(16px); }
 
-    /* 🌟 搜索全屏栏 */
     #chat-search-bar { display: none; padding: 15px 20px; background: #ffffff; border-bottom: 1px solid #eaeaea; align-items: center; gap: 10px; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; box-sizing: border-box; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     #chat-search-input { flex-grow: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid #e5e5ea; outline: none; background: #f5f5f7; font-size: 15px; }
     .search-cancel-btn { background: none; border: none; font-size: 16px; color: #333; cursor: pointer; padding: 0; }
@@ -451,16 +438,7 @@
     /* ==================================================== */
     /* 🌟 设置 App 界面样式 (恢复全屏) */
     /* ==================================================== */
-    #settings-screen { 
-        background-color: #f2f2f7; 
-        z-index: 5000; 
-        padding: 0; 
-        position: fixed; 
-        top: 0; left: 0; width: 100vw; height: 100vh; 
-        display: none; 
-        flex-direction: column; 
-        overflow-y: auto; 
-    }
+    #settings-screen { background-color: #f2f2f7; z-index: 5000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow-y: auto; }
     #settings-screen.active { display: flex; }
     
     .settings-header-bar { display: flex; align-items: center; justify-content: center; position: relative; padding: 15px 20px; background: #f2f2f7; position: sticky; top: 0; z-index: 10; }
@@ -491,251 +469,32 @@
     #api-screen { background-color: #e0e0e0; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; overflow: hidden; }
     #api-screen.active { display: flex; }
     
-    .api-main-card {
-        width: 92%;
-        max-width: 380px;
-        height: 92vh;
-        background: #ffffff;
-        border-radius: 36px;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        margin-top: 10px;
-    }
-
-    .api-black-header {
-        background: linear-gradient(to bottom, #111111, #333333);
-        height: 120px;
-        border-top-left-radius: 36px;
-        border-top-right-radius: 36px;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 25px;
-        flex-shrink: 0;
-        position: relative;
-    }
-
-    .api-back-btn {
-        position: absolute;
-        left: 20px;
-        top: 25px;
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .api-login-title {
-        color: #ffffff;
-        font-size: 22px;
-        font-weight: 500;
-        letter-spacing: 1px;
-        outline: none;
-        min-width: 50px;
-        text-align: center;
-    }
-
-    .api-white-body {
-        background: #ffffff;
-        flex-grow: 1;
-        border-top-left-radius: 36px;
-        border-top-right-radius: 36px;
-        margin-top: -30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 30px 25px 20px;
-        overflow-y: auto;
-        z-index: 2;
-    }
-
-    .api-avatar-container {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        background-color: #e5e5ea;
-        background-size: cover;
-        background-position: center;
-        cursor: pointer;
-        margin-bottom: 20px;
-        flex-shrink: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #999;
-        font-size: 14px;
-    }
-
-    .api-input-group {
-        width: 100%;
-        margin-bottom: 12px;
-        position: relative;
-    }
-
-    .api-input {
-        width: 100%;
-        background-color: #f4f4f5;
-        border: none;
-        border-radius: 30px;
-        padding: 16px 24px;
-        font-size: 15px;
-        color: #333;
-        outline: none;
-        box-sizing: border-box;
-        font-family: inherit;
-    }
-
-    .api-input::placeholder {
-        color: #b0b0b5;
-    }
-
-    .api-eye-icon {
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        fill: #b0b0b5;
-    }
-
-    /* 模型输入框与拉取按钮并列 */
-    .api-input-row {
-        display: flex;
-        gap: 10px;
-        width: 100%;
-        margin-bottom: 12px;
-    }
-    .api-input-row .api-input {
-        flex-grow: 1;
-        margin-bottom: 0;
-    }
-    .api-btn-pull {
-        background-color: #f4f4f5;
-        border: none;
-        border-radius: 30px;
-        padding: 0 20px;
-        font-size: 14px;
-        color: #333;
-        cursor: pointer;
-        font-weight: 500;
-        white-space: nowrap;
-        outline: none;
-    }
-
-    /* 下拉列表 */
-    .api-dropdown {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        z-index: 100;
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-        margin-top: 5px;
-    }
-    .api-dropdown-item {
-        padding: 12px 20px;
-        font-size: 14px;
-        color: #333;
-        border-bottom: 1px solid #f0f0f0;
-        cursor: pointer;
-    }
-    .api-dropdown-item:last-child {
-        border-bottom: none;
-    }
-    .api-dropdown-item:active {
-        background-color: #f9f9f9;
-    }
-
-    .api-slider-container {
-        width: 100%;
-        padding: 5px 10px 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .api-slider-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px;
-        color: #888;
-    }
-    
-    .api-slider {
-        width: 100%;
-        -webkit-appearance: none;
-        height: 6px;
-        background: #e5e5ea;
-        border-radius: 3px;
-        outline: none;
-    }
-    
-    .api-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        background: #111;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    .api-preset-row {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 15px;
-    }
-
-    .api-preset-btn {
-        width: 100%;
-        background: #f4f4f5;
-        color: #333;
-        border: none;
-        border-radius: 20px;
-        padding: 12px;
-        font-size: 14px;
-        cursor: pointer;
-        font-weight: 500;
-    }
-
-    .api-action-btns {
-        display: flex;
-        width: 100%;
-        gap: 12px;
-        margin-bottom: 10px;
-    }
-
-    .api-submit-btn {
-        flex: 1;
-        background-color: #111111;
-        color: #ffffff;
-        border: none;
-        border-radius: 20px;
-        padding: 16px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .api-submit-btn.outline {
-        background-color: #ffffff;
-        color: #111111;
-        border: 1px solid #ddd;
-    }
+    .api-main-card { width: 92%; max-width: 380px; height: 92vh; background: #ffffff; border-radius: 36px; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-top: 10px; }
+    .api-black-header { background: linear-gradient(to bottom, #111111, #333333); height: 120px; border-top-left-radius: 36px; border-top-right-radius: 36px; display: flex; justify-content: center; align-items: flex-start; padding-top: 25px; flex-shrink: 0; position: relative; }
+    .api-back-btn { position: absolute; left: 20px; top: 25px; background: none; border: none; color: #fff; cursor: pointer; padding: 5px; }
+    .api-login-title { color: #ffffff; font-size: 22px; font-weight: 500; letter-spacing: 1px; outline: none; min-width: 50px; text-align: center; }
+    .api-white-body { background: #ffffff; flex-grow: 1; border-top-left-radius: 36px; border-top-right-radius: 36px; margin-top: -30px; display: flex; flex-direction: column; align-items: center; padding: 30px 25px 20px; overflow-y: auto; z-index: 2; }
+    .api-avatar-container { width: 90px; height: 90px; border-radius: 50%; background-color: #e5e5ea; background-size: cover; background-position: center; cursor: pointer; margin-bottom: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; color: #999; font-size: 14px; }
+    .api-input-group { width: 100%; margin-bottom: 12px; position: relative; }
+    .api-input { width: 100%; background-color: #f4f4f5; border: none; border-radius: 30px; padding: 16px 24px; font-size: 15px; color: #333; outline: none; box-sizing: border-box; font-family: inherit; }
+    .api-input::placeholder { color: #b0b0b5; }
+    .api-eye-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; cursor: pointer; fill: #b0b0b5; }
+    .api-input-row { display: flex; gap: 10px; width: 100%; margin-bottom: 12px; }
+    .api-input-row .api-input { flex-grow: 1; margin-bottom: 0; }
+    .api-btn-pull { background-color: #f4f4f5; border: none; border-radius: 30px; padding: 0 20px; font-size: 14px; color: #333; cursor: pointer; font-weight: 500; white-space: nowrap; outline: none; }
+    .api-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 100; max-height: 200px; overflow-y: auto; border: 1px solid #eee; margin-top: 5px; }
+    .api-dropdown-item { padding: 12px 20px; font-size: 14px; color: #333; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .api-dropdown-item:last-child { border-bottom: none; }
+    .api-dropdown-item:active { background-color: #f9f9f9; }
+    .api-slider-container { width: 100%; padding: 5px 10px 15px; display: flex; flex-direction: column; gap: 8px; }
+    .api-slider-label { display: flex; justify-content: space-between; font-size: 14px; color: #888; }
+    .api-slider { width: 100%; -webkit-appearance: none; height: 6px; background: #e5e5ea; border-radius: 3px; outline: none; }
+    .api-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #111; border-radius: 50%; cursor: pointer; }
+    .api-preset-row { width: 100%; display: flex; justify-content: center; margin-bottom: 15px; }
+    .api-preset-btn { width: 100%; background: #f4f4f5; color: #333; border: none; border-radius: 20px; padding: 12px; font-size: 14px; cursor: pointer; font-weight: 500; }
+    .api-action-btns { display: flex; width: 100%; gap: 12px; margin-bottom: 10px; }
+    .api-submit-btn { flex: 1; background-color: #111111; color: #ffffff; border: none; border-radius: 20px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+    .api-submit-btn.outline { background-color: #ffffff; color: #111111; border: 1px solid #ddd; }
 
     /* ==================================================== */
     /* 🌟 优化后的预设管理界面 */
@@ -768,45 +527,30 @@
     .sticker-mgr-btn.blue { background-color: #5a7bf6; }
     .sticker-mgr-btn.green { background-color: #5ec670; }
     .sticker-mgr-btn.full { width: 100%; flex: none; }
-    
     .sticker-pack-list { padding: 20px; }
     .sticker-pack-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; }
     .sticker-pack-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; }
     .sticker-pack-name { font-size: 16px; font-weight: 600; color: #333; word-break: break-all; white-space: normal; line-height: 1.4; padding-right: 10px; }
     .sticker-pack-count { font-size: 13px; color: #999; }
     .sticker-pack-delete { background: #feeceb; color: #e74c3c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-shrink: 0; }
-    
     .sticker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; }
     .sticker-item { background: #fff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; }
     .sticker-item img { width: 100%; aspect-ratio: 1/1; object-fit: contain; margin-bottom: 8px; border-radius: 8px; background: #f5f5f7; }
     .sticker-item .meaning { font-size: 12px; color: #666; text-align: center; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; width: 100%; }
-
     .sticker-detail-header { padding: 10px 20px; background: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
     .sticker-detail-header .title { font-size: 16px; font-weight: 600; max-width: 70%; word-break: break-all; white-space: normal; line-height: 1.2; padding-right: 10px; }
     .sticker-detail-header .upload-btn { background-color: #34c759; color: #fff; padding: 6px 16px; font-size: 14px; border-radius: 20px; border: none; cursor: pointer; font-weight: 600; flex-shrink: 0; }
-    
     .sticker-delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 14px; cursor: pointer; z-index: 10; }
 
-    /* 🌟 表情包面板完美 Grid 布局，无奇怪留白 */
     #sticker-panel { position: fixed; bottom: 0; left: 0; width: 100vw; height: 320px; background: #ffffff; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 4001; display: none; flex-direction: column; transition: transform 0.3s ease-out; transform: translateY(100%); }
     #sticker-panel.active { display: flex; transform: translateY(0); }
     .sticker-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px 10px; flex-shrink: 0; }
     .sticker-panel-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
-    
     .sticker-tabs-container { display: flex; overflow-x: auto; padding: 0 20px 10px; gap: 10px; border-bottom: 1px solid #f0f0f0; -webkit-overflow-scrolling: touch; white-space: nowrap; flex-shrink: 0; }
     .sticker-tabs-container::-webkit-scrollbar { display: none; }
     .sticker-tab { padding: 6px 12px; background: #f2f2f7; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
     .sticker-tab.active { background: var(--blue); color: #fff; }
-
-    .sticker-panel-content { 
-        flex-grow: 1; 
-        overflow-y: auto; 
-        display: grid; 
-        grid-template-columns: repeat(5, 1fr); 
-        gap: 10px; 
-        padding: 15px; 
-        align-content: flex-start; 
-    }
+    .sticker-panel-content { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 15px; align-content: flex-start; }
     .sticker-panel-content img { width: 100%; aspect-ratio: 1/1; object-fit: contain; cursor: pointer; border-radius: 8px; padding: 4px; background: #f5f5f7; }
 
     #sticker-bind-modal { z-index: 6000 !important; }
@@ -816,100 +560,46 @@
     /* ==================================================== */
     #music-app-screen { background-color: #f2f2f7; z-index: 5500; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow: hidden; }
     #music-app-screen.active { display: flex; }
-    
-    /* 顶部导航栏 */
     .music-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-shrink: 0; }
     .music-top-actions { display: flex; gap: 15px; }
     .music-action-btn { font-size: 15px; font-weight: 600; color: #000; cursor: pointer; outline: none; background: none; border: none; padding: 0; }
-
     .music-main-view { flex-grow: 1; display: flex; flex-direction: column; padding: 0 0 20px 0; overflow-y: hidden; }
-    
-    /* 图二白板卡片 */
     .music-card { background: #ffffff; display: flex; flex-direction: column; flex-grow: 1; border-radius: 24px; margin: 0 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow: hidden; }
     .music-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .music-card-title { font-size: 22px; font-weight: 800; color: #000; outline: none; letter-spacing: -0.5px; }
     .music-card-viewall { font-size: 14px; font-weight: 600; color: #000; cursor: pointer; outline: none; }
-    
-    /* 顶部三个装饰展示框 (横向滚动) */
     .music-decorations-row { display: flex; flex-direction: row; overflow-x: auto; gap: 15px; padding-bottom: 15px; flex-shrink: 0; -webkit-overflow-scrolling: touch; }
     .music-decorations-row::-webkit-scrollbar { display: none; }
     .music-decoration-item { display: flex; flex-direction: column; min-width: 130px; width: 130px; }
     .music-decoration-cover { width: 130px; height: 130px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-bottom: 10px; cursor: pointer; }
     .music-decoration-title { font-size: 16px; font-weight: 600; color: #000; outline: none; word-break: break-all; line-height: 1.2; }
-
-    /* 真实歌曲列表 (垂直仿图三) */
     .music-song-list { display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto; padding-top: 10px; -webkit-overflow-scrolling: touch; }
-    
-    /* 彻底修复右侧漏红边：白底容器 + 硬件加速 + 红色按钮同圆角 */
-    .music-song-swipe-wrapper { 
-        position: relative; 
-        overflow: hidden; 
-        border-radius: 16px; 
-        margin-bottom: 12px; 
-        flex-shrink: 0; 
-        background-color: #ffffff; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
-        transform: translateZ(0);
-    }
-    .music-song-delete-btn { 
-        position: absolute; 
-        right: 0; 
-        top: 0; 
-        bottom: 0; 
-        width: 80px; 
-        background: #ff3b30; 
-        color: #fff; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        font-weight: 600; 
-        z-index: 1; 
-        cursor: pointer; 
-        border-radius: 0 16px 16px 0;
-    }
-    .music-song-item { 
-        display: flex; 
-        align-items: center; 
-        background: #ffffff; 
-        padding: 10px; 
-        border-radius: 16px; 
-        cursor: pointer; 
-        position: relative; 
-        z-index: 2; 
-        width: 100%; 
-        box-sizing: border-box; 
-        transition: transform 0.2s ease; 
-    }
+    .music-song-swipe-wrapper { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 12px; flex-shrink: 0; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.03); transform: translateZ(0); }
+    .music-song-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: #ff3b30; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 600; z-index: 1; cursor: pointer; border-radius: 0 16px 16px 0; }
+    .music-song-item { display: flex; align-items: center; background: #ffffff; padding: 10px; border-radius: 16px; cursor: pointer; position: relative; z-index: 2; width: 100%; box-sizing: border-box; transition: transform 0.2s ease; }
     .music-song-cover { width: 60px; height: 60px; border-radius: 12px; background-color: #e5e5ea; background-size: cover; background-position: center; flex-shrink: 0; margin-right: 15px; }
     .music-song-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
     .music-song-title { font-size: 16px; font-weight: 800; color: #000; outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .music-song-artist { font-size: 13px; color: #999; outline: none; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* 播放界面 (图五) */
     #music-playing-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 10; display: none; flex-direction: column; padding: 20px; }
     #music-playing-screen.active { display: flex; }
     .playing-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 30px; }
     .playing-header svg { width: 24px; height: 24px; stroke: #000; stroke-width: 2; fill: none; cursor: pointer; }
     .playing-title-main { font-size: 16px; font-weight: 600; color: #000; outline: none; text-align: center; flex-grow: 1; }
-    
     .playing-cover-container { display: flex; justify-content: center; margin-bottom: 30px; }
     .playing-cover { width: 280px; height: 280px; border-radius: 24px; background-color: #e5e5ea; background-size: cover; background-position: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; color: #fff; font-size: 14px; }
-    
     .playing-info { text-align: center; margin-bottom: 20px; }
     .playing-song-title { font-size: 22px; font-weight: 700; color: #000; margin-bottom: 8px; outline: none; }
     .playing-song-artist { font-size: 16px; color: #888; outline: none; }
-    
     .playing-lyrics-container { flex-grow: 1; overflow-y: auto; position: relative; text-align: center; margin-bottom: 20px; padding: 0 20px; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); }
     .playing-lyrics-container::-webkit-scrollbar { display: none; }
     .lyrics-line { font-size: 16px; color: #aaa; margin: 15px 0; transition: all 0.3s ease; line-height: 1.4; }
     .lyrics-line.active { color: #000; font-weight: 700; font-size: 18px; transform: scale(1.05); }
-    
     .playing-progress { margin-bottom: 30px; padding: 0 10px; }
     .progress-bar-bg { width: 100%; height: 4px; background-color: #e5e5ea; border-radius: 2px; position: relative; cursor: pointer; padding: 10px 0; background-clip: content-box; }
     .progress-bar-fill { width: 0%; height: 100%; background-color: #000; border-radius: 2px; position: absolute; top: 0; left: 0; pointer-events: none; }
     .progress-bar-dot { width: 12px; height: 12px; background-color: #000; border-radius: 50%; position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%); pointer-events: none; }
     .progress-time { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 8px; }
-    
     .playing-controls { display: flex; justify-content: space-around; align-items: center; padding: 0 20px 20px; }
     .playing-controls svg { width: 32px; height: 32px; fill: #000; cursor: pointer; }
     .playing-play-btn { width: 70px; height: 70px; border-radius: 50%; background-color: #000; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -918,7 +608,6 @@
     /* ==================================================== */
     /* 🌟 通话相关界面样式 */
     /* ==================================================== */
-    /* 图2：来电弹窗 (参考图1样式) */
     .incoming-call-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 7000; display: none; justify-content: center; align-items: center; }
     .incoming-call-overlay.active { display: flex; }
     .incoming-call-card { background: #ffffff; border-radius: 24px; padding: 30px 20px 20px; width: 85%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
@@ -930,222 +619,122 @@
     .incoming-call-actions { display: flex; justify-content: space-between; gap: 15px; padding: 0 10px; }
     .incoming-call-btn { flex: 1; background: #000; color: #fff; padding: 14px 0; border-radius: 30px; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; border: none; }
     .incoming-call-btn:active { opacity: 0.8; }
-    
-    /* 图3：通话中全屏界面 (已改造) */
     #call-screen { background: #f5f5f7; z-index: 6500; display: none; flex-direction: column; padding: 0; overflow: hidden; }
     #call-screen.active { display: flex; }
     .call-screen-back { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; flex-shrink: 0; }
     .call-screen-back svg { width: 24px; height: 24px; stroke: #333; stroke-width: 2; fill: none; }
-    
-    .call-card-small {
-        display: flex; 
-        align-items: center; 
-        background: #fff; 
-        margin: 0 20px 10px; 
-        padding: 15px; 
-        border-radius: 20px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-        flex-shrink: 0;
-    }
-    .call-card-avatar-small {
-        width: 50px; 
-        height: 50px; 
-        border-radius: 50%; 
-        background-color: #e5e5ea; 
-        background-size: cover; 
-        background-position: center; 
-        margin-right: 15px; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        color: #fff; 
-        font-size: 20px; 
-        font-weight: bold;
-    }
-    .call-end-btn-small {
-        width: 44px; 
-        height: 44px; 
-        border-radius: 50%; 
-        background: #ff3b30; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        cursor: pointer; 
-        box-shadow: 0 2px 8px rgba(255,59,48,0.3);
-    }
+    .call-card-small { display: flex; align-items: center; background: #fff; margin: 0 20px 10px; padding: 15px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0; }
+    .call-card-avatar-small { width: 50px; height: 50px; border-radius: 50%; background-color: #e5e5ea; background-size: cover; background-position: center; margin-right: 15px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 20px; font-weight: bold; }
+    .call-end-btn-small { width: 44px; height: 44px; border-radius: 50%; background: #ff3b30; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(255,59,48,0.3); }
 
-    /* 🌟 聊天特殊卡片样式 (转账、红包、礼物) */
-    
-    /* 转账卡片 (图2样式) */
+    /* 🌟 聊天特殊卡片样式 (转账、红包、礼物、位置) */
     .card-payment-v2 { border-radius: 12px; padding: 16px; width: 220px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #fff; position: relative; overflow: hidden; transition: opacity 0.3s; }
-    .card-payment-v2.transfer { background: #f9d6d9; color: #fff; } /* 完美复刻图2的浅粉色背景和白色字 */
+    .card-payment-v2.transfer { background: #f9d6d9; color: #fff; }
     .card-payment-v2.transfer .cpv-desc { color: #fff; opacity: 1; }
-    
-    /* 红包卡片 (微信风格) */
     .redpacket-card { background: #fa9d3b; border-radius: 12px; width: 220px; overflow: hidden; color: #fff; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .rp-top { padding: 20px 15px; text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.3); background: #fa9d3b; }
     .rp-icon svg { width: 40px; height: 40px; fill: #fde6b4; }
     .rp-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
     .rp-bottom { padding: 8px; text-align: center; font-size: 13px; background: #fa9d3b; color: rgba(255,255,255,0.8); }
-    
-    /* 已完成状态，颜色变浅、去色 */
     .card-payment-v2.finished { opacity: 0.6; background: #f2f2f7; color: #888; }
     .card-payment-v2.finished .cpv-icon { border-color: #ccc; }
     .card-payment-v2.finished .cpv-icon svg { fill: #ccc; }
     .redpacket-card.finished { opacity: 0.6; background: #e5e5ea; color: #888; }
     .redpacket-card.finished .rp-top, .redpacket-card.finished .rp-bottom { background: #e5e5ea; }
     .redpacket-card.finished .rp-icon svg { fill: #ccc; }
-
     .cpv-icon { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
     .cpv-icon svg { width: 26px; height: 26px; fill: currentColor; }
     .cpv-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
     .cpv-amount { font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cpv-desc { font-size: 13px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cpv-status { font-size: 11px; opacity: 0.7; margin-top: 2px; }
-    
-    /* 礼物卡片 (图2样式) */
     .card-gift-v2 { background: #fff; border-radius: 16px; width: 240px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #eaeaea; }
     .gift-v2-top { padding: 20px 15px 15px; text-align: center; position: relative; z-index: 1; background: #f9f9f9; border-bottom: 1px dashed #e0e0e0; }
     .gift-v2-title { font-size: 20px; font-weight: 700; color: #000; margin-bottom: 8px; }
     .gift-v2-remark { font-size: 13px; color: #888; background: #eee; padding: 6px 16px; border-radius: 12px; display: inline-block; max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
     .gift-v2-bottom { background: #1c1c1e; padding: 20px 20px 20px; color: #fff; border-radius: 0 0 16px 16px; position: relative; z-index: 2; }
-    /* 模拟切角 */
     .gift-v2-bottom::before, .gift-v2-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border-bottom: 1px solid #eaeaea; }
     .gift-v2-bottom::before { left: -10px; transform: rotate(45deg); }
     .gift-v2-bottom::after { right: -10px; transform: rotate(-45deg); }
-    
-    /* 修正切角被遮挡的样式 */
     .gift-v2-bottom { border-radius: 0 0 16px 16px; margin-top: -10px; }
     .gift-v2-bottom::before { box-shadow: 2px 2px 0 #f9f9f9; }
     .gift-v2-bottom::after { box-shadow: -2px 2px 0 #f9f9f9; }
-
     .gift-v2-list { border-bottom: 2px dotted #444; padding-bottom: 15px; margin-bottom: 15px; }
     .gift-v2-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #ddd; }
     .gift-v2-item:last-child { margin-bottom: 0; }
     .gift-v2-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
 
-    /* 🌟 礼物定制界面 (全屏图2) */
+    /* 图 1 位置卡片样式 */
+    .card-location-v1 {
+        background: #ffffff; border-radius: 20px; padding: 15px; width: 260px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
+    }
+    .loc-img-container {
+        width: 76px; height: 76px; border-radius: 18px; background: #555; background-size: cover; background-position: center; flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .loc-bottom-bars {
+        display: flex; gap: 8px; width: 100%; padding: 0 4px; margin-top: 5px;
+    }
+    .loc-bottom-bar { height: 6px; flex: 1; background: #d1d1d6; border-radius: 3px; }
+    .loc-bottom-bar.light { background: #f0f0f0; }
+
+    /* 胶囊形状邀请弹窗 */
+    .loc-invite-capsule-modal {
+        background: #fff; border-radius: 40px; padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 85%; max-width: 320px;
+    }
+
     #gift-create-screen { background-color: #f5f5f7; z-index: 6000; padding: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; overflow-y: auto; }
     #gift-create-screen.active { display: flex; }
     .gift-edit-container { width: 90%; max-width: 340px; margin: 20px auto; position: relative; }
-    
     .gift-edit-top { background: #fff; border-radius: 20px 20px 0 0; padding: 30px 20px 20px; text-align: center; position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-bottom: 1px dashed #eee; }
     .gift-edit-title { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 15px; }
     .gift-edit-remark-input { border: none; background: #f2f2f7; border-radius: 12px; padding: 10px 16px; font-size: 14px; text-align: center; width: 80%; outline: none; color: #333; }
     .gift-edit-add-btn { position: absolute; right: 15px; top: 15px; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: none; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #000; z-index: 10; }
-    
     .gift-edit-bottom { background: #1c1c1e; border-radius: 0 0 20px 20px; padding: 20px 20px 20px; color: #fff; position: relative; z-index: 2; margin-top: -10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
     .gift-edit-bottom::before, .gift-edit-bottom::after { content: ''; position: absolute; top: -10px; width: 20px; height: 20px; background: #f5f5f7; border-radius: 50%; border-bottom: 1px dashed #eee; }
     .gift-edit-bottom::before { left: -10px; transform: rotate(45deg); }
     .gift-edit-bottom::after { right: -10px; transform: rotate(-45deg); }
     .gift-edit-bottom::before { box-shadow: 2px 2px 0 #fff; }
     .gift-edit-bottom::after { box-shadow: -2px 2px 0 #fff; }
-    
     .gift-edit-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
     .gift-input-name, .gift-input-price { background: transparent; border: none; color: #fff; outline: none; font-size: 15px; }
     .gift-input-name { width: 60%; }
     .gift-input-name::placeholder { color: #666; }
     .gift-input-price { width: 40%; text-align: right; }
     .gift-input-price::placeholder { color: #666; }
-    
     .gift-edit-dashed { border-top: 2px dotted #444; margin: 15px 0; }
     .gift-edit-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; }
     .gift-total-input { background: transparent; border: none; color: #fff; outline: none; font-size: 16px; font-weight: 600; text-align: right; width: 40%; }
 
-    /* 隐藏 input */
     .hidden-input { display: none; }
-
-    /* 🌟 聊天功能弹窗层级提升 */
-    #location-modal, #payment-modal, #action-modal, #msg-action-modal { z-index: 9000 !important; }
-    
-    /* 🌟 引用预览框 */
+    #location-modal, #payment-modal, #action-modal, #msg-action-modal, #location-share-invite-modal { z-index: 9000 !important; }
     .reply-preview { display: none; padding: 8px 15px; background: #f5f5f7; border-bottom: 1px solid #e5e5ea; align-items: center; justify-content: space-between; z-index: 4005; }
     .reply-text { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; margin-right: 10px; }
-    
-    /* 🌟 语音气泡 */
     .voice-bubble { display: flex; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; }
     .chat-msg-row.right .voice-bubble { flex-direction: row-reverse; }
-    
-    /* 🌟 多选模式底栏 */
     #multi-select-bar { display: none; padding: 10px; background: #f5f5f7; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; z-index: 4005; border-top: 1px solid #e5e5ea; box-sizing: border-box; }
     
-    /* 🌟 消息长按操作菜单 (只保留复制、多选、删除、引用、翻译、撤回) */
     #msg-action-menu {
-        position: fixed;
-        background-color: #333;
-        border-radius: 12px;
-        padding: 15px;
-        z-index: 9999;
-        display: none;
-        flex-direction: column;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        color: #fff;
-        width: 280px;
+        position: fixed; background-color: #333; border-radius: 12px; padding: 15px; z-index: 9999; display: none; flex-direction: column; box-shadow: 0 4px 20px rgba(0,0,0,0.3); color: #fff; width: 280px;
     }
     #msg-action-menu::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 8px 8px 0;
-        border-style: solid;
-        border-color: #333 transparent transparent transparent;
+        content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); border-width: 8px 8px 0; border-style: solid; border-color: #333 transparent transparent transparent;
     }
     #msg-action-menu.arrow-top::after {
-        bottom: auto;
-        top: -8px;
-        border-width: 0 8px 8px 8px;
-        border-color: transparent transparent #333 transparent;
+        bottom: auto; top: -8px; border-width: 0 8px 8px 8px; border-color: transparent transparent #333 transparent;
     }
-    .msg-action-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-    }
-    .msg-action-row:last-child {
-        margin-bottom: 0;
-    }
-    .msg-action-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        cursor: pointer;
-        width: 30%;
-    }
-    .msg-action-item svg {
-        width: 20px;
-        height: 20px;
-        fill: #fff;
-    }
-    .msg-action-item span {
-        font-size: 11px;
-        color: #ddd;
-        white-space: nowrap;
-    }
-    .msg-action-divider {
-        height: 1px;
-        background-color: #444;
-        margin: 10px 0 15px;
-    }
-
-    /* 🌟 多选模式下的消息样式 */
+    .msg-action-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .msg-action-row:last-child { margin-bottom: 0; }
+    .msg-action-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; width: 30%; }
+    .msg-action-item svg { width: 20px; height: 20px; fill: #fff; }
+    .msg-action-item span { font-size: 11px; color: #ddd; white-space: nowrap; }
+    .msg-action-divider { height: 1px; background-color: #444; margin: 10px 0 15px; }
     .chat-msg-row.multi-selectable { padding-left: 30px; position: relative; cursor: pointer; }
     .chat-msg-row.multi-selectable::before {
-        content: '';
-        position: absolute;
-        left: 0; top: 50%; transform: translateY(-50%);
-        width: 20px; height: 20px; border-radius: 50%;
-        border: 1px solid #999; background: #fff;
+        content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 50%; border: 1px solid #999; background: #fff;
     }
-    .chat-msg-row.multi-selected::before {
-        background: #007aff; border-color: #007aff;
-    }
+    .chat-msg-row.multi-selected::before { background: #007aff; border-color: #007aff; }
     .chat-msg-row.multi-selected::after {
-        content: '✓'; position: absolute; left: 5px; top: 50%; transform: translateY(-50%);
-        color: #fff; font-size: 12px; font-weight: bold;
+        content: '✓'; position: absolute; left: 5px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 12px; font-weight: bold;
     }
 </style>
 </head>
@@ -1184,7 +773,6 @@
         <div class="app-item" onclick="openManager()"><div class="app-icon" id="home-icon-4"></div><div class="app-name" id="home-name-4">桌面</div></div>
     </div>
     <div class="search-container"><div class="search-bar"><svg class="svg-icon-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>搜索</div></div>
-    <!-- Dock 区域 -->
     <div class="dock">
         <div class="dock-icon" id="home-dock-1" onclick="openSettingsApp()"></div>
         <div class="dock-icon" id="home-dock-2" onclick="openMusicApp()"></div>
@@ -1238,56 +826,36 @@
 
 <!-- 全新音乐 App 结构 -->
 <div class="fullscreen-screen" id="music-app-screen" style="padding: 0;">
-    <!-- 主界面 -->
     <div class="music-main-view" id="music-main-view">
-        <!-- 顶部操作栏：返回键 + MP3 -->
         <div class="music-top-bar">
             <svg onclick="closeScreen('music-app-screen')" style="width: 28px; height: 28px; stroke: #000; stroke-width: 2; fill: none; cursor: pointer;" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
             <div class="music-top-actions">
                 <button class="music-action-btn" onclick="document.getElementById('music-audio-upload').click()">+ MP3</button>
             </div>
         </div>
-
         <div class="music-card">
             <div class="music-card-header">
                 <div class="music-card-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicMainTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Upcoming Trips</div>
                 <div class="music-card-viewall" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicViewAll(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">View all</div>
             </div>
-            
-            <!-- 顶部三个装饰展示框 (横向滚动) -->
-            <div id="music-decorations-container" class="music-decorations-row">
-                <!-- 动态渲染3个装饰框 -->
-            </div>
-
-            <!-- 真实歌曲列表 (垂直仿图三) -->
-            <div id="music-song-list-container" class="music-song-list">
-                <!-- 动态渲染歌曲 -->
-            </div>
+            <div id="music-decorations-container" class="music-decorations-row"></div>
+            <div id="music-song-list-container" class="music-song-list"></div>
         </div>
     </div>
-
-    <!-- 播放详情界面 (图五) -->
     <div id="music-playing-screen">
         <div class="playing-header">
             <svg viewBox="0 0 24 24" onclick="document.getElementById('music-playing-screen').classList.remove('active')"><path d="M6 9l6 6 6-6"></path></svg>
             <div class="playing-title-main" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; saveMusicPlayingTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Now playing</div>
-            <!-- 歌词功能绑定在此 -->
             <svg viewBox="0 0 24 24" onclick="openPasteLyricsModal()" style="cursor: pointer; pointer-events: auto;"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </div>
-        
         <div class="playing-cover-container">
             <div class="playing-cover" id="playing-cover" onclick="document.getElementById('playing-cover-upload').click()">点击上传封面</div>
         </div>
-        
         <div class="playing-info">
             <div class="playing-song-title" id="playing-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; savePlayingSongTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">未命名歌曲</div>
             <div class="playing-song-artist" id="playing-artist" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="this.contentEditable='false'; savePlayingSongArtist(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">未知歌手</div>
         </div>
-        
-        <div class="playing-lyrics-container" id="music-lyrics-container">
-            <!-- 歌词动态渲染 -->
-        </div>
-        
+        <div class="playing-lyrics-container" id="music-lyrics-container"></div>
         <div class="playing-progress">
             <div class="progress-bar-bg" id="music-progress-bg" ontouchstart="handleSeekStart(event)" onmousedown="handleSeekStart(event)">
                 <div class="progress-bar-fill" id="music-progress-fill"></div>
@@ -1298,7 +866,6 @@
                 <span id="music-time-total">00:00</span>
             </div>
         </div>
-        
         <div class="playing-controls">
             <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
             <div class="playing-play-btn" id="music-play-btn">
@@ -1358,45 +925,31 @@
 <!-- 全新仿图 API 设置界面 -->
 <div class="fullscreen-screen" id="api-screen">
     <div class="api-main-card">
-        <!-- 黑色顶部区域 -->
         <div class="api-black-header">
             <button class="api-back-btn" onclick="closeScreen('api-screen')">
                 <svg style="width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
             </button>
             <div class="api-login-title" id="api-top-title" contenteditable="false" ondblclick="this.contentEditable='true'; this.focus();" onblur="saveApiTopTitle(this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">Log in</div>
         </div>
-        
-        <!-- 白色圆角主体 -->
         <div class="api-white-body">
-            <!-- 头像 -->
             <div class="api-avatar-container" id="api-avatar" onclick="document.getElementById('api-avatar-upload').click()"></div>
-
-            <!-- 输入区 -->
             <div class="api-input-group">
                 <input type="text" class="api-input" id="api-url" placeholder="API URL">
             </div>
-            
             <div class="api-input-group">
                 <input type="password" class="api-input" id="api-key" placeholder="API key" style="padding-right: 50px;">
                 <svg class="api-eye-icon" id="api-eye-icon" onclick="toggleApiPasswordVisibility()" viewBox="0 0 24 24">
                     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                 </svg>
             </div>
-
-            <!-- 模型名称与拉取 -->
             <div class="api-input-row" style="position: relative;">
                 <input type="text" class="api-input" id="api-model-manual" placeholder="模型名称">
                 <button class="api-btn-pull" id="btn-pull-model" onclick="fetchApiModels()">拉取模型</button>
-                <!-- 下拉列表容器 -->
                 <div class="api-dropdown" id="api-model-dropdown"></div>
             </div>
-
-            <!-- 最大 Token -->
             <div class="api-input-group">
                 <input type="number" class="api-input" id="api-max-tokens" placeholder="最大 Token (默认 2048)">
             </div>
-            
-            <!-- 温度调节 -->
             <div class="api-slider-container">
                 <div class="api-slider-label">
                     <span>温度 (Temperature)</span>
@@ -1404,13 +957,9 @@
                 </div>
                 <input type="range" class="api-slider" id="api-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('api-temp-val').innerText = this.value">
             </div>
-
-            <!-- 预设操作 -->
             <div class="api-preset-row">
                 <button class="api-preset-btn" onclick="openPresetManageModal()">管理预设</button>
             </div>
-
-            <!-- 操作按钮行 (保存 & 测试) -->
             <div class="api-action-btns">
                 <button class="api-submit-btn outline" onclick="testApiConnection(this)">测试连接</button>
                 <button class="api-submit-btn" onclick="saveApiConfig()">保存配置</button>
@@ -1486,6 +1035,20 @@
             <div class="blog-stat-item"><div class="blog-stat-num xy-editable" data-key="blog_followers">0</div><div class="blog-stat-label">Followers</div></div>
             <div class="blog-stat-item"><div class="blog-stat-num xy-editable" data-key="blog_following">0</div><div class="blog-stat-label">Following</div></div>
         </div>
+    </div>
+    <!-- 便利贴美化编辑器 -->
+    <div class="beautify-note-card">
+        <div style="font-size: 16px; font-weight: 600; color: #333; display: flex; justify-content: space-between; align-items: center;">
+            <span>聊天界面美化代码 (原始)</span>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="resetChatBeautify()" style="background: #f0f0f0; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; color: #333;">恢复默认</button>
+                <button onclick="saveChatBeautifyPreset()" style="background: #007aff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; color: #fff;">保存预设</button>
+            </div>
+        </div>
+        <select id="beautify-preset-select" class="preset-select" onchange="loadSelectedPresetCode()" style="margin-bottom: 10px; font-size: 13px; padding: 10px;">
+            <option value="default">默认预设</option>
+        </select>
+        <textarea id="chat-code-editor" placeholder="在此编辑聊天界面HTML代码... 请保留id以确保功能正常！"></textarea>
     </div>
 </div>
 
@@ -1702,7 +1265,6 @@
         </div>
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
-            <!-- 修改点：绑定用户人设改为 user -->
             <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>user</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
@@ -1711,6 +1273,8 @@
             <div class="chat-detail-item" onclick="document.getElementById('chat-bg-upload').click()"><span>更换聊天背景</span></div>
             <div class="chat-detail-item" onclick="clearChatBackground()"><span>清空聊天背景</span></div>
             <div class="chat-detail-item" onclick="clearChatHistory()"><span>清空聊天记录</span></div>
+            <!-- 美化选项 -->
+            <div class="chat-detail-item" onclick="openChatBeautifySelectModal()"><span>美化</span><span class="custom-select-value" id="chat-beautify-display" style="color: #888;">默认</span></div>
             <div class="chat-detail-item danger" onclick="deleteChatSession()"><span>删除该聊天</span></div>
         </div>
         <div class="modal-actions" style="margin-top: 10px; padding: 0 20px 20px;"><button class="modal-btn cancel" onclick="closeChatDetailModal()">关闭</button></div>
@@ -1724,6 +1288,17 @@
         <div class="modal-list" id="chat-user-persona-select-list"></div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closeChatUserPersonaSelectModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 选择美化预设弹窗 -->
+<div class="modal-overlay high-z-modal" id="chat-beautify-select-modal">
+    <div class="modal-content">
+        <div class="modal-title">选择聊天界面美化</div>
+        <div class="modal-list" id="chat-beautify-select-list"></div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeChatBeautifySelectModal()">取消</button>
         </div>
     </div>
 </div>
@@ -1787,6 +1362,8 @@
         <div class="ce-card">
             <div class="ce-input-row"><input type="text" class="ce-input" id="ce-remark" placeholder="添加备注"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="ce-name" placeholder="名字"></div>
+            <!-- 新增性别 -->
+            <div class="ce-input-row"><input type="text" class="ce-input" id="ce-gender" placeholder="性别"></div>
             <div class="ce-input-row"><input type="text" class="ce-input" id="ce-identity" placeholder="身份"></div>
         </div>
         <div class="ce-action-btn" onclick="document.getElementById('ce-docx-upload').click()"><div class="plus-icon">+</div> 上传人设文件</div>
@@ -1822,53 +1399,7 @@
 
 <!-- 聊天界面 -->
 <div class="fullscreen-screen" id="chat-screen">
-    <div class="chat-header">
-        <button class="chat-back-btn" onclick="closeScreen('chat-screen')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg></button>
-        <div class="chat-title" id="chat-title">角色名称</div>
-        <div style="display: flex; align-items: center;">
-            <button class="chat-more-btn" onclick="openChatDetailModal()"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
-        </div>
-    </div>
-    <div id="chat-search-bar">
-        <button class="search-cancel-btn" onclick="toggleChatSearch()">取消</button>
-        <input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
-    </div>
-    <div class="chat-container" id="chat-container"></div>
-    
-    <!-- 引用预览框 -->
-    <div class="reply-preview" id="reply-preview">
-        <div class="reply-text" id="reply-text"></div>
-        <button onclick="cancelReply()" style="background: none; border: none; font-size: 16px; color: #999; cursor: pointer;">×</button>
-    </div>
-
-    <!-- 🌟 底栏变回图二样式 (注意这里加了 id="chat-input-bar") -->
-    <div class="chat-input-bar" id="chat-input-bar">
-        <!-- 麦克风触发AI回复 -->
-        <button class="chat-input-icon-btn" onclick="triggerCharReply()" title="触发AI回复"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
-        
-        <!-- 包裹输入框的胶囊体 -->
-        <div class="chat-input-wrapper">
-            <textarea class="chat-input-field" id="chat-input-field" placeholder="输入消息..." rows="1" oninput="handleChatInput(this)"></textarea>
-        </div>
-        
-        <!-- 表情面板触发 -->
-        <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
-        
-        <!-- 附件面板触发 (默认显示) -->
-        <button class="chat-input-icon-btn" onclick="toggleAttachmentPanel()" id="add-msg-btn"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
-        
-        <!-- 发送按钮 (默认隐藏) -->
-        <button class="chat-send-btn-inline" onclick="sendTextMessage()" id="send-msg-btn" style="display: none;">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
-    </div>
-
-    <!-- 多选模式底栏 (仿图二，黑色字体，去除收藏和转发) -->
-    <div id="multi-select-bar">
-        <button onclick="cancelMultiSelect()" style="background: none; border: none; font-size: 16px; color: #000; padding: 8px 16px;">取消</button>
-        <span id="multi-select-count" style="color: #000; font-size: 15px;">已选 0 条</span>
-        <button onclick="deleteSelectedMessages()" style="background: none; border: none; font-size: 16px; color: #000; padding: 8px 16px;">删除</button>
-    </div>
+    <!-- 聊天界面内容将由 JS 根据预设动态渲染 -->
 </div>
 
 <!-- 附件面板 (图标颜色统一为标准灰黑色) -->
@@ -1915,6 +1446,7 @@
 </div>
 <input type="file" id="chat-photo-upload" accept="image/*" style="display:none;">
 <input type="file" id="chat-camera-upload" accept="image/*" capture="camera" style="display:none;">
+<input type="file" id="loc-img-upload" accept="image/*" style="display:none;">
 
 <!-- 弹窗：关联人选择 -->
 <div class="modal-overlay" id="relation-modal">
@@ -1981,12 +1513,29 @@
             <button class="modal-btn confirm" style="flex:1; background:#f2f2f7; color:#333;" onclick="document.getElementById('location-manual-input').focus()">手动输入</button>
         </div>
         <div class="modal-input-group">
-            <input type="text" id="location-manual-input" placeholder="输入位置名称/地址...">
+            <input type="text" id="location-manual-input" placeholder="输入位置名称/地址..." value="初始地点">
             <input type="text" id="location-title-input" placeholder="标题 (如：我的位置)" value="我的位置" style="margin-top: 8px;">
+        </div>
+        <!-- 新增选择：单纯发送或邀请共享 -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+            <input type="checkbox" id="loc-is-invite" style="width: 20px; height: 20px;">
+            <label for="loc-is-invite" style="font-size: 15px; color: #333; flex-grow: 1;">邀请对方开始位置共享</label>
         </div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="closeLocationModal()">取消</button>
             <button class="modal-btn confirm" onclick="sendLocationMessage()">发送</button>
+        </div>
+    </div>
+</div>
+
+<!-- 胶囊形状的位置共享邀请弹窗 -->
+<div class="modal-overlay" id="location-share-invite-modal">
+    <div class="loc-invite-capsule-modal">
+        <div style="font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #000;">位置共享邀请</div>
+        <div style="font-size: 14px; color: #666; margin-bottom: 20px;" id="loc-invite-text">对方请求与你共享位置</div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="handleLocationInviteAction('reject')" style="flex:1; padding: 12px; border-radius: 30px; border: none; background: #f2f2f7; color: #333; font-size: 16px; cursor: pointer;">拒绝</button>
+            <button onclick="handleLocationInviteAction('accept')" style="flex:1; padding: 12px; border-radius: 30px; border: none; background: #007aff; color: #fff; font-size: 16px; cursor: pointer;">同意</button>
         </div>
     </div>
 </div>
@@ -2005,7 +1554,6 @@
     </div>
 </div>
 
-<!-- 处理操作弹窗 (领取/退回/填地址) -->
 <div class="modal-overlay" id="action-modal">
     <div class="modal-content">
         <div class="modal-title" id="action-modal-title">操作</div>
@@ -2019,7 +1567,6 @@
     </div>
 </div>
 
-<!-- 消息长按操作菜单 (只保留复制、多选、删除、引用、翻译、撤回) -->
 <div id="msg-action-menu">
     <div class="msg-action-row">
         <div class="msg-action-item" onclick="msgActionCopy()">
@@ -2051,7 +1598,6 @@
     </div>
 </div>
 
-<!-- 赠送礼物定制界面 (全屏图2) -->
 <div class="fullscreen-screen" id="gift-create-screen">
     <div class="ce-header" style="background: transparent; position: absolute; width: 100%; z-index: 10;">
         <div class="ce-icon-btn" onclick="closeScreen('gift-create-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
@@ -2059,43 +1605,30 @@
         <div style="width:36px;"></div>
     </div>
     <div class="ce-body" style="display:flex; flex-direction:column; align-items:center; padding-top:80px; padding-bottom:40px;">
-        
         <div class="gift-edit-container">
-            <!-- 白色卡片部分 -->
             <div class="gift-edit-top">
                 <div class="gift-edit-title">마음</div>
                 <input type="text" id="gift-edit-remark" class="gift-edit-remark-input" placeholder="비고/호칭">
-                <!-- 添加按钮 -->
                 <button class="gift-edit-add-btn" onclick="addGiftItemRow()">+</button>
             </div>
-            
-            <!-- 黑色收据部分 -->
             <div class="gift-edit-bottom">
                 <div id="gift-items-list">
-                    <!-- 动态行 -->
                     <div class="gift-edit-row">
                         <input type="text" class="gift-input-name" placeholder="선물 이름">
                         <input type="text" class="gift-input-price" placeholder="0.00" value="0.00" oninput="updateGiftTotal()">
                     </div>
                 </div>
-                
                 <div class="gift-edit-dashed"></div>
-                
                 <div class="gift-edit-total-row">
                     <span>총 판매가</span>
                     <input type="text" id="gift-edit-total" class="gift-total-input" placeholder="0.00" value="0.00" readonly>
                 </div>
             </div>
         </div>
-
         <button onclick="confirmSendGift()" style="margin-top:40px; width:80%; max-width:300px; padding:16px; border-radius:30px; background:#1c1c1e; color:#fff; font-size:18px; font-weight:600; border:none; cursor:pointer;">确认赠送</button>
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- 通话相关界面 -->
-<!-- ========================================== -->
-<!-- 图2：来电弹窗 (参考图1样式) -->
 <div class="incoming-call-overlay" id="incoming-call-modal">
     <div class="incoming-call-card">
         <div class="incoming-call-header">
@@ -2116,13 +1649,10 @@
     </div>
 </div>
 
-<!-- 图3：通话中全屏界面 (整合聊天功能) -->
 <div class="fullscreen-screen" id="call-screen" style="padding: 0; background-color: #f5f5f7;">
     <div class="call-screen-back" onclick="endCall()">
         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
     </div>
-    
-    <!-- 缩小版的通话状态卡片 -->
     <div class="call-card-small">
         <div class="call-card-avatar-small" id="call-avatar">C</div>
         <div style="flex-grow: 1; text-align: left; overflow: hidden;">
@@ -2133,11 +1663,7 @@
             <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #fff;"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
         </div>
     </div>
-
-    <!-- 通话时的聊天记录区域 -->
     <div class="chat-container" id="call-chat-container" style="flex-grow: 1; padding: 10px 20px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: transparent;"></div>
-    
-    <!-- 通话时的输入框 -->
     <div class="chat-input-bar" style="flex-shrink: 0; margin: 10px 15px 20px; background-color: #ffffff; padding: 10px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 30px; position: relative; z-index: 4005;">
         <input type="text" class="chat-input-field" id="call-input-field" placeholder="通话中发送消息..." onkeypress="if(event.key==='Enter') sendCallMessage()">
         <button class="chat-input-icon-btn" onclick="sendCallMessage()" style="background: #007aff; color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center;">
@@ -2146,7 +1672,6 @@
     </div>
 </div>
 
-<!-- 文件上传隐藏输入框 -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
 <input type="file" id="import-data-file" accept=".json,application/json">
@@ -2167,17 +1692,13 @@
 <input type="file" id="settings-avatar-upload" accept="image/*">
 <input type="file" id="global-font-upload" accept=".ttf,.otf,.woff,.woff2">
 <input type="file" id="offline-font-upload" accept=".ttf,.otf,.woff,.woff2">
-<!-- 表情包文件上传 -->
 <input type="file" id="sticker-file-upload" accept=".json,.docx,.txt,image/*" multiple>
-<!-- 音乐 App 上传 -->
 <input type="file" id="music-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, audio/flac, .mp3, .m4a, .flac">
 <input type="file" id="music-lyrics-upload" accept=".txt,.lrc">
 <input type="file" id="playing-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <input type="file" id="music-decoration-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
-<!-- 底部组件图片上传 -->
 <input type="file" id="mgr-widget-upload" accept="image/*">
-<!-- API界面头像上传 -->
 <input type="file" id="api-avatar-upload" accept="image/*">
 
 
@@ -2406,7 +1927,7 @@
                 document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'CustomOfflineFont, sans-serif');
             } catch (e) { console.error("线下字体加载失败", e); }
         } else {
-            document.getElementById('contact-offline-screen').style.setProperty('--offline-font', 'var(--global-font)');
+            document.getElementById('contact-offline-screen').setProperty('--offline-font', 'var(--global-font)');
         }
     }
     document.getElementById('global-font-upload').addEventListener('change', function(e) {
@@ -3994,7 +3515,11 @@
         const avatarEl = document.getElementById('blog-avatar'); const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
         if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.style.borderColor = 'transparent'; } else { avatarEl.style.backgroundImage = 'none'; avatarEl.style.borderColor = '#e5e5ea'; }
     }
-    function openBlog() { renderBlogPage(); openScreen('blog-screen'); }
+    function openBlog() { 
+        renderBlogPage(); 
+        initBeautifyEditor();
+        openScreen('blog-screen'); 
+    }
     document.getElementById('blog-avatar-upload').addEventListener('change', function(e) {
         const file = e.target.files[0]; if (file && activeUserPersonaId) {
             const reader = new FileReader(); reader.onload = async function(event) { await saveImageToDB(`user_avatar_${activeUserPersonaId}`, event.target.result); renderBlogPage(); }; reader.readAsDataURL(file);
@@ -4147,12 +3672,12 @@
 
     async function openContactEdit(id = null) {
         currentEditId = id; const avatarEl = document.getElementById('ce-avatar');
-        document.getElementById('ce-remark').value = ''; document.getElementById('ce-name').value = ''; document.getElementById('ce-identity').value = ''; document.getElementById('ce-bio').value = '';
+        document.getElementById('ce-remark').value = ''; document.getElementById('ce-name').value = ''; document.getElementById('ce-gender').value = ''; document.getElementById('ce-identity').value = ''; document.getElementById('ce-bio').value = '';
         avatarEl.style.backgroundImage = 'none'; avatarEl.innerText = '?'; avatarEl.style.color = '#fff'; document.getElementById('ce-delete-btn').style.display = id ? 'block' : 'none'; currentRelations = []; 
         if (id) {
             const c = contacts.find(x => x.id === id);
             if (c) {
-                document.getElementById('ce-remark').value = c.remark || ''; document.getElementById('ce-name').value = c.name || ''; document.getElementById('ce-identity').value = c.identity || ''; document.getElementById('ce-bio').value = c.bio || ''; currentRelations = c.relations || [];
+                document.getElementById('ce-remark').value = c.remark || ''; document.getElementById('ce-name').value = c.name || ''; document.getElementById('ce-gender').value = c.gender || ''; document.getElementById('ce-identity').value = c.identity || ''; document.getElementById('ce-bio').value = c.bio || ''; currentRelations = c.relations || [];
                 const initial = (c.remark || c.name || '?').charAt(0); avatarEl.innerText = initial; const savedImg = await getImageFromDB(`contact_avatar_${id}`);
                 if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.innerText = ''; }
             }
@@ -4214,14 +3739,14 @@
     });
 
     async function saveContact() {
-        const remark = document.getElementById('ce-remark').value.trim(); const name = document.getElementById('ce-name').value.trim(); const identity = document.getElementById('ce-identity').value.trim(); const bio = document.getElementById('ce-bio').value.trim();
+        const remark = document.getElementById('ce-remark').value.trim(); const name = document.getElementById('ce-name').value.trim(); const gender = document.getElementById('ce-gender').value.trim(); const identity = document.getElementById('ce-identity').value.trim(); const bio = document.getElementById('ce-bio').value.trim();
         if (!name || !bio) { alert("【名字】和【生平】是必填项！"); return; }
         let id = currentEditId;
         if (!id) {
             id = 'c_' + Date.now();
             if (window.tempAvatarId) { const imgData = await getImageFromDB(`contact_avatar_${window.tempAvatarId}`); if (imgData) { await saveImageToDB(`contact_avatar_${id}`, imgData); await deleteImageFromDB(`contact_avatar_${window.tempAvatarId}`); } window.tempAvatarId = null; }
-            contacts.push({ id, remark, name, identity, bio, relations: currentRelations });
-        } else { const index = contacts.findIndex(x => x.id === id); if (index > -1) contacts[index] = { id, remark, name, identity, bio, relations: currentRelations }; }
+            contacts.push({ id, remark, name, gender, identity, bio, relations: currentRelations });
+        } else { const index = contacts.findIndex(x => x.id === id); if (index > -1) contacts[index] = { id, remark, name, gender, identity, bio, relations: currentRelations }; }
         localStorage.setItem('contacts_data', JSON.stringify(contacts)); alert("保存成功！"); closeScreen('contact-edit-screen'); renderContactList();
     }
 
@@ -4235,8 +3760,119 @@
     let currentCharAvatarCache = null;
     let currentUserAvatarCache = null;
 
+    // 聊天界面的原始 HTML 模板
+    const DEFAULT_CHAT_HTML = `
+    <div class="chat-header">
+        <button class="chat-back-btn" onclick="closeScreen('chat-screen')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div class="chat-title" id="chat-title">角色名称</div>
+        <div style="display: flex; align-items: center;">
+            <button class="chat-more-btn" onclick="openChatDetailModal()"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+        </div>
+    </div>
+    <div id="chat-search-bar">
+        <button class="search-cancel-btn" onclick="toggleChatSearch()">取消</button>
+        <input type="text" id="chat-search-input" placeholder="搜索聊天记录..." oninput="filterChatMessages()">
+    </div>
+    <div class="chat-container" id="chat-container"></div>
+    
+    <!-- 引用预览框 -->
+    <div class="reply-preview" id="reply-preview">
+        <div class="reply-text" id="reply-text"></div>
+        <button onclick="cancelReply()" style="background: none; border: none; font-size: 16px; color: #999; cursor: pointer;">×</button>
+    </div>
+
+    <div class="chat-input-bar" id="chat-input-bar">
+        <button class="chat-input-icon-btn" onclick="triggerCharReply()" title="触发AI回复"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></button>
+        
+        <div class="chat-input-wrapper">
+            <textarea class="chat-input-field" id="chat-input-field" placeholder="输入消息..." rows="1" oninput="handleChatInput(this)"></textarea>
+        </div>
+        
+        <button class="chat-input-icon-btn" onclick="openStickerPanel()"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></button>
+        
+        <button class="chat-input-icon-btn" onclick="toggleAttachmentPanel()" id="add-msg-btn"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+        
+        <button class="chat-send-btn-inline" onclick="sendTextMessage()" id="send-msg-btn" style="display: none;">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+    </div>
+
+    <div id="multi-select-bar">
+        <button onclick="cancelMultiSelect()" style="background: none; border: none; font-size: 16px; color: #000; padding: 8px 16px;">取消</button>
+        <span id="multi-select-count" style="color: #000; font-size: 15px;">已选 0 条</span>
+        <button onclick="deleteSelectedMessages()" style="background: none; border: none; font-size: 16px; color: #000; padding: 8px 16px;">删除</button>
+    </div>
+    `;
+
+    // 初始化美化编辑器
+    function initBeautifyEditor() {
+        const editor = document.getElementById('chat-code-editor');
+        if(!editor) return;
+        const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
+        const sel = document.getElementById('beautify-preset-select');
+        sel.innerHTML = '<option value="default">默认预设</option>';
+        Object.keys(presets).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+        
+        editor.value = presets['default'] || DEFAULT_CHAT_HTML;
+        sel.onchange = (e) => {
+            const val = e.target.value;
+            if(val === 'default') editor.value = DEFAULT_CHAT_HTML;
+            else editor.value = presets[val] || DEFAULT_CHAT_HTML;
+        };
+    }
+
+    function saveChatBeautifyPreset() {
+        const name = prompt("请输入美化预设名称：");
+        if(!name || !name.trim()) return;
+        const code = document.getElementById('chat-code-editor').value;
+        if (!code.includes('id="chat-input-field"') || !code.includes('id="chat-container"')) {
+            alert("保存失败：代码中缺失关键ID (chat-input-field, chat-container)，这会导致聊天功能不可用！请恢复默认或添加关键ID。");
+            return;
+        }
+        const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
+        presets[name.trim()] = code;
+        localStorage.setItem('chat_beautify_presets', JSON.stringify(presets));
+        alert('预设保存成功！');
+        initBeautifyEditor();
+        document.getElementById('beautify-preset-select').value = name.trim();
+    }
+
+    function resetChatBeautify() {
+        document.getElementById('chat-code-editor').value = DEFAULT_CHAT_HTML;
+        document.getElementById('beautify-preset-select').value = 'default';
+    }
+
+    function loadSelectedPresetCode() {
+        const val = document.getElementById('beautify-preset-select').value;
+        const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
+        document.getElementById('chat-code-editor').value = (val === 'default') ? DEFAULT_CHAT_HTML : (presets[val] || DEFAULT_CHAT_HTML);
+    }
+
+    // 应用美化
+    function applyChatBeautify(charId, chatScreen) {
+        const boundPreset = localStorage.getItem(`chat_beautify_${charId}`);
+        if (boundPreset && boundPreset !== 'default') {
+            const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
+            if (presets[boundPreset]) {
+                chatScreen.innerHTML = presets[boundPreset];
+                return;
+            }
+        }
+        chatScreen.innerHTML = DEFAULT_CHAT_HTML;
+    }
+
     async function openChatScreen(charId) {
         currentChatCharId = charId; const char = contacts.find(c => c.id === charId); if (!char) return;
+        
+        const chatScreen = document.getElementById('chat-screen');
+        applyChatBeautify(charId, chatScreen);
+        
+        // 重新绑定基本事件 (如果用户去除了内联事件)
+        const inputField = document.getElementById('chat-input-field');
+        if (inputField && !inputField.hasAttribute('oninput')) {
+            inputField.addEventListener('input', function() { handleChatInput(this); });
+        }
+
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'}`;
         const container = document.getElementById('chat-container'); container.innerHTML = ''; 
         
@@ -4249,7 +3885,6 @@
         
         document.getElementById('chat-container').style.paddingTop = '20px';
         
-        // 彻底关闭弹层，防止遮挡和卡顿
         document.getElementById('attachment-panel').classList.remove('active');
         document.getElementById('attachment-panel').style.display = 'none';
         document.getElementById('sticker-panel').classList.remove('active');
@@ -4258,12 +3893,10 @@
         document.getElementById('msg-action-menu').style.display = 'none';
 
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
-        const chatScreen = document.getElementById('chat-screen');
         if (customBg) { chatScreen.style.backgroundImage = `url(${customBg})`; } else { chatScreen.style.backgroundImage = 'none'; }
         
         currentCharAvatarCache = await getImageFromDB(`contact_avatar_${charId}`);
         
-        // 获取绑定的 user 人设
         let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${charId}`) || activeUserPersonaId;
         const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
         
@@ -4272,22 +3905,25 @@
         currentUserAvatarCache = chatUserImg || globalUserImg;
 
         const history = await getChatHistory(charId);
-        // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
         const recentHistory = history.slice(-100);
         for (const msg of recentHistory) { 
             await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
         }
         
-        const inputField = document.getElementById('chat-input-field');
-        inputField.value = '';
-        inputField.style.height = 'auto';
-        document.getElementById('add-msg-btn').style.display = 'flex';
-        document.getElementById('send-msg-btn').style.display = 'none';
+        const inputEl = document.getElementById('chat-input-field');
+        if (inputEl) {
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+        }
+        
+        const addBtn = document.getElementById('add-msg-btn');
+        const sendBtn = document.getElementById('send-msg-btn');
+        if(addBtn) addBtn.style.display = 'flex';
+        if(sendBtn) sendBtn.style.display = 'none';
 
         openScreen('chat-screen');
         requestAnimationFrame(() => {
             container.scrollTop = container.scrollHeight;
-            requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
         });
     }
 
@@ -4295,7 +3931,6 @@
         const container = document.getElementById(targetId); 
         if (!container) return;
 
-        // 系统提示样式 (撤回等)
         if (msgType === 'system' || text.startsWith('[系统]')) {
             const sysMsg = document.createElement('div');
             sysMsg.style.textAlign = 'center';
@@ -4331,32 +3966,43 @@
         let bubbleHtml = '';
         
         if (msgType === 'location') {
-            const locData = msgData || { title: '我的位置', address: '未知地址', status: 'pending' };
-            let actionHtml = '';
+            const locData = msgData || { title: 'Posizione', address: '初始地点', isShare: false, status: 'pending' };
             if (locData.isShare) {
+                // 胶囊形状位置共享邀请卡片
+                let actionHtml = '';
                 if (locData.status === 'pending') {
-                    if (!isSelf) {
-                        actionHtml = `<div class="loc-actions">
-                            <button class="loc-btn reject" onclick="handleLocationAction('${msgId}', 'reject')">拒绝</button>
-                            <button class="loc-btn accept" onclick="handleLocationAction('${msgId}', 'accept')">同意</button>
-                        </div>`;
-                    } else {
-                        actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#888; text-align:center; width:100%;">等待对方同意</div></div>`;
-                    }
+                    actionHtml = `<div class="loc-actions" style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="loc-btn reject" onclick="handleLocationInvite('${msgId}', 'reject')" style="flex:1; padding:8px; border-radius:8px; border:none; background:#f0f0f0; font-size:13px;">拒绝</button>
+                        <button class="loc-btn accept" onclick="handleLocationInvite('${msgId}', 'accept')" style="flex:1; padding:8px; border-radius:8px; border:none; background:#007aff; color:#fff; font-size:13px;">同意</button>
+                    </div>`;
                 } else if (locData.status === 'accepted') {
-                    actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#34c759; text-align:center; width:100%;">已同意共享</div></div>`;
-                } else if (locData.status === 'rejected') {
-                    actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#ff3b30; text-align:center; width:100%;">已拒绝共享</div></div>`;
+                    actionHtml = `<div style="font-size:12px; color:#34c759; text-align:center; margin-top:10px;">已同意共享</div>`;
+                } else {
+                    actionHtml = `<div style="font-size:12px; color:#ff3b30; text-align:center; margin-top:10px;">已拒绝共享</div>`;
                 }
+                bubbleHtml = `<div style="background:#fff; border-radius:20px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.05); width:220px; border:1px solid #eee;">
+                    <div style="font-size:15px; font-weight:600; text-align:center;">位置共享邀请</div>
+                    ${actionHtml}
+                </div>`;
+            } else {
+                // 图 1 的卡片设计
+                const imgHtml = locData.image ? `<img src="${locData.image}" style="width:100%;height:100%;object-fit:cover;border-radius:18px;">` : '';
+                bubbleHtml = `<div class="card-location-v1" id="loc-card-${msgId}" style="width: 260px; background: #fff; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;" onclick="openLocationModalForMsg('${msgId}')">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="loc-img-upload" style="width: 76px; height: 76px; border-radius: 18px; background: #555; background-size: cover; background-position: center; flex-shrink: 0; position: relative; overflow: hidden;" onclick="triggerLocImgUpload('${msgId}', event)">
+                            ${imgHtml}
+                        </div>
+                        <div style="display: flex; flex-direction: column; flex-grow: 1;">
+                            <div style="font-size: 18px; font-weight: 800; color: #000; margin-bottom: 4px;">Posizione</div>
+                            <div style="font-size: 14px; color: #888;" class="loc-address-text">${locData.address || '初始地点'}</div>
+                        </div>
+                    </div>
+                    <div class="loc-bottom-bars">
+                        <div class="loc-bottom-bar"></div>
+                        <div class="loc-bottom-bar light"></div>
+                    </div>
+                </div>`;
             }
-            bubbleHtml = `<div class="chat-card card-location">
-                <div class="loc-header">
-                    <div class="loc-title">${locData.title}</div>
-                    <div class="loc-address">${locData.address}</div>
-                </div>
-                <div class="loc-map-placeholder"><div class="loc-map-icon"></div></div>
-                ${actionHtml}
-            </div>`;
         } else if (msgType === 'transfer') {
             const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
             let statusText = '';
@@ -4460,64 +4106,94 @@
         }
 
         msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`; container.appendChild(msgRow);
-        
-        // 🌟 长按菜单绑定
-        if (msgId) {
-            let startX, startY, pressTimer;
-            let isLongPressed = false;
-            
-            const startPress = (e) => {
-                if (isMultiSelectMode) return;
-                isLongPressed = false;
-                const touch = e.touches ? e.touches[0] : e;
-                startX = touch.clientX;
-                startY = touch.clientY;
-                
-                clearTimeout(pressTimer);
-                pressTimer = setTimeout(async () => {
-                    isLongPressed = true;
-                    if (e && e.cancelable) e.preventDefault();
-                    await showMsgActionMenu(e, msgRow);
-                }, 500);
-            };
-
-            const cancelPress = () => {
-                clearTimeout(pressTimer);
-            };
-
-            const movePress = (e) => {
-                if (!e.touches) return;
-                if (Math.abs(e.touches[0].clientX - startX) > 10 || Math.abs(e.touches[0].clientY - startY) > 10) {
-                    cancelPress();
-                }
-            };
-
-            // passive: false 必须设置，否则 preventDefault 不生效
-            msgRow.addEventListener('touchstart', startPress, {passive: false}); 
-            msgRow.addEventListener('touchmove', movePress, {passive: true});
-            msgRow.addEventListener('touchend', cancelPress);
-            msgRow.addEventListener('mousedown', startPress);
-            msgRow.addEventListener('mouseup', cancelPress);
-            msgRow.addEventListener('mouseleave', cancelPress);
-            
-            msgRow.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                if (!isMultiSelectMode) showMsgActionMenu(e, msgRow);
-            });
-
-            msgRow.addEventListener('click', (e) => {
-                if (isLongPressed) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    isLongPressed = false;
-                }
-            });
-        }
 
         if (scroll) container.scrollTop = container.scrollHeight;
     }
 
-    // 发送文字消息 (点击发送按钮触发)
+    // 全局长按事件委托，优化性能
+    let longPressTimer = null;
+    let isLongPress = false;
+    let pressStartX, pressStartY;
+    let activeMsgRow = null;
+
+    document.body.addEventListener('touchstart', function(e) {
+        const msgRow = e.target.closest('#chat-container .chat-msg-row');
+        if (!msgRow || isMultiSelectMode) return;
+        isLongPress = false;
+        activeMsgRow = msgRow;
+        const touch = e.touches[0];
+        pressStartX = touch.clientX;
+        pressStartY = touch.clientY;
+        
+        clearTimeout(longPressTimer);
+        longPressTimer = setTimeout(() => {
+            isLongPress = true;
+            if (e.cancelable) e.preventDefault();
+            showMsgActionMenu(e, msgRow);
+        }, 500);
+    }, {passive: false});
+
+    document.body.addEventListener('touchmove', function(e) {
+        if (!activeMsgRow) return;
+        const touch = e.touches[0];
+        if (Math.abs(touch.clientX - pressStartX) > 10 || Math.abs(touch.clientY - pressStartY) > 10) {
+            clearTimeout(longPressTimer);
+            activeMsgRow = null;
+        }
+    }, {passive: true});
+
+    document.body.addEventListener('touchend', function(e) {
+        clearTimeout(longPressTimer);
+        if (isLongPress) {
+            e.stopPropagation();
+            e.preventDefault();
+            isLongPress = false;
+        }
+        activeMsgRow = null;
+    });
+
+    document.body.addEventListener('mousedown', function(e) {
+        const msgRow = e.target.closest('#chat-container .chat-msg-row');
+        if (!msgRow || isMultiSelectMode) return;
+        isLongPress = false;
+        activeMsgRow = msgRow;
+        pressStartX = e.clientX;
+        pressStartY = e.clientY;
+        
+        clearTimeout(longPressTimer);
+        longPressTimer = setTimeout(() => {
+            isLongPress = true;
+            if (e.cancelable) e.preventDefault();
+            showMsgActionMenu(e, msgRow);
+        }, 500);
+    });
+
+    document.body.addEventListener('mousemove', function(e) {
+        if (!activeMsgRow) return;
+        if (Math.abs(e.clientX - pressStartX) > 10 || Math.abs(e.clientY - pressStartY) > 10) {
+            clearTimeout(longPressTimer);
+            activeMsgRow = null;
+        }
+    });
+
+    document.body.addEventListener('mouseup', function(e) {
+        clearTimeout(longPressTimer);
+        if (isLongPress) {
+            e.stopPropagation();
+            e.preventDefault();
+            isLongPress = false;
+        }
+        activeMsgRow = null;
+    });
+
+    document.body.addEventListener('contextmenu', function(e) {
+        const msgRow = e.target.closest('#chat-container .chat-msg-row');
+        if (msgRow && !isMultiSelectMode) {
+            e.preventDefault();
+            showMsgActionMenu(e, msgRow);
+        }
+    });
+
     async function sendTextMessage() {
         const input = document.getElementById('chat-input-field');
         let text = input.value.trim();
@@ -4535,9 +4211,8 @@
         }
         
         input.value = '';
-        input.style.height = 'auto'; // 重置高度
+        input.style.height = 'auto';
         
-        // 恢复加号，隐藏发送键
         document.getElementById('add-msg-btn').style.display = 'flex';
         document.getElementById('send-msg-btn').style.display = 'none';
         
@@ -4550,7 +4225,6 @@
         }
     }
 
-    // 附件面板逻辑
     function toggleAttachmentPanel() {
         const panel = document.getElementById('attachment-panel');
         if (panel.classList.contains('active')) {
@@ -4596,7 +4270,6 @@
         }
     });
 
-    // 全局点击关闭菜单
     document.addEventListener('click', function(e) {
         if (!e.target.closest('#msg-action-menu') && !e.target.closest('.chat-msg-row') && !e.target.closest('.chat-input-bar')) {
             document.getElementById('msg-action-menu').style.display = 'none';
@@ -4617,7 +4290,6 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            // 极致压缩，防止卡顿和超限
             callback(canvas.toDataURL('image/jpeg', 0.4)); 
         };
         img.src = base64;
@@ -4650,12 +4322,56 @@
     // 位置、红包、转账、礼物逻辑
     // ==========================================
     let currentPaymentType = '';
+    let currentEditingLocMsgId = null;
+
     function openLocationModal() {
         toggleAttachmentPanel();
-        document.getElementById('location-manual-input').value = '';
+        document.getElementById('location-manual-input').value = '初始地点';
         document.getElementById('location-modal').classList.add('active');
     }
     function closeLocationModal() { document.getElementById('location-modal').classList.remove('active'); }
+
+    function openLocationModalForMsg(msgId) {
+        currentEditingLocMsgId = msgId;
+        getChatHistory(currentChatCharId).then(history => {
+            const msg = history.find(m => m.id === msgId);
+            if (msg && msg.data) {
+                document.getElementById('location-manual-input').value = msg.data.address || '初始地点';
+                document.getElementById('loc-is-invite').checked = false;
+                document.getElementById('location-modal').classList.add('active');
+            }
+        });
+    }
+
+    function triggerLocImgUpload(msgId, event) {
+        event.stopPropagation();
+        currentEditingLocMsgId = msgId;
+        document.getElementById('loc-img-upload').click();
+    }
+
+    document.getElementById('loc-img-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file || !currentEditingLocMsgId) return;
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const base64Data = event.target.result;
+            compressImage(base64Data, 150, async function(compressedBase64) {
+                const history = await getChatHistory(currentChatCharId);
+                const msgIndex = history.findIndex(m => m.id === currentEditingLocMsgId);
+                if (msgIndex > -1) {
+                    history[msgIndex].data.image = compressedBase64;
+                    await saveChatHistory(currentChatCharId, history);
+                    // 更新 UI
+                    const imgContainer = document.querySelector(`#loc-card-${currentEditingLocMsgId} .loc-img-upload`);
+                    if (imgContainer) {
+                        imgContainer.innerHTML = `<img src="${compressedBase64}" style="width:100%;height:100%;object-fit:cover;border-radius:18px;">`;
+                    }
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+    });
 
     function getCurrentLocation() {
         if (navigator.geolocation) {
@@ -4673,18 +4389,60 @@
     async function sendLocationMessage() {
         const address = document.getElementById('location-manual-input').value.trim();
         const title = document.getElementById('location-title-input').value.trim() || '我的位置';
+        const isInvite = document.getElementById('loc-is-invite').checked;
         if (!address) { alert('请输入位置信息'); return; }
         closeLocationModal();
         
+        if (currentEditingLocMsgId) {
+            // 修改已有位置信息
+            const history = await getChatHistory(currentChatCharId);
+            const msgIndex = history.findIndex(m => m.id === currentEditingLocMsgId);
+            if (msgIndex > -1) {
+                history[msgIndex].data.address = address;
+                await saveChatHistory(currentChatCharId, history);
+                const textEl = document.querySelector(`#loc-card-${currentEditingLocMsgId} .loc-address-text`);
+                if (textEl) textEl.innerText = address;
+            }
+            currentEditingLocMsgId = null;
+            return;
+        }
+
         const msgId = Date.now().toString();
-        const msgData = { title, address, isShare: true, status: 'pending' };
-        await renderChatMessage(`[位置] ${title} - ${address}`, true, true, null, 'location', msgData, '', msgId);
+        let msgData = { title, address, isShare: isInvite, status: 'pending' };
+        let msgText = isInvite ? `[邀请共享位置]` : `[位置] ${title} - ${address}`;
+
+        await renderChatMessage(msgText, true, true, null, 'location', msgData, '', msgId);
         
         if(currentChatCharId) {
             const history = await getChatHistory(currentChatCharId);
-            history.push({ id: msgId, type: 'location', text: `[位置] ${title} - ${address}`, data: msgData, isSelf: true, time: Date.now() });
+            history.push({ id: msgId, type: 'location', text: msgText, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
         }
+    }
+
+    // 处理位置共享邀请同意/拒绝（在聊天记录中点击触发）
+    async function handleLocationInvite(msgId, action) {
+        const history = await getChatHistory(currentChatCharId);
+        const msgIndex = history.findIndex(m => m.id === msgId);
+        if (msgIndex === -1) return;
+        
+        history[msgIndex].data.status = action === 'accept' ? 'accepted' : 'rejected';
+        await saveChatHistory(currentChatCharId, history);
+        
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charName = char ? (char.remark || char.name) : '对方';
+        const sysText = action === 'accept' ? `你同意了${charName}的位置共享` : `你拒绝了${charName}的位置共享`;
+        
+        // 局部更新 DOM
+        const msgRow = document.querySelector(`#chat-container .chat-msg-row[data-msg-id="${msgId}"]`);
+        if (msgRow) {
+            const locActions = msgRow.querySelector('.loc-actions');
+            if (locActions) {
+                locActions.innerHTML = action === 'accept' ? `<div style="font-size:12px; color:#34c759; text-align:center; width:100%; margin-top:10px;">已同意共享</div>` : `<div style="font-size:12px; color:#ff3b30; text-align:center; width:100%; margin-top:10px;">已拒绝共享</div>`;
+            }
+        }
+
+        await addSystemMessage(sysText);
     }
 
     function openPaymentModal(type) {
@@ -4717,7 +4475,6 @@
         }
     }
 
-    // 礼物定制逻辑
     function openGiftCreateScreen() {
         toggleAttachmentPanel();
         document.getElementById('gift-edit-remark').value = '';
@@ -4780,7 +4537,6 @@
         }
     }
 
-    // 处理领取/退回
     let currentActionMsgId = null;
     let currentActionType = '';
     async function handlePaymentAction(msgId, type) {
@@ -4854,7 +4610,6 @@
             sysText += ` (地址：${address})`;
         }
 
-        // 局部更新 DOM，避免整体重绘卡顿
         const isCallActive = document.getElementById('call-screen').classList.contains('active');
         const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
         const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${currentActionMsgId}"]`);
@@ -4869,33 +4624,6 @@
             }
         }
 
-        // 添加系统消息
-        await addSystemMessage(sysText);
-    }
-
-    async function handleLocationAction(msgId, action) {
-        const history = await getChatHistory(currentChatCharId);
-        const msgIndex = history.findIndex(m => m.id === msgId);
-        if (msgIndex === -1) return;
-        
-        history[msgIndex].data.status = action === 'accept' ? 'accepted' : 'rejected';
-        await saveChatHistory(currentChatCharId, history);
-        
-        const char = contacts.find(c => c.id === currentChatCharId);
-        const charName = char ? (char.remark || char.name) : '对方';
-        const sysText = action === 'accept' ? `你同意了${charName}的位置共享` : `你拒绝了${charName}的位置共享`;
-        
-        // 局部更新 DOM
-        const isCallActive = document.getElementById('call-screen').classList.contains('active');
-        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
-        const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${msgId}"]`);
-        if (msgRow) {
-            const locActions = msgRow.querySelector('.loc-actions');
-            if (locActions) {
-                locActions.innerHTML = action === 'accept' ? `<div style="font-size:12px; color:#34c759; text-align:center; width:100%;">已同意共享</div>` : `<div style="font-size:12px; color:#ff3b30; text-align:center; width:100%;">已拒绝共享</div>`;
-            }
-        }
-
         await addSystemMessage(sysText);
     }
 
@@ -4905,7 +4633,6 @@
         const config = safeParseJSON(configStr, null); if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
         const char = contacts.find(c => c.id === currentChatCharId); 
         
-        // 获取绑定的用户人设
         let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
         const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
         
@@ -5048,10 +4775,12 @@
         const pinSwitch = document.getElementById('pin-switch');
         if (pinnedIds.includes(currentChatCharId)) pinSwitch.classList.add('on'); else pinSwitch.classList.remove('on');
         
-        // 更新绑定用户人设显示
         const boundUserId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`);
         const boundP = userPersonas.find(p => p.id === boundUserId);
         document.getElementById('chat-user-persona-display').innerText = boundP ? (boundP.remark || boundP.name || '未命名') : '未绑定(使用当前)';
+        
+        const beautifyVal = localStorage.getItem(`chat_beautify_${currentChatCharId}`) || 'default';
+        document.getElementById('chat-beautify-display').innerText = beautifyVal === 'default' ? '默认' : beautifyVal;
         
         loadDetailAvatars(); document.getElementById('chat-detail-modal').classList.add('active');
     }
@@ -5089,6 +4818,37 @@
         document.getElementById('chat-user-persona-select-modal').classList.add('active');
     }
     function closeChatUserPersonaSelectModal() { document.getElementById('chat-user-persona-select-modal').classList.remove('active'); }
+
+    function openChatBeautifySelectModal() {
+        const listContainer = document.getElementById('chat-beautify-select-list');
+        listContainer.innerHTML = '';
+        const boundVal = localStorage.getItem(`chat_beautify_${currentChatCharId}`) || 'default';
+        
+        const defaultItem = document.createElement('div');
+        defaultItem.className = `modal-item ${boundVal === 'default' ? 'selected' : ''}`;
+        defaultItem.innerHTML = `<span class="modal-item-name">默认</span><div class="modal-check"></div>`;
+        defaultItem.onclick = () => {
+            localStorage.removeItem(`chat_beautify_${currentChatCharId}`);
+            closeChatBeautifySelectModal();
+            openChatDetailModal();
+        };
+        listContainer.appendChild(defaultItem);
+
+        const presets = safeParseJSON(localStorage.getItem('chat_beautify_presets'), {});
+        Object.keys(presets).forEach(name => {
+            const div = document.createElement('div');
+            div.className = `modal-item ${boundVal === name ? 'selected' : ''}`;
+            div.innerHTML = `<span class="modal-item-name">${name}</span><div class="modal-check"></div>`;
+            div.onclick = () => {
+                localStorage.setItem(`chat_beautify_${currentChatCharId}`, name);
+                closeChatBeautifySelectModal();
+                openChatDetailModal();
+            };
+            listContainer.appendChild(div);
+        });
+        document.getElementById('chat-beautify-select-modal').classList.add('active');
+    }
+    function closeChatBeautifySelectModal() { document.getElementById('chat-beautify-select-modal').classList.remove('active'); }
 
     async function loadDetailAvatars() {
         const char = contacts.find(c => c.id === currentChatCharId); 
@@ -5138,7 +4898,7 @@
             container.style.paddingTop = '20px';
             document.getElementById('chat-search-input').value = ''; 
             filterChatMessages(); 
-            container.scrollTop = container.scrollHeight; // 回到最后一条消息
+            container.scrollTop = container.scrollHeight; 
         }
         closeChatDetailModal();
     }
@@ -5235,7 +4995,6 @@
         if(!container) return;
         container.innerHTML = '';
         const history = await getChatHistory(currentChatCharId);
-        // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
         const recentHistory = history.slice(-100);
         for(const msg of recentHistory) { 
             await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
@@ -5319,7 +5078,6 @@
             av.innerText = (char.remark || char.name).charAt(0);
         }
 
-        // 同步聊天记录到通话界面
         const callChatContainer = document.getElementById('call-chat-container');
         callChatContainer.innerHTML = '';
         const history = await getChatHistory(currentChatCharId);
@@ -5356,7 +5114,6 @@
             history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
         }
-        // 自动呼叫AI回复 (通话内逻辑保持不变)
         triggerCharReply();
     }
 
@@ -5404,19 +5161,19 @@
     }
 
     function handleChatInput(el) {
-        // 动态高度
         el.style.height = 'auto';
         el.style.height = (el.scrollHeight) + 'px';
         
-        // 切换发送/加号按钮
         const addBtn = document.getElementById('add-msg-btn');
         const sendBtn = document.getElementById('send-msg-btn');
-        if (el.value.trim().length > 0) {
-            addBtn.style.display = 'none';
-            sendBtn.style.display = 'flex';
-        } else {
-            addBtn.style.display = 'flex';
-            sendBtn.style.display = 'none';
+        if(addBtn && sendBtn) {
+            if (el.value.trim().length > 0) {
+                addBtn.style.display = 'none';
+                sendBtn.style.display = 'flex';
+            } else {
+                addBtn.style.display = 'flex';
+                sendBtn.style.display = 'none';
+            }
         }
     }
 
@@ -5433,7 +5190,6 @@
         currentMsgId = msgRow.dataset.msgId;
         currentMsgRow = msgRow;
         
-        // 修复：必须从 IndexedDB 读取，而不是 localStorage
         const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
@@ -5441,11 +5197,9 @@
         const menu = document.getElementById('msg-action-menu');
         menu.style.display = 'flex';
         
-        // 动态判断位置
         const rect = msgRow.getBoundingClientRect();
         menu.classList.remove('arrow-top');
         
-        // 强制重绘以获取准确尺寸
         menu.style.visibility = 'hidden';
         const menuHeight = menu.offsetHeight;
         const menuWidth = menu.offsetWidth;
@@ -5463,9 +5217,8 @@
         menu.style.top = `${top}px`;
         menu.style.left = `${left}px`;
 
-        // 撤回按钮判断
         const recallBtn = document.getElementById('action-recall');
-        if (msg.isSelf && Date.now() - msg.time > 120000) { // 超过2分钟不可撤回
+        if (msg.isSelf && Date.now() - msg.time > 120000) {
             recallBtn.style.opacity = '0.5';
             recallBtn.style.pointerEvents = 'none';
         } else {
@@ -5557,7 +5310,6 @@
 
     function msgActionTranslate() { alert('暂未实现翻译功能'); closeMsgActionMenu(); }
 
-    // 语音消息切换文字
     function toggleVoiceText(e, el) {
         e.stopPropagation();
         const voiceText = el.dataset.voiceText;
@@ -5570,7 +5322,6 @@
         }
     }
 
-    // 多选模式
     let isMultiSelectMode = false;
     let selectedMsgIds = new Set();
 
@@ -5636,12 +5387,10 @@
     }
 
     async function initApp() {
-        // 请求持久化存储，避免被浏览器清理
         if (navigator.storage && navigator.storage.persist) {
             navigator.storage.persist().catch(() => {});
         }
 
-        // 静音保活机制
         try {
             const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
             silentAudio.loop = true;
