@@ -895,20 +895,48 @@
     .incoming-call-actions { display: flex; justify-content: space-between; gap: 20px; padding: 0 10px; }
     .incoming-call-btn { flex: 1; background: #000; color: #fff; padding: 14px 0; border-radius: 30px; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; border: none; }
     
-    /* 图3：通话中全屏界面 */
-    #call-screen { background: #e5e5ea; z-index: 6500; display: none; flex-direction: column; padding: 0; }
+    /* 图3：通话中全屏界面 (已改造) */
+    #call-screen { background: #f5f5f7; z-index: 6500; display: none; flex-direction: column; padding: 0; }
     #call-screen.active { display: flex; }
-    .call-screen-back { padding: 20px; cursor: pointer; display: inline-block; }
-    .call-screen-back svg { width: 28px; height: 28px; stroke: #333; stroke-width: 2; fill: none; }
-    .call-main-content { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-    .call-card { background: #ffffff; border-radius: 30px; width: 100%; max-width: 340px; padding: 40px 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-    .call-card-avatar { width: 200px; height: 200px; border-radius: 50%; background-color: #f0f0f0; background-size: cover; background-position: center; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; color: #999; font-size: 60px; font-weight: bold; }
-    .call-card-name { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 8px; }
-    .call-card-remark { font-size: 15px; color: #666; margin-bottom: 40px; }
-    .call-progress-bar-container { display: flex; align-items: center; gap: 15px; background: #d1d1d6; border-radius: 12px; padding: 10px 15px; }
-    .call-end-btn { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid #333; cursor: pointer; }
-    .call-progress-bg { flex-grow: 1; height: 8px; background: #999; border-radius: 4px; overflow: hidden; position: relative; }
-    .call-progress-fill { width: 0%; height: 100%; background: #333; position: absolute; left: 0; top: 0; transition: width 1s linear; }
+    .call-screen-back { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; flex-shrink: 0; }
+    .call-screen-back svg { width: 24px; height: 24px; stroke: #333; stroke-width: 2; fill: none; }
+    
+    .call-card-small {
+        display: flex; 
+        align-items: center; 
+        background: #fff; 
+        margin: 0 20px 10px; 
+        padding: 15px; 
+        border-radius: 20px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        flex-shrink: 0;
+    }
+    .call-card-avatar-small {
+        width: 50px; 
+        height: 50px; 
+        border-radius: 50%; 
+        background-color: #e5e5ea; 
+        background-size: cover; 
+        background-position: center; 
+        margin-right: 15px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        color: #fff; 
+        font-size: 20px; 
+        font-weight: bold;
+    }
+    .call-end-btn-small {
+        width: 44px; 
+        height: 44px; 
+        border-radius: 50%; 
+        background: #ff3b30; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        cursor: pointer; 
+        box-shadow: 0 2px 8px rgba(255,59,48,0.3);
+    }
 
     /* 隐藏 input */
     .hidden-input { display: none; }
@@ -1074,7 +1102,7 @@
     </div>
 </div>
 
-<!-- 设置 App (已彻底恢复全屏) -->
+<!-- 设置 App -->
 <div class="fullscreen-screen" id="settings-screen">
     <div class="settings-header-bar">
         <div class="back-icon" onclick="closeScreen('settings-screen')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
@@ -1120,7 +1148,7 @@
     </div>
 </div>
 
-<!-- 全新仿图 API 设置界面 (已删除“运用预设”按钮) -->
+<!-- 全新仿图 API 设置界面 -->
 <div class="fullscreen-screen" id="api-screen">
     <div class="api-main-card">
         <!-- 黑色顶部区域 -->
@@ -1170,7 +1198,7 @@
                 <input type="range" class="api-slider" id="api-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('api-temp-val').innerText = this.value">
             </div>
 
-            <!-- 预设操作 (删除了运用预设按钮) -->
+            <!-- 预设操作 -->
             <div class="api-preset-row">
                 <button class="api-preset-btn" onclick="openPresetManageModal()">管理预设</button>
             </div>
@@ -1668,7 +1696,7 @@
     </div>
 </div>
 
-<!-- 弹窗：粘贴歌词 (用于纯文本复制) -->
+<!-- 弹窗：粘贴歌词 -->
 <div class="modal-overlay" id="paste-lyrics-modal">
     <div class="modal-content">
         <div class="modal-title">粘贴/上传歌词文本</div>
@@ -1709,23 +1737,33 @@
     </div>
 </div>
 
-<!-- 图3：通话中全屏界面 -->
-<div class="fullscreen-screen" id="call-screen" style="padding: 0;">
+<!-- 图3：通话中全屏界面 (整合聊天功能) -->
+<div class="fullscreen-screen" id="call-screen" style="padding: 0; background-color: #f5f5f7;">
     <div class="call-screen-back" onclick="endCall()">
         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
     </div>
-    <div class="call-main-content">
-        <div class="call-card">
-            <div class="call-card-avatar" id="call-avatar">C</div>
-            <div class="call-card-name" id="call-char-name">Love song</div>
-            <div class="call-card-remark" id="call-char-remark">Kaash Paige</div>
-            <div class="call-progress-bar-container">
-                <div class="call-end-btn" onclick="endCall()"></div>
-                <div class="call-progress-bg">
-                    <div class="call-progress-fill" id="call-progress"></div>
-                </div>
-            </div>
+    
+    <!-- 缩小版的通话状态卡片 -->
+    <div class="call-card-small">
+        <div class="call-card-avatar-small" id="call-avatar">C</div>
+        <div style="flex-grow: 1; text-align: left; overflow: hidden;">
+            <div class="call-card-name" id="call-char-name" style="font-size: 18px; font-weight: 600; color: #000; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name</div>
+            <div class="call-card-remark" id="call-time-display" style="font-size: 13px; color: #34c759;">正在通话中... 00:00</div>
         </div>
+        <div class="call-end-btn-small" onclick="endCall()">
+            <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #fff;"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+        </div>
+    </div>
+
+    <!-- 通话时的聊天记录区域 -->
+    <div class="chat-container" id="call-chat-container" style="flex-grow: 1; padding: 10px 20px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: transparent;"></div>
+    
+    <!-- 通话时的输入框 -->
+    <div class="chat-input-bar" style="flex-shrink: 0; margin: 10px 15px 20px; background-color: #ffffff; padding: 10px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 30px; position: relative; z-index: 4005;">
+        <input type="text" class="chat-input-field" id="call-input-field" placeholder="通话中发送消息..." onkeypress="if(event.key==='Enter') sendCallMessage()">
+        <button class="chat-input-icon-btn" onclick="sendCallMessage()" style="background: #007aff; color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center;">
+            <svg viewBox="0 0 24 24" style="fill: white; width: 20px; height: 20px; margin-left: 2px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
     </div>
 </div>
 
@@ -1752,15 +1790,15 @@
 <input type="file" id="offline-font-upload" accept=".ttf,.otf,.woff,.woff2">
 <!-- 表情包文件上传 -->
 <input type="file" id="sticker-file-upload" accept=".json,.docx,.txt,image/*" multiple>
-<!-- 音乐 App 上传 (修复格式和后缀，新增 flac) -->
+<!-- 音乐 App 上传 -->
 <input type="file" id="music-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <input type="file" id="music-audio-upload" accept="audio/mpeg, audio/mp3, audio/wav, audio/x-m4a, audio/flac, .mp3, .m4a, .flac">
 <input type="file" id="music-lyrics-upload" accept=".txt,.lrc">
 <input type="file" id="playing-cover-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
 <input type="file" id="music-decoration-upload" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
-<!-- 新增：底部组件图片上传 -->
+<!-- 底部组件图片上传 -->
 <input type="file" id="mgr-widget-upload" accept="image/*">
-<!-- 新增：API界面头像上传 -->
+<!-- API界面头像上传 -->
 <input type="file" id="api-avatar-upload" accept="image/*">
 
 
@@ -1830,7 +1868,6 @@
     });
     setupEditableText(document.querySelectorAll('.editable'));
 
-    // 新增：底部组件文字的双击编辑逻辑
     document.querySelectorAll('.mgr-widget-editable').forEach(el => {
         const key = el.dataset.key;
         const saved = localStorage.getItem(key);
@@ -1855,7 +1892,6 @@
         });
     });
 
-    // 新增：底部组件图片上传逻辑
     document.getElementById('mgr-widget-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -2016,7 +2052,6 @@
         }
     }
 
-    // 解析引擎
     function extractStickersFromText(text) {
         let stickers = [];
         text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -3751,6 +3786,10 @@
         document.getElementById('chat-container').style.paddingTop = '20px';
         document.getElementById('attachment-panel').classList.remove('active');
         setTimeout(() => document.getElementById('attachment-panel').style.display = 'none', 300);
+        
+        // 彻底清理可能存在的通话残留
+        document.getElementById('call-screen').classList.remove('active');
+        document.getElementById('incoming-call-modal').classList.remove('active');
 
         const customBg = await getImageFromDB(`chat_bg_${charId}`);
         const chatScreen = document.getElementById('chat-screen');
@@ -3768,8 +3807,24 @@
         container.scrollTop = container.scrollHeight; openScreen('chat-screen');
     }
 
-    async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null) {
-        const container = document.getElementById('chat-container'); let avatarHtml = ''; let nameHtml = '';
+    async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null, targetId = 'chat-container') {
+        const container = document.getElementById(targetId); 
+        if (!container) return;
+
+        // 系统消息（图1样式）
+        if (!isSelf && (text.startsWith('[系统]') || text.includes('正在呼叫你') || text.includes('已拒绝') || text.includes('通话已结束'))) {
+            const sysMsg = document.createElement('div');
+            sysMsg.style.textAlign = 'center';
+            sysMsg.style.color = '#999';
+            sysMsg.style.fontSize = '13px';
+            sysMsg.style.margin = '10px 0';
+            sysMsg.innerText = text.replace('[系统]', '').trim();
+            container.appendChild(sysMsg);
+            if(scroll) container.scrollTop = container.scrollHeight;
+            return;
+        }
+
+        let avatarHtml = ''; let nameHtml = '';
         if (isSelf) {
             const activeP = userPersonas.find(p => p.id === activeUserPersonaId); const name = activeP ? (activeP.remark || activeP.name || '我') : '我';
             const finalImg = currentUserAvatarCache;
@@ -3787,7 +3842,7 @@
         let bubbleHtml = '';
         
         if (imageBase64) {
-            bubbleHtml = `<img src="${imageBase64}" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px;" alt="${text}">`;
+            bubbleHtml = `<img src="${imageBase64}" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px;" alt="${text}" onerror="this.src=''">`;
         } else {
             const stickerRegex = /\[表情:(.*?)\]/g;
             const pureStickerMatch = text.match(/^\[表情:(.*?)\]$/);
@@ -3837,7 +3892,11 @@
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim(); this.value = '';
             await renderChatMessage(msgText, true, true);
-            if(currentChatCharId) { const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); history.push({ text: msgText, isSelf: true, time: Date.now() }); localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); }
+            if(currentChatCharId) { 
+                const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); 
+                history.push({ text: msgText, isSelf: true, time: Date.now() }); 
+                try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) { alert("存储空间不足！"); }
+            }
         }
     });
 
@@ -3853,12 +3912,10 @@
             panel.classList.add('active');
             const container = document.getElementById('chat-container');
             container.scrollTop = container.scrollHeight;
-            // 关闭表情面板
             document.getElementById('sticker-panel').classList.remove('active');
         }
     }
 
-    // 点击聊天区域收起附件面板
     document.getElementById('chat-container').addEventListener('click', function(e) {
         if (document.getElementById('attachment-panel').classList.contains('active')) {
             toggleAttachmentPanel();
@@ -3882,7 +3939,7 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            callback(canvas.toDataURL('image/jpeg', 0.7));
+            callback(canvas.toDataURL('image/jpeg', 0.6)); // 调低质量防卡顿
         };
         img.src = base64;
     }
@@ -3893,7 +3950,7 @@
         const reader = new FileReader();
         reader.onload = function(event) {
             const base64Data = event.target.result;
-            compressImage(base64Data, 600, async function(compressedBase64) {
+            compressImage(base64Data, 400, async function(compressedBase64) { // 缩小到400px
                 await renderChatMessage("[发送了一张图片]", true, true, compressedBase64);
                 if(currentChatCharId) {
                     const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
@@ -3901,7 +3958,7 @@
                     try {
                         localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
                     } catch(e) {
-                        alert("图片过大，保存失败！请清理缓存或发送更小的图片。");
+                        console.error("图片过大导致存储失败", e);
                     }
                 }
                 toggleAttachmentPanel();
@@ -3923,7 +3980,6 @@
         let charPersona = `【角色设定】\n名字: ${char.remark || char.name || '未命名'}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
         let userPersona = activeP ? `【用户设定】\n名字: ${activeP.remark || activeP.name || '我'}\n身份: ${activeP.identity || '未知'}\n` : '';
 
-        // 加入记忆
         let memories = safeParseJSON(localStorage.getItem(`char_memory_${char.id}`), []);
         let memoryPrompt = '';
         if (memories.length > 0) {
@@ -3970,7 +4026,11 @@
             }
         });
 
-        const container = document.getElementById('chat-container'); const loadingRow = document.createElement('div'); loadingRow.className = `chat-msg-row left`; loadingRow.id = 'loading-msg';
+        const isCallActive = document.getElementById('call-screen').classList.contains('active');
+        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
+        const container = document.getElementById(targetId); 
+
+        const loadingRow = document.createElement('div'); loadingRow.className = `chat-msg-row left`; loadingRow.id = 'loading-msg';
         const charImg = currentCharAvatarCache; let style = charImg ? `background-image:url(${charImg}); background-size:cover;` : `background-color:#a4b4e0; color:#fff; display:flex; justify-content:center; align-items:center; font-size:18px;`;
         loadingRow.innerHTML = `<div class="chat-msg-avatar" style="${style}">${charImg ? '' : (char.remark||char.name||'?').charAt(0)}</div><div class="chat-msg-content"><div class="chat-bubble" style="color:#888;">正在输入...</div></div>`;
         container.appendChild(loadingRow); container.scrollTop = container.scrollHeight;
@@ -3992,17 +4052,19 @@
             if (replyText.includes('[发起通话]')) {
                 replyText = replyText.replace('[发起通话]', '').trim();
                 if (replyText) {
-                    container.removeChild(loadingRow); 
-                    await renderChatMessage(replyText, false, true);
+                    if (container.contains(loadingRow)) container.removeChild(loadingRow); 
+                    await renderChatMessage(replyText, false, true, null, targetId);
                     history.push({ text: replyText, isSelf: false, time: Date.now() }); 
-                    localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history));
+                    try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
                 }
                 showIncomingCall();
                 return;
             }
 
-            container.removeChild(loadingRow); await renderChatMessage(replyText, false, true);
-            history.push({ text: replyText, isSelf: false, time: Date.now() }); localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history));
+            if (container.contains(loadingRow)) container.removeChild(loadingRow); 
+            await renderChatMessage(replyText, false, true, null, targetId);
+            history.push({ text: replyText, isSelf: false, time: Date.now() }); 
+            try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
 
             if (document.visibilityState === 'hidden') {
                 playRingtone();
@@ -4100,7 +4162,7 @@
             const reader = new FileReader(); 
             reader.onload = async function(event) { 
                 await saveImageToDB(`contact_avatar_${currentChatCharId}`, event.target.result); 
-                currentCharAvatarCache = event.target.result; // 更新缓存
+                currentCharAvatarCache = event.target.result; 
                 loadDetailAvatars(); 
                 reRenderChatHistory(); 
             }; 
@@ -4115,7 +4177,7 @@
             const reader = new FileReader(); 
             reader.onload = async function(event) { 
                 await saveImageToDB(`chat_user_avatar_${currentChatCharId}`, event.target.result); 
-                currentUserAvatarCache = event.target.result; // 更新缓存
+                currentUserAvatarCache = event.target.result; 
                 loadDetailAvatars(); 
                 reRenderChatHistory(); 
             }; 
@@ -4161,17 +4223,32 @@
     }
 
     // ==========================================
-    // 🌟 6. 通话功能逻辑
+    // 🌟 6. 通话功能逻辑 (修复与增强)
     // ==========================================
     let callTimer = null;
     let callSeconds = 0;
 
+    async function addSystemMessage(text) {
+        await renderChatMessage(text, false, true);
+        const isCallActive = document.getElementById('call-screen').classList.contains('active');
+        if (isCallActive) {
+            await renderChatMessage(text, false, true, null, 'call-chat-container');
+        }
+        if(currentChatCharId) {
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            history.push({ text: text, isSelf: false, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        }
+    }
+
     function startOutgoingCall() {
         if(!currentChatCharId) return;
-        toggleAttachmentPanel(); // 关闭面板
-        addSystemMessage("[系统] 您发起通话申请");
+        toggleAttachmentPanel(); 
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charName = char ? (char.remark || char.name) : '对方';
+        addSystemMessage(`[系统] ${charName}正在呼叫你`);
+        
         setTimeout(() => {
-            // 模拟对方接通
             acceptCall();
         }, 1500);
     }
@@ -4195,7 +4272,9 @@
 
     function rejectIncomingCall() {
         document.getElementById('incoming-call-modal').classList.remove('active');
-        addSystemMessage("[系统] 您已拒绝对方的通话申请");
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charName = char ? (char.remark || char.name) : '对方';
+        addSystemMessage(`[系统] 已拒绝${charName}的视频来电`);
     }
 
     function acceptIncomingCall() {
@@ -4206,10 +4285,8 @@
     async function acceptCall() {
         const char = contacts.find(c => c.id === currentChatCharId);
         if(!char) return;
-        addSystemMessage("[系统] 通话已接通");
         
-        document.getElementById('call-char-name').innerText = char.name || char.remark || 'Love song';
-        document.getElementById('call-char-remark').innerText = char.remark || 'Kaash Paige';
+        document.getElementById('call-char-name').innerText = char.remark || char.name || 'Love song';
         
         const av = document.getElementById('call-avatar');
         if(currentCharAvatarCache) {
@@ -4219,34 +4296,56 @@
             av.style.backgroundImage = 'none';
             av.innerText = (char.remark || char.name).charAt(0);
         }
+
+        // 同步聊天记录到通话界面
+        const callChatContainer = document.getElementById('call-chat-container');
+        callChatContainer.innerHTML = '';
+        const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
+        if(hasHistory) { 
+            const history = safeParseJSON(hasHistory, []); 
+            const recent = history.slice(-20); // 避免渲染过多卡顿
+            for(const msg of recent) { 
+                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, 'call-chat-container'); 
+            } 
+        }
         
         document.getElementById('call-screen').classList.add('active');
+        callChatContainer.scrollTop = callChatContainer.scrollHeight;
+        
         callSeconds = 0;
-        document.getElementById('call-progress').style.width = '0%';
+        document.getElementById('call-time-display').innerText = `正在通话中... 00:00`;
         
         if(callTimer) clearInterval(callTimer);
         callTimer = setInterval(() => {
             callSeconds++;
-            let percent = Math.min((callSeconds / 60) * 100, 100); // 60秒填满
-            document.getElementById('call-progress').style.width = percent + '%';
+            const m = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+            const s = String(callSeconds % 60).padStart(2, '0');
+            document.getElementById('call-time-display').innerText = `正在通话中... ${m}:${s}`;
         }, 1000);
+    }
+
+    async function sendCallMessage() {
+        const input = document.getElementById('call-input-field');
+        const text = input.value.trim();
+        if(!text) return;
+        input.value = '';
+        
+        await renderChatMessage(text, true, true, null, 'call-chat-container');
+        if(currentChatCharId) {
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            history.push({ text: text, isSelf: true, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        }
+        // 自动呼叫AI回复
+        triggerCharReply();
     }
 
     function endCall() {
         if(callTimer) clearInterval(callTimer);
         document.getElementById('call-screen').classList.remove('active');
+        document.getElementById('call-chat-container').innerHTML = ''; // 清空以防下次冲突
         addSystemMessage("[系统] 通话已结束");
-        // 触发总结
         summarizeCallMemory(currentChatCharId);
-    }
-
-    async function addSystemMessage(text) {
-        await renderChatMessage(text, false, true);
-        if(currentChatCharId) {
-            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ text: text, isSelf: false, time: Date.now() });
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
-        }
     }
 
     async function summarizeCallMemory(charId) {
