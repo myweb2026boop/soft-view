@@ -883,17 +883,18 @@
     /* ==================================================== */
     /* 🌟 通话相关界面样式 */
     /* ==================================================== */
-    /* 图2：来电弹窗 */
+    /* 图2：来电弹窗 (参考图1样式) */
     .incoming-call-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 7000; display: none; justify-content: center; align-items: center; }
     .incoming-call-overlay.active { display: flex; }
-    .incoming-call-card { background: #f2f2f7; border-radius: 20px; padding: 24px; width: 80%; max-width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-    .incoming-call-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 30px; }
-    .incoming-call-avatar { width: 60px; height: 60px; border-radius: 50%; background-size: cover; background-position: center; background-color: #e5e5ea; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px; font-weight: bold; }
+    .incoming-call-card { background: #ffffff; border-radius: 24px; padding: 30px 20px 20px; width: 85%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+    .incoming-call-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 30px; padding: 0 10px; }
+    .incoming-call-avatar { width: 60px; height: 60px; border-radius: 50%; background-size: cover; background-position: center; background-color: #e5e5ea; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px; font-weight: bold; flex-shrink: 0; }
     .incoming-call-info { text-align: left; }
-    .incoming-call-name { font-size: 20px; font-weight: 600; color: #000; }
-    .incoming-call-type { font-size: 14px; color: #888; }
-    .incoming-call-actions { display: flex; justify-content: space-between; gap: 20px; padding: 0 10px; }
+    .incoming-call-name { font-size: 22px; font-weight: 500; color: #000; margin-bottom: 4px; }
+    .incoming-call-type { font-size: 14px; color: #666; }
+    .incoming-call-actions { display: flex; justify-content: space-between; gap: 15px; padding: 0 10px; }
     .incoming-call-btn { flex: 1; background: #000; color: #fff; padding: 14px 0; border-radius: 30px; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; border: none; }
+    .incoming-call-btn:active { opacity: 0.8; }
     
     /* 图3：通话中全屏界面 (已改造) */
     #call-screen { background: #f5f5f7; z-index: 6500; display: none; flex-direction: column; padding: 0; }
@@ -937,6 +938,33 @@
         cursor: pointer; 
         box-shadow: 0 2px 8px rgba(255,59,48,0.3);
     }
+
+    /* 🌟 聊天特殊卡片样式 (位置、红包、转账、礼物) */
+    .chat-card { border-radius: 12px; overflow: hidden; width: 220px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: left; }
+    
+    /* 位置卡片 (参考图2) */
+    .card-location .loc-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #f0f0f0; }
+    .card-location .loc-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .card-location .loc-address { font-size: 12px; color: #888; line-height: 1.4; }
+    .card-location .loc-map-placeholder { height: 100px; background: #e5f0e5 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20 80 Q 40 50 60 60 T 90 20" stroke="%23a0c8a0" stroke-width="8" fill="none"/><circle cx="60" cy="60" r="8" fill="%2334c759" stroke="white" stroke-width="2"/></svg>') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
+    .card-location .loc-map-icon { width: 30px; height: 30px; background: #34c759; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .card-location .loc-actions { padding: 10px; display: flex; gap: 10px; border-top: 1px solid #f0f0f0; }
+    .loc-btn { flex: 1; padding: 6px 0; border-radius: 6px; font-size: 13px; border: none; cursor: pointer; text-align: center; }
+    .loc-btn.accept { background: #34c759; color: white; }
+    .loc-btn.reject { background: #f2f2f7; color: #666; }
+    
+    /* 红包/转账卡片 */
+    .card-redpacket, .card-transfer { background: linear-gradient(135deg, #ff6b00, #ff3b30); color: #fff; border-radius: 12px; padding: 15px; width: 220px; position: relative; }
+    .card-transfer { background: linear-gradient(135deg, #ff9500, #ff5e00); }
+    .card-redpacket .rp-icon, .card-transfer .tp-icon { font-size: 40px; margin-bottom: 10px; line-height: 1; display: flex; align-items: center; gap: 10px; }
+    .card-redpacket .rp-remark, .card-transfer .tp-remark { font-size: 14px; opacity: 0.9; margin-bottom: 4px; word-break: break-all; }
+    .card-redpacket .rp-status, .card-transfer .tp-status { font-size: 12px; opacity: 0.7; }
+    
+    /* 礼物卡片 */
+    .card-gift { background: #fff; border: 1px solid #ffccd5; padding: 15px; border-radius: 12px; width: 220px; }
+    .card-gift .gift-title { font-size: 16px; font-weight: 600; color: #ff3b30; margin-bottom: 8px; }
+    .card-gift .gift-remark { font-size: 13px; color: #666; margin-bottom: 10px; line-height: 1.4; word-break: break-all; }
+    .card-gift .gift-price { font-size: 14px; color: #ff3b30; font-weight: 600; }
 
     /* 隐藏 input */
     .hidden-input { display: none; }
@@ -1634,21 +1662,21 @@
             <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
             <span class="attach-label">通话</span>
         </div>
-        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
+        <div class="attach-item" onclick="openLocationModal()">
             <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
             <span class="attach-label">位置</span>
         </div>
-        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
+        <div class="attach-item" onclick="openPaymentModal('redpacket')">
+            <div class="attach-icon" style="background:#ffebeb;"><svg viewBox="0 0 24 24" style="fill:#ff3b30;"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg></div>
             <span class="attach-label">红包</span>
         </div>
-        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
-            <span class="attach-label">礼物</span>
-        </div>
-        <div class="attach-item" onclick="alert('暂未实现'); toggleAttachmentPanel();">
-            <div class="attach-icon"><svg viewBox="0 0 24 24"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
+        <div class="attach-item" onclick="openPaymentModal('transfer')">
+            <div class="attach-icon" style="background:#fff3e0;"><svg viewBox="0 0 24 24" style="fill:#ff9500;"><path d="M4 9h4l2-2h4V5h-4L4 9zm0 6l6 4h4v-2h-4l-2-2H4zM17.5 9L15 6.5M17.5 15L15 17.5"/></svg></div>
             <span class="attach-label">转账</span>
+        </div>
+        <div class="attach-item" onclick="openPaymentModal('gift')">
+            <div class="attach-icon" style="background:#ffe6eb;"><svg viewBox="0 0 24 24" style="fill:#ff3b30;"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+            <span class="attach-label">礼物</span>
         </div>
         <div class="attach-item" onclick="openManager(); toggleAttachmentPanel();">
             <div class="attach-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
@@ -1714,9 +1742,59 @@
 </div>
 
 <!-- ========================================== -->
+<!-- 新增功能弹窗：位置、红包、转账、礼物 -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="location-modal">
+    <div class="modal-content">
+        <div class="modal-title">发送位置</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button class="modal-btn confirm" style="flex:1; background:#f2f2f7; color:#333;" onclick="getCurrentLocation()">获取当前位置</button>
+            <button class="modal-btn confirm" style="flex:1; background:#f2f2f7; color:#333;" onclick="document.getElementById('location-manual-input').focus()">手动输入</button>
+        </div>
+        <div class="modal-input-group">
+            <input type="text" id="location-manual-input" placeholder="输入位置名称/地址...">
+            <input type="text" id="location-title-input" placeholder="标题 (如：我的位置)" value="我的位置" style="margin-top: 8px;">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeLocationModal()">取消</button>
+            <button class="modal-btn confirm" onclick="sendLocationMessage()">发送</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="payment-modal">
+    <div class="modal-content">
+        <div class="modal-title" id="payment-modal-title">发红包</div>
+        <div class="modal-input-group">
+            <input type="number" id="payment-amount" placeholder="金额 (¥)" step="0.01">
+            <input type="text" id="payment-remark" placeholder="备注/赠言">
+            <input type="text" id="payment-gift-name" placeholder="礼物名称 (仅礼物需要)" style="display:none;">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closePaymentModal()">取消</button>
+            <button class="modal-btn confirm" onclick="sendPaymentMessage()">发送</button>
+        </div>
+    </div>
+</div>
+
+<!-- 处理操作弹窗 (领取/退回/填地址) -->
+<div class="modal-overlay" id="action-modal">
+    <div class="modal-content">
+        <div class="modal-title" id="action-modal-title">操作</div>
+        <div class="modal-input-group" id="action-address-group" style="display:none;">
+            <input type="text" id="action-address-input" placeholder="请输入收货地址">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" id="action-btn-cancel">取消</button>
+            <button class="modal-btn confirm" id="action-btn-confirm">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
 <!-- 通话相关界面 -->
 <!-- ========================================== -->
-<!-- 图2：来电弹窗 -->
+<!-- 图2：来电弹窗 (参考图1样式) -->
 <div class="incoming-call-overlay" id="incoming-call-modal">
     <div class="incoming-call-card">
         <div class="incoming-call-header">
@@ -2396,8 +2474,8 @@
         await renderChatMessage(`[表情:${sticker.meaning}]`, true, true, sticker.image);
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
-            localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
+            history.push({ id: Date.now().toString(), type: 'sticker', text: `[表情:${sticker.meaning}]`, image: sticker.image, isSelf: true, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
     }
 
@@ -3778,7 +3856,6 @@
         document.getElementById('chat-title').innerHTML = `${char.remark || char.name || '未命名'}`;
         const container = document.getElementById('chat-container'); container.innerHTML = ''; 
         
-        // 重置搜索状态与附件面板
         document.getElementById('chat-search-bar').style.display = 'none';
         document.getElementById('chat-search-input').value = '';
         document.querySelector('.chat-header').style.display = 'flex';
@@ -3787,7 +3864,6 @@
         document.getElementById('attachment-panel').classList.remove('active');
         setTimeout(() => document.getElementById('attachment-panel').style.display = 'none', 300);
         
-        // 彻底清理可能存在的通话残留
         document.getElementById('call-screen').classList.remove('active');
         document.getElementById('incoming-call-modal').classList.remove('active');
 
@@ -3795,7 +3871,6 @@
         const chatScreen = document.getElementById('chat-screen');
         if (customBg) { chatScreen.style.backgroundImage = `url(${customBg})`; } else { chatScreen.style.backgroundImage = 'none'; }
         
-        // 缓存头像，防止循环渲染卡顿
         currentCharAvatarCache = await getImageFromDB(`contact_avatar_${charId}`);
         const activeP = userPersonas.find(p => p.id === activeUserPersonaId);
         const chatUserImg = await getImageFromDB(`chat_user_avatar_${charId}`);
@@ -3803,21 +3878,22 @@
         currentUserAvatarCache = chatUserImg || globalUserImg;
 
         const hasHistory = localStorage.getItem(`chat_history_${charId}`);
-        if(hasHistory) { const history = safeParseJSON(hasHistory, []); for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false, msg.image); } }
+        if(hasHistory) { const history = safeParseJSON(hasHistory, []); for (const msg of history) { await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); } }
         container.scrollTop = container.scrollHeight; openScreen('chat-screen');
     }
 
-    async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null, targetId = 'chat-container') {
+    async function renderChatMessage(text, isSelf, scroll = true, imageBase64 = null, msgType = 'text', msgData = null, msgStatus = '', msgId = null, targetId = 'chat-container') {
         const container = document.getElementById(targetId); 
         if (!container) return;
 
-        // 系统消息（图1样式）
-        if (!isSelf && (text.startsWith('[系统]') || text.includes('正在呼叫你') || text.includes('已拒绝') || text.includes('通话已结束'))) {
+        // 系统提示样式 (居中小字，参考图1)
+        if (!isSelf && (msgType === 'system' || text.startsWith('[系统]') || text.includes('正在呼叫你') || text.includes('已拒绝'))) {
             const sysMsg = document.createElement('div');
             sysMsg.style.textAlign = 'center';
             sysMsg.style.color = '#999';
             sysMsg.style.fontSize = '13px';
             sysMsg.style.margin = '10px 0';
+            sysMsg.className = 'chat-system-msg';
             sysMsg.innerText = text.replace('[系统]', '').trim();
             container.appendChild(sysMsg);
             if(scroll) container.scrollTop = container.scrollHeight;
@@ -3839,9 +3915,67 @@
             }
         }
         const msgRow = document.createElement('div'); msgRow.className = `chat-msg-row ${isSelf ? 'right' : 'left'}`;
+        if(msgId) msgRow.dataset.msgId = msgId;
+        
         let bubbleHtml = '';
         
-        if (imageBase64) {
+        if (msgType === 'location') {
+            const locData = msgData || { title: '我的位置', address: '未知地址', status: 'pending' };
+            let actionHtml = '';
+            if (locData.isShare) {
+                if (locData.status === 'pending') {
+                    if (!isSelf) {
+                        actionHtml = `<div class="loc-actions">
+                            <button class="loc-btn reject" onclick="handleLocationAction('${msgId}', 'reject')">拒绝</button>
+                            <button class="loc-btn accept" onclick="handleLocationAction('${msgId}', 'accept')">同意</button>
+                        </div>`;
+                    } else {
+                        actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#888; text-align:center; width:100%;">等待对方同意</div></div>`;
+                    }
+                } else if (locData.status === 'accepted') {
+                    actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#34c759; text-align:center; width:100%;">已同意共享</div></div>`;
+                } else if (locData.status === 'rejected') {
+                    actionHtml = `<div class="loc-actions"><div style="font-size:12px; color:#ff3b30; text-align:center; width:100%;">已拒绝共享</div></div>`;
+                }
+            }
+            bubbleHtml = `<div class="chat-card card-location">
+                <div class="loc-header">
+                    <div class="loc-title">${locData.title}</div>
+                    <div class="loc-address">${locData.address}</div>
+                </div>
+                <div class="loc-map-placeholder"><div class="loc-map-icon"></div></div>
+                ${actionHtml}
+            </div>`;
+        } else if (msgType === 'redpacket' || msgType === 'transfer') {
+            const pData = msgData || { amount: '0.00', remark: '恭喜发财', status: 'pending' };
+            let statusText = pData.status === 'pending' ? '未领取' : (pData.status === 'accepted' ? '已领取' : '已退回');
+            let actionHtml = '';
+            if (pData.status === 'pending' && !isSelf) {
+                bubbleHtml = `<div class="chat-card card-${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-icon">
+                        <svg style="width:40px;height:40px;fill:#fff;" viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>
+                    </div>
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-remark">${pData.remark || (msgType==='redpacket'?'恭喜发财':'转账')}</div>
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-status">${statusText}</div>
+                </div>`;
+            } else {
+                bubbleHtml = `<div class="chat-card card-${msgType}" onclick="handlePaymentAction('${msgId}', '${msgType}')">
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-icon">
+                        <svg style="width:40px;height:40px;fill:#fff;" viewBox="0 0 24 24"><path d="M20 6h-2v2h2v10H4V8h2V6H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9z"/></svg>
+                    </div>
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-remark">${pData.remark || (msgType==='redpacket'?'恭喜发财':'转账')}</div>
+                    <div class="${msgType === 'redpacket' ? 'rp' : 'tp'}-status">${statusText}</div>
+                </div>`;
+            }
+        } else if (msgType === 'gift') {
+            const gData = msgData || { name: '神秘礼物', amount: '0.00', remark: '一点心意', status: 'pending' };
+            let statusText = gData.status === 'pending' ? '待接收' : (gData.status === 'accepted' ? '已收下' : '已退回');
+            bubbleHtml = `<div class="chat-card card-gift" onclick="handlePaymentAction('${msgId}', 'gift')">
+                <div class="gift-title">🎁 ${gData.name}</div>
+                <div class="gift-remark">${gData.remark}</div>
+                <div class="gift-price">¥${gData.amount} <span style="font-size:12px; color:#888; float:right;">${statusText}</span></div>
+            </div>`;
+        } else if (imageBase64) {
             bubbleHtml = `<img src="${imageBase64}" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px;" alt="${text}" onerror="this.src=''">`;
         } else {
             const stickerRegex = /\[表情:(.*?)\]/g;
@@ -3880,7 +4014,7 @@
             }
         }
         
-        if(!imageBase64 && !text.match(/^\[表情:(.*?)\]$/) && (text.includes('( ') || text.includes('₍'))) { 
+        if(!imageBase64 && !text.match(/^\[表情:(.*?)\]$/) && (text.includes('( ') || text.includes('₍')) && msgType === 'text') { 
             bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`; 
         }
 
@@ -3891,10 +4025,11 @@
     document.getElementById('chat-input-field').addEventListener('keypress', async function(e) {
         if (e.key === 'Enter' && this.value.trim() !== '') {
             const msgText = this.value.trim(); this.value = '';
-            await renderChatMessage(msgText, true, true);
+            const msgId = Date.now().toString();
+            await renderChatMessage(msgText, true, true, null, 'text', null, '', msgId);
             if(currentChatCharId) { 
                 const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []); 
-                history.push({ text: msgText, isSelf: true, time: Date.now() }); 
+                history.push({ id: msgId, type: 'text', text: msgText, isSelf: true, time: Date.now() }); 
                 try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) { alert("存储空间不足！"); }
             }
         }
@@ -3908,7 +4043,7 @@
             setTimeout(() => panel.style.display = 'none', 300);
         } else {
             panel.style.display = 'block';
-            panel.offsetHeight; // 强制重绘
+            panel.offsetHeight; 
             panel.classList.add('active');
             const container = document.getElementById('chat-container');
             container.scrollTop = container.scrollHeight;
@@ -3939,7 +4074,8 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            callback(canvas.toDataURL('image/jpeg', 0.6)); // 调低质量防卡顿
+            // 极致压缩，防止卡顿和超限
+            callback(canvas.toDataURL('image/jpeg', 0.5)); 
         };
         img.src = base64;
     }
@@ -3950,15 +4086,17 @@
         const reader = new FileReader();
         reader.onload = function(event) {
             const base64Data = event.target.result;
-            compressImage(base64Data, 400, async function(compressedBase64) { // 缩小到400px
-                await renderChatMessage("[发送了一张图片]", true, true, compressedBase64);
+            compressImage(base64Data, 300, async function(compressedBase64) { 
+                const msgId = Date.now().toString();
+                await renderChatMessage("[发送了一张图片]", true, true, compressedBase64, 'image', null, '', msgId);
                 if(currentChatCharId) {
                     const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-                    history.push({ text: "[发送了一张图片]", image: compressedBase64, isSelf: true, time: Date.now() });
+                    history.push({ id: msgId, type: 'image', text: "[发送了一张图片]", image: compressedBase64, isSelf: true, time: Date.now() });
                     try {
                         localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history));
                     } catch(e) {
                         console.error("图片过大导致存储失败", e);
+                        alert("图片已发送，但受限于本地存储空间，可能无法永久保存！");
                     }
                 }
                 toggleAttachmentPanel();
@@ -3969,6 +4107,187 @@
     }
     document.getElementById('chat-photo-upload').addEventListener('change', function() { handleImageUpload(this); });
     document.getElementById('chat-camera-upload').addEventListener('change', function() { handleImageUpload(this); });
+
+    // 新增功能逻辑：位置、红包、转账、礼物
+    let currentPaymentType = '';
+    function openLocationModal() {
+        toggleAttachmentPanel();
+        document.getElementById('location-manual-input').value = '';
+        document.getElementById('location-modal').classList.add('active');
+    }
+    function closeLocationModal() { document.getElementById('location-modal').classList.remove('active'); }
+
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('location-manual-input').value = `经度:${pos.coords.longitude.toFixed(4)}, 纬度:${pos.coords.latitude.toFixed(4)}`;
+                document.getElementById('location-title-input').value = '我的实时位置';
+            }, (err) => {
+                alert('获取位置失败，请手动输入');
+            });
+        } else {
+            alert('浏览器不支持定位');
+        }
+    }
+
+    async function sendLocationMessage() {
+        const address = document.getElementById('location-manual-input').value.trim();
+        const title = document.getElementById('location-title-input').value.trim() || '我的位置';
+        if (!address) { alert('请输入位置信息'); return; }
+        closeLocationModal();
+        
+        const msgId = Date.now().toString();
+        const msgData = { title, address, isShare: true, status: 'pending' };
+        await renderChatMessage(`[位置] ${title} - ${address}`, true, true, null, 'location', msgData, '', msgId);
+        
+        if(currentChatCharId) {
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            history.push({ id: msgId, type: 'location', text: `[位置] ${title} - ${address}`, data: msgData, isSelf: true, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        }
+        triggerCharReply();
+    }
+
+    function openPaymentModal(type) {
+        toggleAttachmentPanel();
+        currentPaymentType = type;
+        document.getElementById('payment-modal-title').innerText = type === 'redpacket' ? '发红包' : (type === 'transfer' ? '转账' : '送礼物');
+        document.getElementById('payment-amount').value = '';
+        document.getElementById('payment-remark').value = '';
+        document.getElementById('payment-gift-name').style.display = type === 'gift' ? 'block' : 'none';
+        document.getElementById('payment-gift-name').value = '';
+        document.getElementById('payment-modal').classList.add('active');
+    }
+    function closePaymentModal() { document.getElementById('payment-modal').classList.remove('active'); }
+
+    async function sendPaymentMessage() {
+        const amount = document.getElementById('payment-amount').value.trim();
+        const remark = document.getElementById('payment-remark').value.trim() || (currentPaymentType === 'redpacket' ? '恭喜发财' : (currentPaymentType === 'transfer' ? '转账' : '一点心意'));
+        const giftName = document.getElementById('payment-gift-name').value.trim() || '神秘礼物';
+        if (!amount || isNaN(amount)) { alert('请输入有效金额'); return; }
+        
+        closePaymentModal();
+        const msgId = Date.now().toString();
+        let msgText = '';
+        let msgData = { amount, remark, status: 'pending' };
+        if (currentPaymentType === 'redpacket') msgText = `[红包] ${remark}`;
+        else if (currentPaymentType === 'transfer') msgText = `[转账] ¥${amount}`;
+        else { msgText = `[礼物] ${giftName}`; msgData.name = giftName; }
+
+        await renderChatMessage(msgText, true, true, null, currentPaymentType, msgData, '', msgId);
+        if(currentChatCharId) {
+            const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+            history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
+            try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        }
+        triggerCharReply();
+    }
+
+    // 处理领取/退回
+    let currentActionMsgId = null;
+    let currentActionType = '';
+    function handlePaymentAction(msgId, type) {
+        const isCallActive = document.getElementById('call-screen').classList.contains('active');
+        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
+        const msgRow = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${msgId}"]`);
+        if (!msgRow) return;
+        const isSelf = msgRow.classList.contains('right');
+        
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msgIndex = history.findIndex(m => m.id === msgId);
+        if (msgIndex === -1) return;
+        const msg = history[msgIndex];
+
+        if (msg.data.status !== 'pending') return; // 已处理过
+        
+        if (isSelf) {
+            alert('等待对方处理哦~');
+            return;
+        }
+
+        currentActionMsgId = msgId;
+        currentActionType = type;
+        
+        if (type === 'gift') {
+            document.getElementById('action-modal-title').innerText = '收下礼物';
+            document.getElementById('action-address-group').style.display = 'block';
+            document.getElementById('action-address-input').value = '';
+            document.getElementById('action-btn-confirm').onclick = async () => {
+                const address = document.getElementById('action-address-input').value.trim();
+                if (!address) { alert('请填写收货地址'); return; }
+                await processPaymentAction('accepted', address);
+            };
+            document.getElementById('action-btn-cancel').onclick = async () => {
+                await processPaymentAction('rejected');
+            };
+        } else {
+            document.getElementById('action-modal-title').innerText = '领取 / 退回';
+            document.getElementById('action-address-group').style.display = 'none';
+            document.getElementById('action-btn-confirm').innerText = '领取';
+            document.getElementById('action-btn-confirm').onclick = async () => {
+                await processPaymentAction('accepted');
+            };
+            document.getElementById('action-btn-cancel').innerText = '退回';
+            document.getElementById('action-btn-cancel').onclick = async () => {
+                await processPaymentAction('rejected');
+            };
+        }
+        document.getElementById('action-modal').classList.add('active');
+    }
+
+    async function processPaymentAction(action, address = '') {
+        document.getElementById('action-modal').classList.remove('active');
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charName = char ? (char.remark || char.name) : '对方';
+        
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msgIndex = history.findIndex(m => m.id === currentActionMsgId);
+        if (msgIndex === -1) return;
+        
+        history[msgIndex].data.status = action;
+        if (address) history[msgIndex].data.address = address;
+        
+        try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+
+        let sysText = '';
+        if (currentActionType === 'redpacket') {
+            sysText = action === 'accepted' ? `你领取了${charName}的红包` : `你退回了${charName}的红包`;
+        } else if (currentActionType === 'transfer') {
+            sysText = action === 'accepted' ? `你接收了${charName}的转账` : `你退回了${charName}的转账`;
+        } else if (currentActionType === 'gift') {
+            sysText = action === 'accepted' ? `你已收下${charName}赠送的礼物` : `你已退回${charName}赠送的礼物`;
+        }
+
+        if (action === 'accepted' && currentActionType === 'gift') {
+            sysText += ` (地址：${address})`;
+        }
+
+        // 重新渲染历史
+        await reRenderChatHistory();
+        
+        // 添加系统消息
+        await addSystemMessage(sysText);
+        
+        // 触发AI回复
+        triggerCharReply();
+    }
+
+    async function handleLocationAction(msgId, action) {
+        let history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
+        const msgIndex = history.findIndex(m => m.id === msgId);
+        if (msgIndex === -1) return;
+        
+        history[msgIndex].data.status = action === 'accept' ? 'accepted' : 'rejected';
+        try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
+        
+        const char = contacts.find(c => c.id === currentChatCharId);
+        const charName = char ? (char.remark || char.name) : '对方';
+        const sysText = action === 'accept' ? `你同意了${charName}的位置共享` : `你拒绝了${charName}的位置共享`;
+        
+        await reRenderChatHistory();
+        await addSystemMessage(sysText);
+        triggerCharReply();
+    }
 
     async function triggerCharReply() {
         if (!currentChatCharId) return;
@@ -4013,16 +4332,22 @@
         const recentHistory = history.slice(-15);
         
         recentHistory.forEach(msg => {
+            let contentText = msg.text || '';
+            if (msg.type === 'location') contentText = `[发送了位置共享：${msg.data.address}，状态：${msg.data.status}]`;
+            else if (msg.type === 'redpacket') contentText = `[发了一个红包，备注：${msg.data.remark}，状态：${msg.data.status}]`;
+            else if (msg.type === 'transfer') contentText = `[发起转账 ¥${msg.data.amount}，状态：${msg.data.status}]`;
+            else if (msg.type === 'gift') contentText = `[赠送了礼物 ${msg.data.name}，赠言：${msg.data.remark}，状态：${msg.data.status}]`;
+
             if (msg.image) {
                 messages.push({ 
                     role: msg.isSelf ? "user" : "assistant", 
                     content: [
-                        { type: "text", text: msg.text || "发送了一张图片" },
+                        { type: "text", text: contentText || "发送了一张图片" },
                         { type: "image_url", image_url: { url: msg.image } }
                     ]
                 });
             } else {
-                messages.push({ role: msg.isSelf ? "user" : "assistant", content: msg.text });
+                messages.push({ role: msg.isSelf ? "user" : "assistant", content: contentText });
             }
         });
 
@@ -4053,8 +4378,9 @@
                 replyText = replyText.replace('[发起通话]', '').trim();
                 if (replyText) {
                     if (container.contains(loadingRow)) container.removeChild(loadingRow); 
-                    await renderChatMessage(replyText, false, true, null, targetId);
-                    history.push({ text: replyText, isSelf: false, time: Date.now() }); 
+                    const msgId = Date.now().toString();
+                    await renderChatMessage(replyText, false, true, null, 'text', null, '', msgId, targetId);
+                    history.push({ id: msgId, type: 'text', text: replyText, isSelf: false, time: Date.now() }); 
                     try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
                 }
                 showIncomingCall();
@@ -4062,8 +4388,9 @@
             }
 
             if (container.contains(loadingRow)) container.removeChild(loadingRow); 
-            await renderChatMessage(replyText, false, true, null, targetId);
-            history.push({ text: replyText, isSelf: false, time: Date.now() }); 
+            const msgId = Date.now().toString();
+            await renderChatMessage(replyText, false, true, null, 'text', null, '', msgId, targetId);
+            history.push({ id: msgId, type: 'text', text: replyText, isSelf: false, time: Date.now() }); 
             try { localStorage.setItem(`chat_history_${char.id}`, JSON.stringify(history)); } catch(e) {}
 
             if (document.visibilityState === 'hidden') {
@@ -4137,6 +4464,12 @@
         const keyword = document.getElementById('chat-search-input').value.trim().toLowerCase();
         const rows = document.querySelectorAll('#chat-container .chat-msg-row');
         rows.forEach(row => {
+            // 系统消息不参与搜索 (根据要求)
+            const isSysMsg = row.querySelector('.chat-system-msg') !== null;
+            if (isSysMsg) {
+                row.style.display = keyword ? 'none' : 'flex'; // 搜索时隐藏系统消息
+                return;
+            }
             const text = row.querySelector('.chat-bubble, .chat-bubble-plain, img')?.innerText.toLowerCase() || '';
             if (!keyword || text.includes(keyword)) row.style.display = 'flex'; else row.style.display = 'none';
         });
@@ -4216,7 +4549,7 @@
         if(hasHistory) { 
             const history = safeParseJSON(hasHistory, []); 
             for(const msg of history) { 
-                await renderChatMessage(msg.text, msg.isSelf, false, msg.image); 
+                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
             } 
         }
         container.scrollTop = container.scrollHeight;
@@ -4229,14 +4562,15 @@
     let callSeconds = 0;
 
     async function addSystemMessage(text) {
-        await renderChatMessage(text, false, true);
+        const msgId = Date.now().toString();
+        await renderChatMessage(text, false, true, null, 'system', null, '', msgId);
         const isCallActive = document.getElementById('call-screen').classList.contains('active');
         if (isCallActive) {
-            await renderChatMessage(text, false, true, null, 'call-chat-container');
+            await renderChatMessage(text, false, true, null, 'system', null, '', msgId, 'call-chat-container');
         }
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ text: text, isSelf: false, time: Date.now() });
+            history.push({ id: msgId, type: 'system', text: text, isSelf: false, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
     }
@@ -4246,7 +4580,7 @@
         toggleAttachmentPanel(); 
         const char = contacts.find(c => c.id === currentChatCharId);
         const charName = char ? (char.remark || char.name) : '对方';
-        addSystemMessage(`[系统] ${charName}正在呼叫你`);
+        addSystemMessage(`${charName}正在呼叫你`);
         
         setTimeout(() => {
             acceptCall();
@@ -4274,7 +4608,7 @@
         document.getElementById('incoming-call-modal').classList.remove('active');
         const char = contacts.find(c => c.id === currentChatCharId);
         const charName = char ? (char.remark || char.name) : '对方';
-        addSystemMessage(`[系统] 已拒绝${charName}的视频来电`);
+        addSystemMessage(`已拒绝${charName}的视频来电`);
     }
 
     function acceptIncomingCall() {
@@ -4303,9 +4637,9 @@
         const hasHistory = localStorage.getItem(`chat_history_${currentChatCharId}`);
         if(hasHistory) { 
             const history = safeParseJSON(hasHistory, []); 
-            const recent = history.slice(-20); // 避免渲染过多卡顿
+            const recent = history.slice(-20);
             for(const msg of recent) { 
-                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, 'call-chat-container'); 
+                await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'call-chat-container'); 
             } 
         }
         
@@ -4330,10 +4664,11 @@
         if(!text) return;
         input.value = '';
         
-        await renderChatMessage(text, true, true, null, 'call-chat-container');
+        const msgId = Date.now().toString();
+        await renderChatMessage(text, true, true, null, 'text', null, '', msgId, 'call-chat-container');
         if(currentChatCharId) {
             const history = safeParseJSON(localStorage.getItem(`chat_history_${currentChatCharId}`), []);
-            history.push({ text: text, isSelf: true, time: Date.now() });
+            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() });
             try { localStorage.setItem(`chat_history_${currentChatCharId}`, JSON.stringify(history)); } catch(e) {}
         }
         // 自动呼叫AI回复
@@ -4343,8 +4678,8 @@
     function endCall() {
         if(callTimer) clearInterval(callTimer);
         document.getElementById('call-screen').classList.remove('active');
-        document.getElementById('call-chat-container').innerHTML = ''; // 清空以防下次冲突
-        addSystemMessage("[系统] 通话已结束");
+        document.getElementById('call-chat-container').innerHTML = '';
+        addSystemMessage("通话已结束");
         summarizeCallMemory(currentChatCharId);
     }
 
