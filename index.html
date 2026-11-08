@@ -4862,6 +4862,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'location', text: `[位置] ${address}`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            triggerCharReply();
         }
         currentLocImg = null;
     }
@@ -4915,6 +4916,7 @@
             }
         }
         await addSystemMessage(sysText);
+        triggerCharReply();
     }
 
     let currentPaymentType = '';
@@ -4945,6 +4947,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            triggerCharReply();
         }
     }
 
@@ -5008,6 +5011,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            triggerCharReply();
         }
     }
 
@@ -5102,6 +5106,134 @@
 
         // 添加系统消息
         await addSystemMessage(sysText);
+        triggerCharReply();
+    }
+
+    async function parseAISpecialActions(text, charId, isCallActive) {
+        let processedText = text;
+        const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
+        const history = await getChatHistory(charId);
+        const newMsgs = [];
+
+        // 1. 提取并处理 AI 发送的特殊卡片
+        const cardRegex = /\[(发红包|转账|发位置|共享位置|送礼物):([^\]]+)\]/g;
+        let match;
+        while ((match = cardRegex.exec(text)) !== null) {
+            const typeStr = match[1];
+            const params = match[2].split(':');
+            const msgId = Date.now().toString() + Math.floor(Math.random() * 1000);
+            let type = '';
+            let msgData = null;
+            let textLabel = '';
+
+            if (typeStr === '发红包') {
+                type = 'redpacket';
+                msgData = { amount: params[0] || '0.00', remark: params[1] || '恭喜发财', status: 'pending' };
+                textLabel = `[红包] ${msgData.remark}`;
+            } else if (typeStr === '转账') {
+                type = 'transfer';
+                msgData = { amount: params[0] || '0.00', remark: params[1] || '转账', status: 'pending' };
+                textLabel = `[转账] ¥${msgData.amount}`;
+            } else if (typeStr === '发位置') {
+                type = 'location';
+                msgData = { address: params[0] || '未知', image: null, isShare: false, status: 'sent' };
+                textLabel = `[位置] ${msgData.address}`;
+            } else if (typeStr === '共享位置') {
+                type = 'location';
+                msgData = { address: params[0] || '未知', image: null, isShare: true, status: 'pending' };
+                textLabel = `[位置] ${msgData.address}`;
+            } else if (typeStr === '送礼物') {
+                type = 'gift';
+                const giftName = params[0] || '礼物';
+                const price = params[1] || '0.00';
+                const remark = params[2] || '赠言';
+                msgData = { title: giftName, remark: remark, items: [{ name: giftName, price: price }], total: price, status: 'pending' };
+                textLabel = `[礼物] ${giftName}`;
+            }
+
+            if (type) {
+                const newMsg = { id: msgId, type, text: textLabel, data: msgData, isSelf: false, time: Date.now() };
+                newMsgs.push(newMsg);
+                await renderChatMessage(textLabel, false, true, null, type, msgData, '', msgId, targetId);
+                processedText = processedText.replace(match[0], '');
+            }
+        }
+
+        // 2. 提取并处理 AI 接收的特殊动作
+        const actionRegex = /\[(领取红包|退回红包|接收转账|退回转账|接受位置共享|拒绝位置共享|收下礼物|退回礼物)(?::([^\]]+))?\]/g;
+        while ((match = actionRegex.exec(text)) !== null) {
+            const actionStr = match[1];
+            const extraInfo = match[2];
+            
+            let targetMsg = null;
+            let targetIdx = -1;
+            
+            // 从后往前找待处理的卡片
+            for (let i = history.length - 1; i >= 0; i--) {
+                const m = history[i];
+                if (m.isSelf && m.data && m.data.status === 'pending') {
+                    if ((actionStr.includes('红包') && m.type === 'redpacket') ||
+                        (actionStr.includes('转账') && m.type === 'transfer') ||
+                        (actionStr.includes('位置') && m.type === 'location' && m.data.isShare) ||
+                        (actionStr.includes('礼物') && m.type === 'gift')) {
+                        targetMsg = m;
+                        targetIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            if (targetMsg) {
+                const isAccept = actionStr.includes('领取') || actionStr.includes('接收') || actionStr.includes('接受') || actionStr.includes('收下');
+                targetMsg.data.status = isAccept ? 'accepted' : 'rejected';
+                if (extraInfo && actionStr.includes('礼物')) {
+                    targetMsg.data.address = extraInfo;
+                }
+                // 更新界面 DOM
+                const row = document.querySelector(`#${targetId} .chat-msg-row[data-msg-id="${targetMsg.id}"]`);
+                if (row) {
+                    if (targetMsg.type === 'redpacket') {
+                        const card = row.querySelector('.redpacket-card');
+                        if (card) {
+                            card.classList.add('finished');
+                            const statusEl = card.querySelector('.rp-bottom');
+                            if (statusEl) statusEl.innerText = isAccept ? '已领取' : '已退回';
+                        }
+                    } else if (targetMsg.type === 'transfer') {
+                        const card = row.querySelector('.card-payment-v2');
+                        if (card) {
+                            card.classList.add('finished');
+                            const statusEl = card.querySelector('.cpv-status');
+                            if (statusEl) statusEl.innerText = isAccept ? '已领取' : '已退回';
+                        }
+                    } else if (targetMsg.type === 'location') {
+                        const actionsEl = row.querySelector('.loc-actions');
+                        if (actionsEl) {
+                            actionsEl.innerHTML = `<div class="loc-status ${isAccept ? 'accepted' : 'rejected'}">${isAccept ? '已同意共享' : '已拒绝共享'}</div>`;
+                        }
+                    }
+                }
+                
+                // 添加系统消息提示
+                const char = contacts.find(c => c.id === charId);
+                const charName = char ? (char.remark || char.name) : '对方';
+                let sysText = '';
+                if (actionStr.includes('红包')) sysText = isAccept ? `${charName}领取了你的红包` : `${charName}退回了你的红包`;
+                else if (actionStr.includes('转账')) sysText = isAccept ? `${charName}接收了你的转账` : `${charName}退回了你的转账`;
+                else if (actionStr.includes('位置')) sysText = isAccept ? `${charName}同意了你的位置共享` : `${charName}拒绝了你的位置共享`;
+                else if (actionStr.includes('礼物')) sysText = isAccept ? `${charName}收下了你的礼物` : `${charName}退回了你的礼物`;
+                
+                if (sysText) {
+                    const sysId = Date.now().toString() + Math.floor(Math.random() * 1000);
+                    const newSysMsg = { id: sysId, type: 'system', text: `[系统] ${sysText}`, isSelf: false, time: Date.now() };
+                    newMsgs.push(newSysMsg);
+                    await renderChatMessage(`[系统] ${sysText}`, false, true, null, 'system', null, '', sysId, targetId);
+                }
+            }
+            processedText = processedText.replace(match[0], '');
+        }
+
+        return { text: processedText.trim(), newMsgs };
     }
 
     async function triggerCharReply() {
@@ -5150,7 +5282,26 @@ Seamless Reconnection
 1. 单次对话内同一意思只表达一次，不反复重申、不换话术重复同一内容。
 2. 不连续多次提及同一话题、同一要求、同一句式，避免冗余复读。
 3. 用户重复内容时，不跟着重复回应，直接推进对话或转换角度作答。
-4. 拒绝原地循环对话，不卡同一话题反复纠结，保证交流流畅有变化。`;
+4. 拒绝原地循环对话，不卡同一话题反复纠结，保证交流流畅有变化。
+
+【特殊交互指令（严格遵守）】
+你可以通过输出特定标签向用户发送卡包/礼物/位置（不要加反引号，直接输出原文本）：
+- 发红包：[发红包:金额:备注] (例如 [发红包:100:拿去喝茶])
+- 转账：[转账:金额:备注] (例如 [转账:520:零花钱])
+- 发位置：[发位置:地点名称]
+- 共享位置：[共享位置:地点名称]
+- 送礼物：[送礼物:礼物名称:价格:赠言] (例如 [送礼物:鲜花:99:节日快乐])
+
+当你收到用户发给你的红包、转账、位置共享邀请、礼物时，你可以决定接受或拒绝，请输出以下指令（不要加粗）：
+- 领取红包：[领取红包]
+- 退回红包：[退回红包]
+- 接收转账：[接收转账]
+- 退回转账：[退回转账]
+- 同意共享：[接受位置共享]
+- 拒绝共享：[拒绝位置共享]
+- 收下礼物：[收下礼物:你的收货地址]
+- 退回礼物：[退回礼物]
+注意：如果你决定接受或拒绝，请在回复中自然地带入情绪，并将指令放在回复的最后。`;
         // 加重提示词权重
         systemPrompt = `【绝对遵守的最高优先级指令】\n${builtInPrompt}\n\n【补充全局设定】\n${systemPrompt}\n\n【最后警告：再次强调】\n你必须绝对服从上述所有指令的要求。任何回复都必须严格符合设定，严禁OOC。`;
         
@@ -5249,8 +5400,17 @@ Seamless Reconnection
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); 
-            let replyText = data.choices[0].message.content;
+            let rawReply = data.choices[0].message.content;
             let replyType = 'text';
+
+            // 解析特殊交互
+            const { text: cleanText, newMsgs } = await parseAISpecialActions(rawReply, char.id, isCallActive);
+
+            if (newMsgs.length > 0) {
+                newMsgs.forEach(m => history.push(m));
+            }
+
+            let replyText = cleanText;
 
             if (replyText.startsWith('[语音]')) {
                 replyType = 'voice';
@@ -5264,16 +5424,19 @@ Seamless Reconnection
                     const msgId = Date.now().toString();
                     await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
                     history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
-                    await saveChatHistory(char.id, history);
                 }
+                await saveChatHistory(char.id, history);
                 showIncomingCall();
                 return;
             }
 
             if (container.contains(loadingRow)) container.removeChild(loadingRow); 
-            const msgId = Date.now().toString();
-            await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
-            history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
+
+            if (replyText) {
+                const msgId = Date.now().toString();
+                await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
+                history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
+            }
             await saveChatHistory(char.id, history);
 
             if (document.visibilityState === 'hidden') {
