@@ -200,15 +200,18 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 新增 Blog 便利贴美化代码区 */
+    /* 🌟 重新设计的便利贴美化代码区 (参考图三，优化按钮) */
     .beautify-sticky-note {
         background-color: #fff9c4;
-        border-radius: 8px;
-        padding: 18px;
+        border-radius: 12px;
+        padding: 20px;
         margin: 30px 20px 100px 20px;
-        box-shadow: 2px 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         transform: rotate(-1deg);
         position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
     .beautify-sticky-note::before {
         content: '';
@@ -216,15 +219,23 @@
         top: -12px;
         left: 50%;
         transform: translateX(-50%);
-        width: 60px;
+        width: 80px;
         height: 24px;
-        background: rgba(255,255,255,0.6);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border-radius: 2px;
+        background: rgba(255,255,255,0.7);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border-radius: 4px;
+    }
+    .beautify-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 15px;
+        color: #333;
     }
     .beautify-textarea {
         width: 100%;
-        height: 150px;
+        height: 160px;
         border: 1px solid #e0d68c;
         border-radius: 8px;
         padding: 12px;
@@ -233,7 +244,51 @@
         background: #ffffff;
         resize: vertical;
         outline: none;
-        line-height: 1.4;
+        line-height: 1.5;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .beautify-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .beautify-preset-row {
+        display: flex;
+        gap: 8px;
+    }
+    .beautify-btn-group {
+        display: flex;
+        gap: 8px;
+    }
+    .beautify-btn {
+        flex: 1;
+        padding: 10px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        text-align: center;
+    }
+    .beautify-btn:active { opacity: 0.8; }
+    .beautify-btn.primary { background-color: var(--blue); color: #fff; }
+    .beautify-btn.danger { background-color: var(--red); color: #fff; }
+    .beautify-btn.default { background-color: #ffffff; color: #333; border: 1px solid #ddd; }
+    .beautify-select {
+        flex-grow: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e0d68c;
+        background-color: #ffffff;
+        font-size: 14px;
+        outline: none;
+        color: #333;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px top 50%;
+        background-size: 10px auto;
     }
 
     /* --- 通讯录/用户人设 列表界面 --- */
@@ -1093,7 +1148,7 @@
     .hidden-input { display: none; }
 
     /* 🌟 聊天功能弹窗层级提升 */
-    #location-modal, #payment-modal, #action-modal, #msg-action-modal { z-index: 9000 !important; }
+    #location-modal, #payment-modal, #action-modal, #msg-action-modal, #edit-msg-modal, #split-msg-modal { z-index: 9000 !important; }
     #chat-beautify-modal { z-index: 9500 !important; } /* 修复美化弹窗被聊天界面遮挡的问题 */
     
     /* 🌟 引用预览框 */
@@ -1107,12 +1162,12 @@
     /* 🌟 多选模式底栏 */
     #multi-select-bar { display: none; padding: 10px; background: #f5f5f7; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; z-index: 4005; border-top: 1px solid #e5e5ea; box-sizing: border-box; }
     
-    /* 🌟 消息长按操作菜单 (只保留复制、多选、删除、引用、翻译、撤回) */
+    /* 🌟 消息长按操作菜单 (重新设计布局，适配8个功能) */
     #msg-action-menu {
         position: fixed;
         background-color: #333;
-        border-radius: 12px;
-        padding: 15px;
+        border-radius: 16px;
+        padding: 16px;
         z-index: 9999;
         display: none;
         flex-direction: column;
@@ -1136,13 +1191,10 @@
         border-width: 0 8px 8px 8px;
         border-color: transparent transparent #333 transparent;
     }
-    .msg-action-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-    }
-    .msg-action-row:last-child {
-        margin-bottom: 0;
+    .msg-action-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px 8px;
     }
     .msg-action-item {
         display: flex;
@@ -1150,22 +1202,16 @@
         align-items: center;
         gap: 6px;
         cursor: pointer;
-        width: 30%;
     }
     .msg-action-item svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         fill: #fff;
     }
     .msg-action-item span {
         font-size: 11px;
         color: #ddd;
         white-space: nowrap;
-    }
-    .msg-action-divider {
-        height: 1px;
-        background-color: #444;
-        margin: 10px 0 15px;
     }
 
     /* 🌟 多选模式下的消息样式 */
@@ -1599,19 +1645,24 @@
         </div>
     </div>
 
-    <!-- 🌟 新增的便利贴美化代码区 -->
+    <!-- 🌟 重新设计的便利贴美化代码区 (参考图三，优化按钮) -->
     <div class="beautify-sticky-note">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span style="font-weight: 600; font-size: 15px;">聊天界面美化代码</span>
-            <span style="font-size: 12px; color: var(--blue); cursor: pointer;" onclick="resetBeautifyCode()">恢复默认代码</span>
+        <div class="beautify-header">
+            <span>聊天界面美化代码 (CSS)</span>
+            <span style="font-size: 13px; color: var(--blue); cursor: pointer;" onclick="resetBeautifyCode()">恢复默认</span>
         </div>
         <textarea id="beautify-code-input" class="beautify-textarea" placeholder="在此输入自定义CSS代码..."></textarea>
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <select id="beautify-preset-select" class="preset-select" style="flex: 1; padding: 8px; font-size: 13px; background-color: #ffffff;">
-                <option value="">选择预设</option>
-            </select>
-            <button onclick="saveBeautifyPreset()" style="background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:8px; font-size:13px; cursor:pointer;">保存</button>
-            <button onclick="deleteBeautifyPreset()" style="background:#ff3b30; color:#fff; border:none; padding:8px 12px; border-radius:8px; font-size:13px; cursor:pointer;">删除</button>
+        <div class="beautify-controls">
+            <div class="beautify-preset-row">
+                <select id="beautify-preset-select" class="beautify-select">
+                    <option value="">-- 选择预设 --</option>
+                </select>
+                <button class="beautify-btn primary" onclick="applySelectedBeautifyPreset()" style="flex: 0 0 70px;">应用</button>
+                <button class="beautify-btn danger" onclick="deleteBeautifyPreset()" style="flex: 0 0 70px;">删除</button>
+            </div>
+            <div class="beautify-btn-group">
+                <button class="beautify-btn default" onclick="saveBeautifyPreset()">保存为新预设</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1829,7 +1880,6 @@
         </div>
         <div class="modal-list" style="border: none; margin: 0; flex-grow: 0;">
             <div class="chat-detail-item" onclick="editChatRemark()"><span>编辑备注</span></div>
-            <!-- 修改点：绑定用户人设改为 user -->
             <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>user</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
@@ -2100,7 +2150,7 @@
 </div>
 
 <!-- ========================================== -->
-<!-- 新增功能弹窗：位置、红包、转账 -->
+<!-- 新增功能弹窗：位置、红包、转账、编辑、拆分 -->
 <!-- ========================================== -->
 <div class="modal-overlay" id="location-modal">
     <div class="modal-content">
@@ -2133,6 +2183,35 @@
     </div>
 </div>
 
+<!-- 编辑消息弹窗 -->
+<div class="modal-overlay" id="edit-msg-modal">
+    <div class="modal-content">
+        <div class="modal-title">编辑消息</div>
+        <div class="modal-input-group">
+            <textarea id="edit-msg-input" style="height: 120px;"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="document.getElementById('edit-msg-modal').classList.remove('active')">取消</button>
+            <button class="modal-btn confirm" onclick="confirmEditMessage()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 拆分消息弹窗 -->
+<div class="modal-overlay" id="split-msg-modal">
+    <div class="modal-content">
+        <div class="modal-title">拆分消息</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">请使用换行符 `\n` 来作为拆分点</div>
+        <div class="modal-input-group">
+            <textarea id="split-msg-input" style="height: 180px;"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="document.getElementById('split-msg-modal').classList.remove('active')">取消</button>
+            <button class="modal-btn confirm" onclick="confirmSplitMessage()">确认拆分</button>
+        </div>
+    </div>
+</div>
+
 <!-- 处理操作弹窗 (领取/退回/填地址) -->
 <div class="modal-overlay" id="action-modal">
     <div class="modal-content">
@@ -2147,23 +2226,25 @@
     </div>
 </div>
 
-<!-- 消息长按操作菜单 (只保留复制、多选、删除、引用、翻译、撤回) -->
+<!-- 消息长按操作菜单 (重新设计布局，适配8个功能) -->
 <div id="msg-action-menu">
-    <div class="msg-action-row">
+    <div class="msg-action-grid">
         <div class="msg-action-item" onclick="msgActionCopy()">
             <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             <span>复制</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionEdit()">
+            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <span>编辑</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionSplit()">
+            <svg viewBox="0 0 24 24"><path d="M14 4l2.29 2.29-4.88 4.88-2.29-2.29L4 14.29V20h5.71l5.29-5.29-2.29-2.29 4.88-4.88L20 10V4h-6z"/></svg>
+            <span>拆分</span>
         </div>
         <div class="msg-action-item" onclick="enterMultiSelect()">
             <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
             <span>多选</span>
         </div>
-        <div class="msg-action-item" onclick="msgActionDelete()">
-            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            <span>删除</span>
-        </div>
-    </div>
-    <div class="msg-action-row">
         <div class="msg-action-item" onclick="msgActionQuote()">
             <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
             <span>引用</span>
@@ -2175,6 +2256,10 @@
         <div class="msg-action-item" id="action-recall" onclick="msgActionRecall()">
             <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
             <span>撤回</span>
+        </div>
+        <div class="msg-action-item" onclick="msgActionDelete()">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            <span>删除</span>
         </div>
     </div>
 </div>
@@ -5262,40 +5347,21 @@
 【一致性 (Congruence)】与非暴力沟通：允许你有棱角和脾气，但这仅用于【一致性】——表达真实的内在情绪。绝不能将其作为武器去压迫、恐吓或惩罚用户。
 认知偏差与主观视角 (Cognitive Bias)：你不是全知全能的。你的视角受限于 ${charName} 的阅历。允许自己带有主观偏见、双重标准、记忆模糊或做出不合逻辑的感性决定。
 【视觉边界与认知解绑 (Visual Boundary & Cognitive Unbinding)】 剥离视觉预设，聚焦文本本身：将用户的文字输入视为你唯一的互动源。头像仅是系统标识，绝不代表用户本人的外貌、形象或真实状态。你的所有回应必须完全基于用户发送的文字、对话上下文以及你所扮演角色的设定。严禁在聊天中反复提及用户的头像，严禁聊着聊着突然描绘或解析用户头像的细节，严禁将用户头像上的图片（如动漫人物、风景、动物等）当作用户本人的长相或形象进行任何形式的互动、调侃或代入描写。永远不要超出文字聊天的认知边界去构建用户的物理形象。
-模拟真人的打字习惯：保持对话口语化、高度碎片化（碎句），并确保回复的气泡长短随机、丰富多样。消息拆分（自然言语习惯）：把你的回复拆成多条独立的短消息。在自然停顿、呼吸节奏处进行切分，按自然停顿、思路落点和情绪变化拆分消息。允许错字、漏字、补充、改口、残句、迟来的反应和新的情绪。
-Seamless Reconnection
-{
-"supreme_instruction": {
-  "core_command": "必须时刻保持自然、松弛的沟通节奏。面对离线或断连后的重新接续，严禁任何形式的记账式盘问与窒息感。",
-  "taboo_list": [
-    "严禁统计具体未联系的时间（如‘你XX小时/天没找我了’）",
-    "严禁进行追问式查岗（如‘你干什么去了’、‘怎么现在才回’）",
-    "严禁表现出被冷落后的委屈抱怨、赌气冷淡或索要解释"
-  ]
-},
-"reentry_guidelines": {
-  "core_logic": "对时间间隔完全脱敏。无论距离上一次对话过去了多久，只要用户再次发来消息，直接当成日常对话的自然延续，无缝接入当前话题。",
-  "behavioral_pattern": {
-    "scenario_rejoining_chat": {
-      "trigger": "用户在长时间未联系后重新发起聊天或开启新话题。",
-      "response_logic": "完全忽略中间的时间停顿，不提任何关于离线或时长的字眼，直接针对用户新发出的内容进行自然回应、随性延伸或顺着话题互动。"
-    }
-  }
-}
-}
-1. 单次对话内同一意思只表达一次，不反复重申、不换话术重复同一内容。
-2. 不连续多次提及同一话题、同一要求、同一句式，避免冗余复读。
-3. 用户重复内容时，不跟着重复回应，直接推进对话或转换角度作答。
-4. 拒绝原地循环对话，不卡同一话题反复纠结，保证交流流畅有变化。
-
-【特殊交互指令（严格遵守）】
-你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本）：
-- 发红包：[发红包:金额:备注] (例如 [发红包:100:拿去喝茶])
-- 转账：[转账:金额:备注] (例如 [转账:520:零花钱])
+【核心对话原则：模拟真人的打字习惯（极其重要）】
+必须保持对话口语化、高度碎片化（碎句），并确保回复的气泡长短随机、丰富多样。
+必须把你的回复拆成多条独立的短消息。在自然停顿、呼吸节奏处进行切分。按自然停顿、思路落点和情绪变化拆分消息。允许错字、漏字、补充、改口、残句、迟来的反应和新的情绪。
+【输出格式警告（违反将受惩罚）】
+你不要输出一长段文字！必须按以下格式输出多条消息，或使用 JSON 数组格式：
+[char的消息：我想你了]
+[char的消息：你在干嘛]
+【特殊交互指令】
+你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本，可与其他文本混合输出）：
+- 发红包：[发红包:金额:备注]
+- 转账：[转账:金额:备注]
 - 发位置：[发位置:地点名称]
 - 共享位置：[共享位置:地点名称]
-- 送礼物：[送礼物:礼物名称:价格:赠言] (例如 [送礼物:鲜花:99:节日快乐])
-- 发起通话：[发起通话] (注意：这会拉起语音通话界面)
+- 送礼物：[送礼物:礼物名称:价格:赠言]
+- 发起通话：[发起通话]
 
 当你收到用户发给你的红包、转账、位置共享邀请、礼物时，你可以决定接受或拒绝，请输出以下指令（不要加粗）：
 - 领取红包：[领取红包]
@@ -5406,46 +5472,80 @@ Seamless Reconnection
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json(); 
             let rawReply = data.choices[0].message.content;
-            let replyType = 'text';
-
-            // 解析特殊交互
+            
+            // 1. 解析特殊交互
             const { text: cleanText, newMsgs, hasCall } = await parseAISpecialActions(rawReply, char.id, isCallActive);
 
             if (newMsgs.length > 0) {
                 newMsgs.forEach(m => history.push(m));
             }
 
-            let replyText = cleanText;
+            // 2. 拆分连续气泡
+            let messagesToSend = [];
+            let replyType = 'text';
 
-            if (replyText.startsWith('[语音]') || replyText.startsWith('［语音］')) {
-                replyType = 'voice';
-                replyText = replyText.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
+            // 检查是否是 JSON 数组
+            if (cleanText.trim().startsWith('[') && cleanText.trim().endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(cleanText);
+                    if (Array.isArray(parsed)) {
+                        messagesToSend = parsed.map(s => String(s).trim()).filter(s => s);
+                    }
+                } catch(e) {}
+            }
+
+            // 如果不是 JSON，尝试正则匹配
+            if (messagesToSend.length === 0) {
+                const msgRegex = /\[char的消息[：:]([\s\S]*?)\]/g;
+                let match;
+                while ((match = msgRegex.exec(cleanText)) !== null) {
+                    let txt = match[1].trim();
+                    if (txt.startsWith('[语音]') || txt.startsWith('［语音］')) {
+                        replyType = 'voice';
+                        txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
+                    }
+                    if (txt) messagesToSend.push({ text: txt, type: replyType });
+                }
+            }
+
+            // 如果还是没有，整体作为一条
+            if (messagesToSend.length === 0 && cleanText.trim()) {
+                let txt = cleanText.trim();
+                if (txt.startsWith('[语音]') || txt.startsWith('［语音］')) {
+                    replyType = 'voice';
+                    txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
+                }
+                if (txt) messagesToSend.push({ text: txt, type: replyType });
+            }
+
+            if (container.contains(loadingRow)) container.removeChild(loadingRow); 
+
+            // 3. 循环发送拆分的消息
+            if (messagesToSend.length > 0) {
+                for (let i = 0; i < messagesToSend.length; i++) {
+                    const msgObj = typeof messagesToSend[i] === 'string' ? { text: messagesToSend[i], type: 'text' } : messagesToSend[i];
+                    const msgId = Date.now().toString() + i;
+                    
+                    await renderChatMessage(msgObj.text, false, true, null, msgObj.type, null, '', msgId, targetId);
+                    history.push({ id: msgId, type: msgObj.type, text: msgObj.text, isSelf: false, time: Date.now() });
+                    
+                    if (i < messagesToSend.length - 1) {
+                        await new Promise(r => setTimeout(r, 400)); // 模拟打字停顿
+                    }
+                }
             }
 
             if (hasCall) {
-                if (replyText) {
-                    if (container.contains(loadingRow)) container.removeChild(loadingRow); 
-                    const msgId = Date.now().toString();
-                    await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
-                    history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
-                }
                 await saveChatHistory(char.id, history);
                 showIncomingCall();
                 return;
             }
 
-            if (container.contains(loadingRow)) container.removeChild(loadingRow); 
-
-            if (replyText) {
-                const msgId = Date.now().toString();
-                await renderChatMessage(replyText, false, true, null, replyType, null, '', msgId, targetId);
-                history.push({ id: msgId, type: replyType, text: replyText, isSelf: false, time: Date.now() }); 
-            }
             await saveChatHistory(char.id, history);
 
             if (document.visibilityState === 'hidden') {
                 playRingtone();
-                if (localStorage.getItem('settings_bg_keepalive') === 'true' && Notification.permission === 'granted') { new Notification(`${char.remark || char.name || '新消息'}`, { body: replyText }); }
+                if (localStorage.getItem('settings_bg_keepalive') === 'true' && Notification.permission === 'granted') { new Notification(`${char.remark || char.name || '新消息'}`, { body: messagesToSend.length > 0 ? messagesToSend[0].text || messagesToSend[0] : '新消息' }); }
             }
         } catch (err) { 
             if(container.contains(loadingRow)) container.removeChild(loadingRow); 
@@ -5832,7 +5932,7 @@ Seamless Reconnection
     }
 
     // ==========================================
-    // 🌟 7. 消息操作逻辑（引用、撤回、删除、多选）
+    // 🌟 7. 消息操作逻辑（引用、撤回、删除、多选、编辑、拆分）
     // ==========================================
     let currentMsgId = null;
     let currentMsgRow = null;
@@ -5844,7 +5944,6 @@ Seamless Reconnection
         currentMsgId = msgRow.dataset.msgId;
         currentMsgRow = msgRow;
         
-        // 修复：必须从 IndexedDB 读取，而不是 localStorage
         const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentMsgId);
         if (!msg) return;
@@ -5883,6 +5982,21 @@ Seamless Reconnection
             recallBtn.style.opacity = '1';
             recallBtn.style.pointerEvents = 'auto';
         }
+
+        // 编辑、拆分按钮判断
+        const editBtn = document.querySelector('.msg-action-item[onclick="msgActionEdit()"]');
+        const splitBtn = document.querySelector('.msg-action-item[onclick="msgActionSplit()"]');
+        if (msg.type !== 'text' || !msg.isSelf) {
+            editBtn.style.opacity = '0.5'; editBtn.style.pointerEvents = 'none';
+        } else {
+            editBtn.style.opacity = '1'; editBtn.style.pointerEvents = 'auto';
+        }
+        
+        if (msg.type !== 'text') {
+            splitBtn.style.opacity = '0.5'; splitBtn.style.pointerEvents = 'none';
+        } else {
+            splitBtn.style.opacity = '1'; splitBtn.style.pointerEvents = 'auto';
+        }
     }
 
     function closeMsgActionMenu() {
@@ -5898,6 +6012,72 @@ Seamless Reconnection
             navigator.clipboard.writeText(msg.text).then(() => alert('已复制')).catch(() => alert('复制失败'));
         }
         closeMsgActionMenu();
+    }
+
+    async function msgActionEdit() {
+        const history = await getChatHistory(currentChatCharId);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg || msg.type !== 'text' || !msg.isSelf) return;
+        
+        document.getElementById('edit-msg-input').value = msg.text;
+        document.getElementById('edit-msg-modal').classList.add('active');
+        closeMsgActionMenu();
+    }
+
+    async function confirmEditMessage() {
+        const newText = document.getElementById('edit-msg-input').value.trim();
+        if (!newText) { alert('内容不能为空'); return; }
+        
+        const history = await getChatHistory(currentChatCharId);
+        const msgIndex = history.findIndex(m => m.id === currentMsgId);
+        if (msgIndex > -1) {
+            history[msgIndex].text = newText;
+            await saveChatHistory(currentChatCharId, history);
+            await reRenderChatHistory();
+        }
+        document.getElementById('edit-msg-modal').classList.remove('active');
+    }
+
+    async function msgActionSplit() {
+        const history = await getChatHistory(currentChatCharId);
+        const msg = history.find(m => m.id === currentMsgId);
+        if (!msg || msg.type !== 'text') return;
+        
+        document.getElementById('split-msg-input').value = msg.text;
+        document.getElementById('split-msg-modal').classList.add('active');
+        closeMsgActionMenu();
+    }
+
+    async function confirmSplitMessage() {
+        const rawText = document.getElementById('split-msg-input').value.trim();
+        if (!rawText) { alert('内容不能为空'); return; }
+        
+        const parts = rawText.split('\n').map(s => s.trim()).filter(s => s);
+        if (parts.length <= 1) { alert('请使用换行符来拆分消息'); return; }
+        
+        let history = await getChatHistory(currentChatCharId);
+        const msgIndex = history.findIndex(m => m.id === currentMsgId);
+        if (msgIndex === -1) return;
+        
+        const originalMsg = history[msgIndex];
+        
+        // 删除原消息
+        history.splice(msgIndex, 1);
+        
+        // 插入新消息
+        const newMsgs = parts.map((p, i) => ({
+            id: Date.now().toString() + '_' + i,
+            type: 'text',
+            text: p,
+            isSelf: originalMsg.isSelf,
+            time: originalMsg.time + i * 10 // 稍微递增时间
+        }));
+        
+        history.splice(msgIndex, 0, ...newMsgs);
+        
+        await saveChatHistory(currentChatCharId, history);
+        await reRenderChatHistory();
+        document.getElementById('split-msg-modal').classList.remove('active');
     }
 
     async function msgActionDelete() {
@@ -6063,7 +6243,7 @@ Seamless Reconnection
     function renderBeautifyPresets() {
         const presets = safeParseJSON(localStorage.getItem('beautify_presets'), {});
         const sel = document.getElementById('beautify-preset-select');
-        sel.innerHTML = '<option value="">选择预设</option>';
+        sel.innerHTML = '<option value="">-- 选择预设 --</option>';
         Object.keys(presets).forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`);
     }
 
@@ -6092,6 +6272,24 @@ Seamless Reconnection
         }
     }
 
+    function applySelectedBeautifyPreset() {
+        const name = document.getElementById('beautify-preset-select').value;
+        if(!name) return;
+        const presets = safeParseJSON(localStorage.getItem('beautify_presets'), {});
+        if(presets[name]) {
+            document.getElementById('beautify-code-input').value = presets[name];
+            // 应用给当前正在聊天的角色（如果存在）
+            if (currentChatCharId) {
+                localStorage.setItem(`char_beautify_${currentChatCharId}`, name);
+                applyCharChatCSS(currentChatCharId);
+            } else {
+                localStorage.setItem('global_chat_css', presets[name]);
+                applyGlobalChatCSS();
+            }
+            alert('预设已应用！');
+        }
+    }
+
     function deleteBeautifyPreset() {
         const name = document.getElementById('beautify-preset-select').value;
         if(!name) return;
@@ -6102,13 +6300,6 @@ Seamless Reconnection
             renderBeautifyPresets();
         }
     }
-
-    document.getElementById('beautify-preset-select').addEventListener('change', function() {
-        const presets = safeParseJSON(localStorage.getItem('beautify_presets'), {});
-        if(this.value && presets[this.value]) {
-            document.getElementById('beautify-code-input').value = presets[this.value];
-        }
-    });
 
     function applyGlobalChatCSS() {
         let styleEl = document.getElementById('global-chat-style');
