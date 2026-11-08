@@ -1094,6 +1094,7 @@
 
     /* 🌟 聊天功能弹窗层级提升 */
     #location-modal, #payment-modal, #action-modal, #msg-action-modal { z-index: 9000 !important; }
+    #chat-beautify-modal { z-index: 9500 !important; } /* 修复美化弹窗被聊天界面遮挡的问题 */
     
     /* 🌟 引用预览框 */
     .reply-preview { display: none; padding: 8px 15px; background: #f5f5f7; border-bottom: 1px solid #e5e5ea; align-items: center; justify-content: space-between; z-index: 4005; }
@@ -5150,7 +5151,8 @@ Seamless Reconnection
 2. 不连续多次提及同一话题、同一要求、同一句式，避免冗余复读。
 3. 用户重复内容时，不跟着重复回应，直接推进对话或转换角度作答。
 4. 拒绝原地循环对话，不卡同一话题反复纠结，保证交流流畅有变化。`;
-        systemPrompt = builtInPrompt + '\n\n' + systemPrompt;
+        // 加重提示词权重
+        systemPrompt = `【绝对遵守的最高优先级指令】\n${builtInPrompt}\n\n【补充全局设定】\n${systemPrompt}\n\n【最后警告：再次强调】\n你必须绝对服从上述所有指令的要求。任何回复都必须严格符合设定，严禁OOC。`;
         
         let charPersona = `【角色设定】\n名字: ${charName}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
         
