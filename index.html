@@ -1176,7 +1176,7 @@
     .hidden-input { display: none; }
 
     /* 🌟 聊天功能弹窗层级提升 */
-    #location-modal, #payment-modal, #action-modal, #msg-action-modal, #edit-msg-modal, #split-msg-modal { z-index: 9000 !important; }
+    #location-modal, #payment-modal, #action-modal, #msg-action-modal, #edit-msg-modal, #split-msg-modal, #memory-modal { z-index: 9000 !important; }
     #chat-beautify-modal { z-index: 9500 !important; } /* 修复美化弹窗被聊天界面遮挡的问题 */
     
     /* 🌟 引用预览框 */
@@ -1911,6 +1911,7 @@
             <div class="chat-detail-item" onclick="openChatUserPersonaSelectModal()"><span>user</span><span class="custom-select-value" id="chat-user-persona-display" style="color: #888;">未绑定</span></div>
             <div class="chat-detail-item" onclick="openChatBookBindModal()"><span>绑定世界书</span></div>
             <div class="chat-detail-item" onclick="openStickerBindModal()"><span>绑定表情包</span></div>
+            <div class="chat-detail-item" onclick="openMemorySummaryModal()"><span>记忆总结</span><span class="custom-select-value" id="memory-auto-display" style="color: #888;">未开启</span></div>
             <div class="chat-detail-item" onclick="togglePinChat()"><span>置顶聊天</span><div class="chat-detail-switch" id="pin-switch"></div></div>
             <div class="chat-detail-item" onclick="toggleChatSearch()"><span>搜索聊天记录</span></div>
             <div class="chat-detail-item" onclick="document.getElementById('chat-bg-upload').click()"><span>更换聊天背景</span></div>
@@ -2232,13 +2233,32 @@
         <div style="display: flex; gap: 10px; margin-bottom: 12px;">
             <button class="pill-btn" style="padding: 8px; font-size: 13px; background: #e5e5ea; flex: 1;" onclick="autoSplitByPunctuation()">按标点/换行智能拆分</button>
         </div>
-        <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">请使用换行符 `\n` 来作为拆分点</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">请直接使用回车换行来作为拆分点</div>
         <div class="modal-input-group">
             <textarea id="split-msg-input" style="height: 180px;"></textarea>
         </div>
         <div class="modal-actions">
             <button class="modal-btn cancel" onclick="document.getElementById('split-msg-modal').classList.remove('active')">取消</button>
             <button class="modal-btn confirm" onclick="confirmSplitMessage()">确认拆分</button>
+        </div>
+    </div>
+</div>
+
+<!-- 记忆总结弹窗 -->
+<div class="modal-overlay" id="memory-modal">
+    <div class="modal-content">
+        <div class="modal-title">角色记忆库</div>
+        <div class="modal-input-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:14px;">每 <input type="number" id="memory-auto-count" style="width:50px; display:inline-block; padding:4px; text-align:center;" value="20" min="5"> 条自动总结</span>
+                <button class="modal-btn confirm" style="width:auto; padding:6px 12px; font-size:13px;" onclick="saveMemoryAutoSetting()">保存</button>
+            </div>
+            <textarea id="memory-textarea" placeholder="暂无记忆，点击下方按钮立即总结..." style="height:200px;"></textarea>
+        </div>
+        <div class="modal-actions" style="flex-direction: column; gap:10px;">
+            <button class="modal-btn confirm" style="background-color:#34c759;" onclick="summarizeMemoryNow()">立即总结最新对话</button>
+            <button class="modal-btn confirm" onclick="saveMemoryManual()">保存记忆</button>
+            <button class="modal-btn cancel" onclick="closeMemorySummaryModal()">关闭</button>
         </div>
     </div>
 </div>
@@ -4553,6 +4573,7 @@
         document.getElementById('send-msg-btn').style.display = 'none';
 
         applyCharChatCSS(charId); // 🌟 应用当前 Char 专属美化
+        updateMemoryAutoDisplay();
 
         openScreen('chat-screen');
         requestAnimationFrame(() => {
@@ -5613,6 +5634,7 @@
         const boundP = userPersonas.find(p => p.id === boundUserId);
         document.getElementById('chat-user-persona-display').innerText = boundP ? (boundP.remark || boundP.name || '未命名') : '未绑定(使用当前)';
         
+        updateMemoryAutoDisplay();
         loadDetailAvatars(); document.getElementById('chat-detail-modal').classList.add('active');
     }
     function closeChatDetailModal() { document.getElementById('chat-detail-modal').classList.remove('active'); }
@@ -6286,10 +6308,49 @@
     // ==========================================
     // 🌟 8. 聊天界面美化核心逻辑
     // ==========================================
-    const DEFAULT_CHAT_CSS = `#chat-screen { background-color: #ffffff; } 
-.chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; } 
-.chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; } 
-.chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: pre-wrap; }`;
+    const DEFAULT_CHAT_CSS = `/* ====== 聊天界面基础美化代码 ====== */
+/* 顶栏 */
+.chat-header { background-color: rgba(255, 255, 255, 0.95); border-bottom: 1px solid #eaeaea; }
+.chat-back-btn svg { stroke: #333; }
+.chat-title { color: #333; font-weight: 600; }
+.chat-more-btn svg { fill: #333; }
+
+/* 聊天气泡与头像 */
+.chat-msg-avatar { border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
+.chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
+.chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+/* 引用框 */
+.quote-block { background-color: rgba(0,0,0,0.04); color: #888; border-left: 3px solid #ccc; }
+
+/* 底栏 */
+.chat-input-bar { background-color: #ffffff; padding: 10px 15px 25px; }
+.chat-input-wrapper { background-color: #F2F2F7; border-radius: 20px; }
+.chat-input-field { color: #333; }
+.chat-input-icon-btn svg { fill: #333; }
+.chat-send-btn-inline { background: #007aff; }
+
+/* 位置卡片 */
+.card-location { background: #ffffff; border-radius: 20px; border: 1px solid #f0f0f0; }
+.loc-title { color: #000; }
+.loc-address { color: #8e8e93; }
+.loc-btn.accept { background: #007aff; color: #fff; }
+
+/* 转账卡片 */
+.card-payment-v2.transfer { background: #f9d6d9; color: #fff; }
+.cpv-amount { font-size: 18px; font-weight: 600; }
+
+/* 红包卡片 */
+.redpacket-card { background: #fa9d3b; color: #fff; }
+.rp-top { background: #fa9d3b; }
+.rp-icon svg { fill: #fde6b4; }
+
+/* 礼物卡片 */
+.card-gift-v2 { background: #fff; border: 1px solid #eaeaea; }
+.gift-v2-top { background: #f9f9f9; }
+.gift-v2-bottom { background: #1c1c1e; color: #fff; }
+`;
 
     function loadBlogBeautify() {
         const savedCode = localStorage.getItem('global_chat_css');
@@ -6436,6 +6497,177 @@
         }
         // 清空，使用全局
         styleEl.innerHTML = '';
+    }
+
+    // ==========================================
+    // 🌟 9. 记忆总结功能
+    // ==========================================
+    function updateMemoryAutoDisplay() {
+        if (!currentChatCharId) return;
+        const autoCount = localStorage.getItem(`memory_auto_count_${currentChatCharId}`);
+        const display = document.getElementById('memory-auto-display');
+        if (autoCount) {
+            display.innerText = `每 ${autoCount} 条自动`;
+        } else {
+            display.innerText = '手动/未开启';
+        }
+    }
+
+    function openMemorySummaryModal() {
+        if (!currentChatCharId) return;
+        const autoCount = localStorage.getItem(`memory_auto_count_${currentChatCharId}`) || '';
+        document.getElementById('memory-auto-count').value = autoCount;
+        
+        const memories = safeParseJSON(localStorage.getItem(`char_memory_${currentChatCharId}`), []);
+        document.getElementById('memory-textarea').value = memories.map(m => m.content).join('\n');
+        
+        document.getElementById('memory-modal').classList.add('active');
+    }
+
+    function closeMemorySummaryModal() {
+        document.getElementById('memory-modal').classList.remove('active');
+    }
+
+    function saveMemoryAutoSetting() {
+        const count = document.getElementById('memory-auto-count').value.trim();
+        if (count && parseInt(count) > 0) {
+            localStorage.setItem(`memory_auto_count_${currentChatCharId}`, count);
+        } else {
+            localStorage.removeItem(`memory_auto_count_${currentChatCharId}`);
+        }
+        updateMemoryAutoDisplay();
+        alert('自动总结设置已保存');
+    }
+
+    async function summarizeMemoryNow() {
+        if (!currentChatCharId) return;
+        const configStr = localStorage.getItem('settings_api_config'); 
+        if (!configStr) { alert("请先在 设置 -> API接口 中配置并保存模型参数！"); return; }
+        const config = safeParseJSON(configStr, null); 
+        if (!config || !config.url || !config.key) { alert("API 配置不完整！"); return; }
+
+        const btn = document.querySelector('#memory-modal .modal-btn.confirm[style*="34c759"]');
+        const originalText = btn.innerText;
+        btn.innerText = "总结中...";
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.5';
+
+        const history = await getChatHistory(currentChatCharId);
+        const recentHistory = history.slice(-30); // 总结最近30条
+        
+        if (recentHistory.length === 0) {
+            alert('最近没有聊天记录可供总结！');
+            btn.innerText = originalText;
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+            return;
+        }
+
+        let chatLog = recentHistory.map(m => {
+            let text = m.text;
+            if (m.type === 'location') text = `[位置共享：${m.data.address}]`;
+            if (m.type === 'redpacket') text = `[红包：${m.data.remark}]`;
+            if (m.type === 'transfer') text = `[转账：¥${m.data.amount}]`;
+            if (m.type === 'gift') text = `[礼物：${m.data.title}]`;
+            return `${m.isSelf ? '用户' : '你'}: ${text}`;
+        }).join('\n');
+
+        let prompt = `请阅读以下对话记录，以第一人称（"我"）提取关键信息，写一段记忆总结。总结应包含：重要事件、用户的偏好/设定、以及双方的关系变化或情感走向。请用精炼的一段话总结，不要超过200字。\n\n对话记录：\n${chatLog}`;
+
+        try {
+            const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` },
+                body: JSON.stringify({ 
+                    model: config.model, 
+                    messages: [{role: 'user', content: prompt}],
+                    temperature: 0.7,
+                    max_tokens: 500
+                })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const memory = data.choices[0].message.content.trim();
+            
+            // 追加到 textarea
+            const textarea = document.getElementById('memory-textarea');
+            let currentText = textarea.value.trim();
+            if (currentText) currentText += '\n';
+            textarea.value = currentText + memory;
+            
+            alert('总结完成！请检查并点击【保存记忆】。');
+        } catch (e) {
+            alert("总结失败: " + e.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+        }
+    }
+
+    async function saveMemoryManual() {
+        if (!currentChatCharId) return;
+        const text = document.getElementById('memory-textarea').value.trim();
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+        
+        const newMemories = lines.map((content, index) => ({
+            time: Date.now() + index * 1000,
+            content: content
+        }));
+
+        localStorage.setItem(`char_memory_${currentChatCharId}`, JSON.stringify(newMemories));
+        closeMemorySummaryModal();
+        alert('记忆已保存，角色将在后续对话中自动运用这些记忆。');
+    }
+
+    async function checkAutoMemorySummary() {
+        if (!currentChatCharId) return;
+        const autoCountStr = localStorage.getItem(`memory_auto_count_${currentChatCharId}`);
+        if (!autoCountStr) return;
+        
+        const autoCount = parseInt(autoCountStr);
+        if (isNaN(autoCount) || autoCount <= 0) return;
+
+        const history = await getChatHistory(currentChatCharId);
+        const lastSummaryCount = parseInt(localStorage.getItem(`last_summary_count_${currentChatCharId}`) || '0');
+        
+        // 如果新增消息达到了设定值
+        if (history.length - lastSummaryCount >= autoCount) {
+            const configStr = localStorage.getItem('settings_api_config'); 
+            if (!configStr) return;
+            const config = safeParseJSON(configStr, null); 
+            if (!config || !config.url || !config.key) return;
+
+            const recentHistory = history.slice(lastSummaryCount);
+            let chatLog = recentHistory.map(m => `${m.isSelf ? '用户' : '你'}: ${m.text}`).join('\n');
+            let prompt = `请阅读以下对话记录，以第一人称（"我"）提取关键信息，写一段简短的记忆总结（不超过100字）。重点提取用户的偏好或发生的重要事件。\n\n对话记录：\n${chatLog}`;
+
+            try {
+                const res = await fetch(`${config.url.replace(/\/$/, '')}/chat/completions`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.key}` },
+                    body: JSON.stringify({ 
+                        model: config.model, 
+                        messages: [{role: 'user', content: prompt}],
+                        temperature: 0.7,
+                        max_tokens: 300
+                    })
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                const memory = data.choices[0].message.content.trim();
+                
+                let memories = safeParseJSON(localStorage.getItem(`char_memory_${currentChatCharId}`), []);
+                memories.push({ time: Date.now(), content: memory });
+                localStorage.setItem(`char_memory_${currentChatCharId}`, JSON.stringify(memories));
+                
+                localStorage.setItem(`last_summary_count_${currentChatCharId}`, history.length);
+                
+                // 添加系统提示
+                await addSystemMessage(`[系统] 角色已自动记住了最近的 ${autoCount} 条对话。`);
+                
+            } catch (e) {
+                console.error("自动总结失败", e);
+            }
+        }
     }
 
     async function initApp() {
