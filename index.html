@@ -200,14 +200,15 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (参考图三，优化按钮) */
+    /* 🌟 重新设计的便利贴美化代码区 (极其清透的淡黄色) */
     .beautify-sticky-note {
-        background-color: #fff9c4;
+        background-color: #fdfef9; /* 极其清透的淡黄色 */
+        border: 1px solid #f6f6e0;
         border-radius: 12px;
         padding: 20px;
         margin: 30px 20px 100px 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        transform: rotate(-1deg);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        transform: rotate(-0.5deg);
         position: relative;
         display: flex;
         flex-direction: column;
@@ -216,14 +217,14 @@
     .beautify-sticky-note::before {
         content: '';
         position: absolute;
-        top: -12px;
+        top: -10px;
         left: 50%;
         transform: translateX(-50%);
         width: 80px;
-        height: 24px;
-        background: rgba(255,255,255,0.7);
+        height: 20px;
+        background: rgba(255,255,255,0.8);
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        border-radius: 4px;
+        border-radius: 2px;
     }
     .beautify-header {
         display: flex;
@@ -236,7 +237,7 @@
     .beautify-textarea {
         width: 100%;
         height: 160px;
-        border: 1px solid #e0d68c;
+        border: 1px solid #e5e5d0;
         border-radius: 8px;
         padding: 12px;
         font-family: monospace;
@@ -245,7 +246,7 @@
         resize: vertical;
         outline: none;
         line-height: 1.5;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
     .beautify-controls {
         display: flex;
@@ -279,7 +280,7 @@
         flex-grow: 1;
         padding: 10px;
         border-radius: 8px;
-        border: 1px solid #e0d68c;
+        border: 1px solid #e5e5d0;
         background-color: #ffffff;
         font-size: 14px;
         outline: none;
@@ -408,7 +409,7 @@
     .chat-msg-row.right .chat-msg-content { align-items: flex-end; }
     .chat-sender-name { font-size: 12px; color: #999; margin-bottom: 4px; padding: 0 4px; }
 
-    .chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: pre-wrap; }
+    .chat-bubble { padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: pre-wrap; position: relative; }
     .chat-msg-row.left .chat-bubble { background-color: #ffffff; color: #333; border-top-left-radius: 4px; border: 1px solid #f0f0f0; }
     .chat-msg-row.right .chat-bubble { background-color: #333333; color: #ffffff; border-top-right-radius: 4px; }
     
@@ -430,6 +431,33 @@
     }
     
     .chat-bubble-plain { background: transparent !important; box-shadow: none !important; font-size: 16px; padding: 0 4px; color: #333; white-space: pre-wrap; }
+
+    /* 🌟 引用气泡样式 (仿图1) */
+    .quote-block {
+        background-color: rgba(0,0,0,0.04);
+        color: #888;
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        margin-bottom: 6px;
+        border-left: 3px solid #ccc;
+        word-break: break-all;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .quote-block .quote-name {
+        font-weight: 600;
+        color: #666;
+    }
+    .chat-msg-row.right .quote-block {
+        background-color: rgba(255,255,255,0.1);
+        color: #ccc;
+        border-left: 3px solid #666;
+    }
+    .chat-msg-row.right .quote-block .quote-name {
+        color: #fff;
+    }
 
     /* 🌟 底栏变回图二样式 */
     .chat-input-bar {
@@ -1645,7 +1673,7 @@
         </div>
     </div>
 
-    <!-- 🌟 重新设计的便利贴美化代码区 (参考图三，优化按钮) -->
+    <!-- 🌟 极其清透的便利贴美化代码区 -->
     <div class="beautify-sticky-note">
         <div class="beautify-header">
             <span>聊天界面美化代码 (CSS)</span>
@@ -2201,6 +2229,9 @@
 <div class="modal-overlay" id="split-msg-modal">
     <div class="modal-content">
         <div class="modal-title">拆分消息</div>
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <button class="pill-btn" style="padding: 8px; font-size: 13px; background: #e5e5ea; flex: 1;" onclick="autoSplitByPunctuation()">按标点/换行智能拆分</button>
+        </div>
         <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">请使用换行符 `\n` 来作为拆分点</div>
         <div class="modal-input-group">
             <textarea id="split-msg-input" style="height: 180px;"></textarea>
@@ -4701,6 +4732,24 @@
             bubbleHtml = `<div class="chat-bubble-plain">${text}</div>`; 
         }
 
+        // 渲染引用块 (仿图1)
+        let quoteHtml = '';
+        if (msgData && msgData.quote) {
+            quoteHtml = `<div class="quote-block">
+                <span class="quote-name">@${msgData.quote.senderName}</span>
+                <span>${msgData.quote.text}</span>
+            </div>`;
+        }
+        
+        // 如果是文本且有引用，插入到气泡内
+        if (quoteHtml) {
+            if (bubbleHtml.includes('class="chat-bubble"')) {
+                bubbleHtml = bubbleHtml.replace('<div class="chat-bubble">', `<div class="chat-bubble">${quoteHtml}`);
+            } else {
+                bubbleHtml = `<div class="chat-bubble">${quoteHtml}${bubbleHtml}</div>`;
+            }
+        }
+
         msgRow.innerHTML = `${avatarHtml}<div class="chat-msg-content">${nameHtml}${bubbleHtml}</div>`; container.appendChild(msgRow);
 
         if (scroll) container.scrollTop = container.scrollHeight;
@@ -4821,13 +4870,13 @@
         let text = input.value.trim();
         if (!text) return;
         
+        let quoteObj = null;
         if (currentReplyTo) {
             const char = contacts.find(c => c.id === currentChatCharId);
             let chatUserPersonaId = localStorage.getItem(`chat_user_persona_${currentChatCharId}`) || activeUserPersonaId;
             const activeP = userPersonas.find(p => p.id === chatUserPersonaId);
             const senderName = currentReplyTo.isSelf ? (activeP?.remark || '我') : (char?.remark || char?.name || '对方');
-            let quoteText = `[引用: ${senderName}: ${currentReplyTo.text ? currentReplyTo.text.substring(0, 20) : '[图片/语音]'}] `;
-            text = quoteText + text;
+            quoteObj = { senderName: senderName, text: currentReplyTo.text ? currentReplyTo.text.substring(0, 30) : '[图片/语音]' };
             currentReplyTo = null;
             document.getElementById('reply-preview').style.display = 'none';
         }
@@ -4840,10 +4889,10 @@
         document.getElementById('send-msg-btn').style.display = 'none';
         
         const msgId = Date.now().toString();
-        await renderChatMessage(text, true, true, null, 'text', null, '', msgId);
+        await renderChatMessage(text, true, true, null, 'text', { quote: quoteObj }, '', msgId);
         if(currentChatCharId) { 
             const history = await getChatHistory(currentChatCharId);
-            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now() }); 
+            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now(), quote: quoteObj }); 
             await saveChatHistory(currentChatCharId, history);
         }
     }
@@ -5749,7 +5798,7 @@
         // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
         const recentHistory = history.slice(-100);
         for(const msg of recentHistory) { 
-            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, { quote: msg.quote }, msg.status, msg.id, 'chat-container'); 
         } 
         container.scrollTop = container.scrollHeight;
     }
@@ -6046,6 +6095,14 @@
         document.getElementById('split-msg-input').value = msg.text;
         document.getElementById('split-msg-modal').classList.add('active');
         closeMsgActionMenu();
+    }
+
+    function autoSplitByPunctuation() {
+        const input = document.getElementById('split-msg-input');
+        let text = input.value;
+        // 在中文句号、问号、感叹号后加换行
+        text = text.replace(/([。！？])/g, '$1\n').replace(/\n+/g, '\n').trim();
+        input.value = text;
     }
 
     async function confirmSplitMessage() {
