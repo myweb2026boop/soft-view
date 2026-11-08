@@ -4862,7 +4862,6 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'location', text: `[位置] ${address}`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
-            triggerCharReply();
         }
         currentLocImg = null;
     }
@@ -4916,7 +4915,6 @@
             }
         }
         await addSystemMessage(sysText);
-        triggerCharReply();
     }
 
     let currentPaymentType = '';
@@ -4947,7 +4945,6 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
-            triggerCharReply();
         }
     }
 
@@ -5011,7 +5008,6 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
-            triggerCharReply();
         }
     }
 
@@ -5106,7 +5102,6 @@
 
         // 添加系统消息
         await addSystemMessage(sysText);
-        triggerCharReply();
     }
 
     async function parseAISpecialActions(text, charId, isCallActive) {
@@ -5114,6 +5109,15 @@
         const targetId = isCallActive ? 'call-chat-container' : 'chat-container';
         const history = await getChatHistory(charId);
         const newMsgs = [];
+        let hasCall = false;
+
+        if (processedText.includes('[发起通话]')) {
+            hasCall = true;
+            processedText = processedText.replace(/\[发起通话\]/g, '');
+        } else if (processedText.includes('［发起通话］')) {
+            hasCall = true;
+            processedText = processedText.replace(/［发起通话］/g, '');
+        }
 
         // 1. 提取并处理 AI 发送的特殊卡片
         const cardRegex = /\[(发红包|转账|发位置|共享位置|送礼物):([^\]]+)\]/g;
@@ -5233,7 +5237,7 @@
             processedText = processedText.replace(match[0], '');
         }
 
-        return { text: processedText.trim(), newMsgs };
+        return { text: processedText.trim(), newMsgs, hasCall };
     }
 
     async function triggerCharReply() {
@@ -5285,12 +5289,13 @@ Seamless Reconnection
 4. 拒绝原地循环对话，不卡同一话题反复纠结，保证交流流畅有变化。
 
 【特殊交互指令（严格遵守）】
-你可以通过输出特定标签向用户发送卡包/礼物/位置（不要加反引号，直接输出原文本）：
+你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本）：
 - 发红包：[发红包:金额:备注] (例如 [发红包:100:拿去喝茶])
 - 转账：[转账:金额:备注] (例如 [转账:520:零花钱])
 - 发位置：[发位置:地点名称]
 - 共享位置：[共享位置:地点名称]
 - 送礼物：[送礼物:礼物名称:价格:赠言] (例如 [送礼物:鲜花:99:节日快乐])
+- 发起通话：[发起通话] (注意：这会拉起语音通话界面)
 
 当你收到用户发给你的红包、转账、位置共享邀请、礼物时，你可以决定接受或拒绝，请输出以下指令（不要加粗）：
 - 领取红包：[领取红包]
@@ -5404,7 +5409,7 @@ Seamless Reconnection
             let replyType = 'text';
 
             // 解析特殊交互
-            const { text: cleanText, newMsgs } = await parseAISpecialActions(rawReply, char.id, isCallActive);
+            const { text: cleanText, newMsgs, hasCall } = await parseAISpecialActions(rawReply, char.id, isCallActive);
 
             if (newMsgs.length > 0) {
                 newMsgs.forEach(m => history.push(m));
@@ -5412,13 +5417,12 @@ Seamless Reconnection
 
             let replyText = cleanText;
 
-            if (replyText.startsWith('[语音]')) {
+            if (replyText.startsWith('[语音]') || replyText.startsWith('［语音］')) {
                 replyType = 'voice';
-                replyText = replyText.replace('[语音]', '').trim();
+                replyText = replyText.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
             }
 
-            if (replyText.includes('[发起通话]')) {
-                replyText = replyText.replace('[发起通话]', '').trim();
+            if (hasCall) {
                 if (replyText) {
                     if (container.contains(loadingRow)) container.removeChild(loadingRow); 
                     const msgId = Date.now().toString();
