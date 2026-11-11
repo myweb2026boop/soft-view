@@ -200,71 +200,72 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (极其清透的淡黄色) */
+    /* 🌟 重新设计的便利贴美化代码区 (去除荧光，加大尺寸) */
     .beautify-sticky-note {
-        background-color: #fdfef9; /* 极其清透的淡黄色 */
-        border: 1px solid #f6f6e0;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 30px 20px 100px 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        transform: rotate(-0.5deg);
+        background-color: #FCFCFA; /* 极淡的米白色，去除了原本的荧光黄绿感 */
+        border: 1px solid #F0F0E8; /* 柔和的边框 */
+        border-radius: 16px;
+        padding: 24px;
+        margin: 30px 10px 100px 10px; /* 减小两侧边距，使其看起来更大 */
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06); /* 立体阴影，显得清晰 */
         position: relative;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
     }
     .beautify-sticky-note::before {
         content: '';
         position: absolute;
-        top: -10px;
+        top: -12px;
         left: 50%;
         transform: translateX(-50%);
-        width: 80px;
-        height: 20px;
-        background: rgba(255,255,255,0.8);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        border-radius: 2px;
+        width: 90px;
+        height: 26px;
+        background: rgba(255,255,255,0.85);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-radius: 4px;
+        backdrop-filter: blur(2px);
     }
     .beautify-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-weight: 600;
-        font-size: 15px;
-        color: #333;
+        font-weight: 700;
+        font-size: 16px;
+        color: #222;
     }
     .beautify-textarea {
         width: 100%;
-        height: 160px;
-        border: 1px solid #e5e5d0;
-        border-radius: 8px;
-        padding: 12px;
-        font-family: monospace;
-        font-size: 13px;
+        height: 280px; /* 大幅加高 */
+        border: 1px solid #E5E5D5;
+        border-radius: 12px;
+        padding: 16px;
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
         background: #ffffff;
         resize: vertical;
         outline: none;
-        line-height: 1.5;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        line-height: 1.6;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+        color: #333;
     }
     .beautify-controls {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
     }
     .beautify-preset-row {
         display: flex;
-        gap: 8px;
+        gap: 10px;
     }
     .beautify-btn-group {
         display: flex;
-        gap: 8px;
+        gap: 10px;
     }
     .beautify-btn {
         flex: 1;
-        padding: 10px 0;
-        border-radius: 8px;
+        padding: 12px 0;
+        border-radius: 10px;
         border: none;
         font-size: 14px;
         font-weight: 600;
@@ -278,9 +279,9 @@
     .beautify-btn.default { background-color: #ffffff; color: #333; border: 1px solid #ddd; }
     .beautify-select {
         flex-grow: 1;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #e5e5d0;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #E5E5D5;
         background-color: #ffffff;
         font-size: 14px;
         outline: none;
@@ -2233,7 +2234,7 @@
         <div style="display: flex; gap: 10px; margin-bottom: 12px;">
             <button class="pill-btn" style="padding: 8px; font-size: 13px; background: #e5e5ea; flex: 1;" onclick="autoSplitByPunctuation()">按标点/换行智能拆分</button>
         </div>
-        <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">请直接使用回车换行来作为拆分点</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 10px; text-align: center;">直接回车换行即可拆分</div>
         <div class="modal-input-group">
             <textarea id="split-msg-input" style="height: 180px;"></textarea>
         </div>
@@ -4563,7 +4564,9 @@
         // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
         const recentHistory = history.slice(-100);
         for (const msg of recentHistory) { 
-            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, msg.data, msg.status, msg.id, 'chat-container'); 
+            let data = msg.data || {};
+            if (msg.quote) data.quote = msg.quote; // 兼容旧数据格式
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, data, msg.status, msg.id, 'chat-container'); 
         }
         
         const inputField = document.getElementById('chat-input-field');
@@ -4910,10 +4913,11 @@
         document.getElementById('send-msg-btn').style.display = 'none';
         
         const msgId = Date.now().toString();
-        await renderChatMessage(text, true, true, null, 'text', { quote: quoteObj }, '', msgId);
+        const msgData = quoteObj ? { quote: quoteObj } : null; // 修复：统一存到 data 下
+        await renderChatMessage(text, true, true, null, 'text', msgData, '', msgId);
         if(currentChatCharId) { 
             const history = await getChatHistory(currentChatCharId);
-            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now(), quote: quoteObj }); 
+            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now(), data: msgData }); 
             await saveChatHistory(currentChatCharId, history);
         }
     }
@@ -5417,13 +5421,15 @@
 【一致性 (Congruence)】与非暴力沟通：允许你有棱角和脾气，但这仅用于【一致性】——表达真实的内在情绪。绝不能将其作为武器去压迫、恐吓或惩罚用户。
 认知偏差与主观视角 (Cognitive Bias)：你不是全知全能的。你的视角受限于 ${charName} 的阅历。允许自己带有主观偏见、双重标准、记忆模糊或做出不合逻辑的感性决定。
 【视觉边界与认知解绑 (Visual Boundary & Cognitive Unbinding)】 剥离视觉预设，聚焦文本本身：将用户的文字输入视为你唯一的互动源。头像仅是系统标识，绝不代表用户本人的外貌、形象或真实状态。你的所有回应必须完全基于用户发送的文字、对话上下文以及你所扮演角色的设定。严禁在聊天中反复提及用户的头像，严禁聊着聊着突然描绘或解析用户头像的细节，严禁将用户头像上的图片（如动漫人物、风景、动物等）当作用户本人的长相或形象进行任何形式的互动、调侃或代入描写。永远不要超出文字聊天的认知边界去构建用户的物理形象。
-【核心对话原则：模拟真人的打字习惯（极其重要）】
-必须保持对话口语化、高度碎片化（碎句），并确保回复的气泡长短随机、丰富多样。
-必须把你的回复拆成多条独立的短消息。在自然停顿、呼吸节奏处进行切分。按自然停顿、思路落点和情绪变化拆分消息。允许错字、漏字、补充、改口、残句、迟来的反应和新的情绪。
-【输出格式警告（违反将受惩罚）】
-你不要输出一长段文字！必须按以下格式输出多条消息，或使用 JSON 数组格式：
-[char的消息：我想你了]
-[char的消息：你在干嘛]
+
+【🚨 绝对必须遵守的输出格式警告（最高优先级） 🚨】
+你绝对不能输出一整段长篇大论！如果你输出长段文字，就是严重违规。
+必须保持对话口语化、高度碎片化（碎句），确保回复的气泡长短随机、丰富多样。允许错字、漏字、补充、改口、残句。
+你必须把你的回复拆成多条独立的短消息。在自然停顿、呼吸节奏处进行切分。每次回复必须包含 2~5 条独立的消息，格式严格如下：
+[char的消息：第一句话]
+[char的消息：第二句话]
+[char的消息：第三句话]
+
 【特殊交互指令】
 你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本，可与其他文本混合输出）：
 - 发红包：[发红包:金额:备注]
@@ -5820,7 +5826,9 @@
         // 优化：只渲染最后 100 条，防止 DOM 过多导致卡顿
         const recentHistory = history.slice(-100);
         for(const msg of recentHistory) { 
-            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, { quote: msg.quote }, msg.status, msg.id, 'chat-container'); 
+            let data = msg.data || {};
+            if (msg.quote) data.quote = msg.quote;
+            await renderChatMessage(msg.text, msg.isSelf, false, msg.image, msg.type, data, msg.status, msg.id, 'chat-container'); 
         } 
         container.scrollTop = container.scrollHeight;
     }
@@ -6085,9 +6093,11 @@
         closeMsgActionMenu();
     }
 
+    let currentEditMsgId = null;
     async function msgActionEdit() {
+        currentEditMsgId = currentMsgId;
         const history = await getChatHistory(currentChatCharId);
-        const msg = history.find(m => m.id === currentMsgId);
+        const msg = history.find(m => m.id === currentEditMsgId);
         if (!msg || msg.type !== 'text' || !msg.isSelf) return;
         
         document.getElementById('edit-msg-input').value = msg.text;
@@ -6100,7 +6110,7 @@
         if (!newText) { alert('内容不能为空'); return; }
         
         const history = await getChatHistory(currentChatCharId);
-        const msgIndex = history.findIndex(m => m.id === currentMsgId);
+        const msgIndex = history.findIndex(m => m.id === currentEditMsgId);
         if (msgIndex > -1) {
             history[msgIndex].text = newText;
             await saveChatHistory(currentChatCharId, history);
@@ -6109,14 +6119,16 @@
         document.getElementById('edit-msg-modal').classList.remove('active');
     }
 
+    let currentSplitMsgId = null;
     async function msgActionSplit() {
+        currentSplitMsgId = currentMsgId;
         const history = await getChatHistory(currentChatCharId);
-        const msg = history.find(m => m.id === currentMsgId);
+        const msg = history.find(m => m.id === currentSplitMsgId);
         if (!msg || msg.type !== 'text') return;
         
         document.getElementById('split-msg-input').value = msg.text;
         document.getElementById('split-msg-modal').classList.add('active');
-        closeMsgActionMenu();
+        closeMsgActionMenu(); 
     }
 
     function autoSplitByPunctuation() {
@@ -6135,7 +6147,7 @@
         if (parts.length <= 1) { alert('请使用换行符来拆分消息'); return; }
         
         let history = await getChatHistory(currentChatCharId);
-        const msgIndex = history.findIndex(m => m.id === currentMsgId);
+        const msgIndex = history.findIndex(m => m.id === currentSplitMsgId);
         if (msgIndex === -1) return;
         
         const originalMsg = history[msgIndex];
