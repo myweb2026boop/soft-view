@@ -200,72 +200,71 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (去除荧光，加大尺寸) */
+    /* 🌟 重新设计的便利贴美化代码区 (极其清透的淡黄色) */
     .beautify-sticky-note {
-        background-color: #FCFCFA; /* 极淡的米白色，去除了原本的荧光黄绿感 */
-        border: 1px solid #F0F0E8; /* 柔和的边框 */
-        border-radius: 16px;
-        padding: 24px;
-        margin: 30px 10px 100px 10px; /* 减小两侧边距，使其看起来更大 */
-        box-shadow: 0 8px 30px rgba(0,0,0,0.06); /* 立体阴影，显得清晰 */
+        background-color: #fdfef9; /* 极其清透的淡黄色 */
+        border: 1px solid #f6f6e0;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 30px 20px 100px 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        transform: rotate(-0.5deg);
         position: relative;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
     }
     .beautify-sticky-note::before {
         content: '';
         position: absolute;
-        top: -12px;
+        top: -10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 90px;
-        height: 26px;
-        background: rgba(255,255,255,0.85);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border-radius: 4px;
-        backdrop-filter: blur(2px);
+        width: 80px;
+        height: 20px;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border-radius: 2px;
     }
     .beautify-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-weight: 700;
-        font-size: 16px;
-        color: #222;
+        font-weight: 600;
+        font-size: 15px;
+        color: #333;
     }
     .beautify-textarea {
         width: 100%;
-        height: 280px; /* 大幅加高 */
-        border: 1px solid #E5E5D5;
-        border-radius: 12px;
-        padding: 16px;
-        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 14px;
+        height: 160px;
+        border: 1px solid #e5e5d0;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: monospace;
+        font-size: 13px;
         background: #ffffff;
         resize: vertical;
         outline: none;
-        line-height: 1.6;
-        box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
-        color: #333;
+        line-height: 1.5;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
     .beautify-controls {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
     }
     .beautify-preset-row {
         display: flex;
-        gap: 10px;
+        gap: 8px;
     }
     .beautify-btn-group {
         display: flex;
-        gap: 10px;
+        gap: 8px;
     }
     .beautify-btn {
         flex: 1;
-        padding: 12px 0;
-        border-radius: 10px;
+        padding: 10px 0;
+        border-radius: 8px;
         border: none;
         font-size: 14px;
         font-weight: 600;
@@ -279,9 +278,9 @@
     .beautify-btn.default { background-color: #ffffff; color: #333; border: 1px solid #ddd; }
     .beautify-select {
         flex-grow: 1;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid #E5E5D5;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e5e5d0;
         background-color: #ffffff;
         font-size: 14px;
         outline: none;
@@ -1626,10 +1625,11 @@
 <div class="fullscreen-screen" id="xunyan-screen">
     <div class="xy-header">
         <svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
-        <svg onclick="openStickerManage()" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <!-- 右侧设置按钮 -->
+        <svg onclick="openSettingsApp()" viewBox="0 0 24 24"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </div>
     <div class="xy-profile-section">
-        <div class="xy-avatar" id="xy-avatar"></div>
+        <div class="xy-avatar" id="xy-avatar" onclick="document.getElementById('blog-avatar-upload').click()"></div>
         <div class="xy-info">
             <div class="xy-name xy-editable" data-key="xy_name">暂无文本输入</div>
             <div class="xy-role xy-editable" data-key="xy_role">暂无文本输入</div>
@@ -2559,7 +2559,7 @@
         if(screenEl) screenEl.classList.remove('active'); 
     }
     function openManager() { openScreen('manager-screen'); }
-    function openXunyan() { renderXunyanMessages(); openScreen('xunyan-screen'); }
+    function openXunyan() { renderXunyanMessages(); renderXunyanProfile(); openScreen('xunyan-screen'); }
     function openContactList() { renderContactList(); openScreen('contact-list-screen'); }
 
     const defaultApps = [ { id: '1', name: '讯言', isDock: false }, { id: '2', name: 'Book', isDock: false }, { id: '3', name: '通讯录', isDock: false }, { id: '4', name: '桌面', isDock: false }, { id: 'd1', name: '', isDock: true }, { id: 'd2', name: '', isDock: true } ];
@@ -2635,6 +2635,7 @@
         this.value = '';
     });
 
+    // 绑定 Blog 页面的双击修改
     document.querySelectorAll('#blog-screen .xy-editable').forEach(el => {
         const field = el.dataset.key.replace('blog_', ''); 
         el.addEventListener('dblclick', function(e) {
@@ -2651,6 +2652,31 @@
                     else if(field === 'followers') userPersonas[pIndex].followers = newVal;
                     else if(field === 'following') userPersonas[pIndex].following = newVal;
                     else if(field === 'signature') userPersonas[pIndex].signature = newVal;
+                    else if(field === 'name') userPersonas[pIndex].remark = newVal;
+                    else if(field === 'role') userPersonas[pIndex].identity = newVal;
+                    localStorage.setItem('user_personas', JSON.stringify(userPersonas));
+                    renderXunyanProfile(); // 同步更新到主页
+                }
+            }
+        });
+    });
+
+    // 🌟 修复：绑定 Xunyan 主页的个人信息修改
+    document.querySelectorAll('#xunyan-screen .xy-editable').forEach(el => {
+        const field = el.dataset.key.replace('xy_', ''); 
+        el.addEventListener('dblclick', function(e) {
+            e.stopPropagation(); this.contentEditable = "true"; this.focus(); 
+            const range = document.createRange(); const sel = window.getSelection(); range.selectNodeContents(this); range.collapse(false); sel.removeAllRanges(); sel.addRange(range);
+        });
+        el.addEventListener('blur', function() {
+            this.contentEditable = "false"; 
+            const newVal = this.innerHTML;
+            if (activeUserPersonaId) {
+                const pIndex = userPersonas.findIndex(p => p.id === activeUserPersonaId);
+                if (pIndex > -1) {
+                    if(field === 'posts') userPersonas[pIndex].posts = newVal;
+                    else if(field === 'followers') userPersonas[pIndex].followers = newVal;
+                    else if(field === 'following') userPersonas[pIndex].following = newVal;
                     else if(field === 'name') userPersonas[pIndex].remark = newVal;
                     else if(field === 'role') userPersonas[pIndex].identity = newVal;
                     localStorage.setItem('user_personas', JSON.stringify(userPersonas));
@@ -4267,12 +4293,32 @@
     } else if (!activeUserPersonaId || !userPersonas.find(p => p.id === activeUserPersonaId)) {
         activeUserPersonaId = userPersonas[0].id; localStorage.setItem('active_user_persona_id', activeUserPersonaId);
     }
+    
+    async function renderXunyanProfile() {
+        const p = userPersonas.find(x => x.id === activeUserPersonaId); if (!p) return;
+        document.querySelector('#xunyan-screen [data-key="xy_name"]').innerHTML = p.remark || p.name || '未命名';
+        document.querySelector('#xunyan-screen [data-key="xy_role"]').innerHTML = p.identity || '暂无身份';
+        document.querySelector('#xunyan-screen [data-key="xy_posts"]').innerHTML = p.posts || '0';
+        document.querySelector('#xunyan-screen [data-key="xy_followers"]').innerHTML = p.followers || '0';
+        document.querySelector('#xunyan-screen [data-key="xy_following"]').innerHTML = p.following || '0';
+        const avatarEl = document.getElementById('xy-avatar');
+        const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
+        if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; }
+        else { avatarEl.style.backgroundImage = 'none'; }
+    }
+
     async function renderBlogPage() {
         const p = userPersonas.find(x => x.id === activeUserPersonaId); if (!p) return;
-        document.querySelector('[data-key="blog_name"]').innerHTML = p.remark || p.name || '未命名用户'; document.querySelector('[data-key="blog_role"]').innerHTML = p.identity || '暂无身份'; document.querySelector('[data-key="blog_signature"]').innerHTML = p.signature || '双击修改个性签名'; document.querySelector('[data-key="blog_posts"]').innerHTML = p.posts || '0'; document.querySelector('[data-key="blog_followers"]').innerHTML = p.followers || '0'; document.querySelector('[data-key="blog_following"]').innerHTML = p.following || '0';
+        document.querySelector('[data-key="blog_name"]').innerHTML = p.remark || p.name || '未命名用户'; 
+        document.querySelector('[data-key="blog_role"]').innerHTML = p.identity || '暂无身份'; 
+        document.querySelector('[data-key="blog_signature"]').innerHTML = p.signature || '双击修改个性签名'; 
+        document.querySelector('[data-key="blog_posts"]').innerHTML = p.posts || '0'; 
+        document.querySelector('[data-key="blog_followers"]').innerHTML = p.followers || '0'; 
+        document.querySelector('[data-key="blog_following"]').innerHTML = p.following || '0';
         const avatarEl = document.getElementById('blog-avatar'); const savedImg = await getImageFromDB(`user_avatar_${p.id}`);
         if (savedImg) { avatarEl.style.backgroundImage = `url(${savedImg})`; avatarEl.style.borderColor = 'transparent'; } else { avatarEl.style.backgroundImage = 'none'; avatarEl.style.borderColor = '#e5e5ea'; }
         loadBlogBeautify();
+        renderXunyanProfile();
     }
     function openBlog() { renderBlogPage(); openScreen('blog-screen'); }
     document.getElementById('blog-avatar-upload').addEventListener('change', function(e) {
@@ -4913,12 +4959,13 @@
         document.getElementById('send-msg-btn').style.display = 'none';
         
         const msgId = Date.now().toString();
-        const msgData = quoteObj ? { quote: quoteObj } : null; // 修复：统一存到 data 下
+        const msgData = quoteObj ? { quote: quoteObj } : null; 
         await renderChatMessage(text, true, true, null, 'text', msgData, '', msgId);
         if(currentChatCharId) { 
             const history = await getChatHistory(currentChatCharId);
-            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now(), data: msgData }); 
+            history.push({ id: msgId, type: 'text', text: text, isSelf: true, time: Date.now(), data: msgData, quote: quoteObj }); 
             await saveChatHistory(currentChatCharId, history);
+            checkAutoMemorySummary(); // 触发自动总结检查
         }
     }
 
@@ -4971,6 +5018,7 @@
                     const history = await getChatHistory(currentChatCharId);
                     history.push({ id: msgId, type: 'image', text: "[发送了一张图片]", image: compressedBase64, isSelf: true, time: Date.now() });
                     await saveChatHistory(currentChatCharId, history);
+                    checkAutoMemorySummary();
                 }
                 toggleAttachmentPanel();
             });
@@ -5021,6 +5069,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'location', text: `[位置] ${address}`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            checkAutoMemorySummary();
         }
         currentLocImg = null;
     }
@@ -5104,6 +5153,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: currentPaymentType, text: msgText, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            checkAutoMemorySummary();
         }
     }
 
@@ -5167,6 +5217,7 @@
             const history = await getChatHistory(currentChatCharId);
             history.push({ id: msgId, type: 'gift', text: `[礼物] 마음`, data: msgData, isSelf: true, time: Date.now() });
             await saveChatHistory(currentChatCharId, history);
+            checkAutoMemorySummary();
         }
     }
 
@@ -5429,6 +5480,7 @@
 [char的消息：第一句话]
 [char的消息：第二句话]
 [char的消息：第三句话]
+如果你的输出不遵循这个换行和格式要求，系统将无法正常显示你的回复，这是不可接受的。
 
 【特殊交互指令】
 你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本，可与其他文本混合输出）：
@@ -5570,7 +5622,7 @@
                 } catch(e) {}
             }
 
-            // 如果不是 JSON，尝试正则匹配
+            // 如果不是 JSON，尝试正则匹配 [char的消息：xxx]
             if (messagesToSend.length === 0) {
                 const msgRegex = /\[char的消息[：:]([\s\S]*?)\]/g;
                 let match;
@@ -5584,14 +5636,24 @@
                 }
             }
 
-            // 如果还是没有，整体作为一条
+            // 如果还是没有，检查是否有换行符（强制拆分）
             if (messagesToSend.length === 0 && cleanText.trim()) {
-                let txt = cleanText.trim();
-                if (txt.startsWith('[语音]') || txt.startsWith('［语音］')) {
-                    replyType = 'voice';
-                    txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
+                let lines = cleanText.split('\n').map(s => s.trim()).filter(s => s);
+                if (lines.length > 1) {
+                    messagesToSend = lines.map(txt => {
+                        if (txt.startsWith('[语音]') || txt.startsWith('［语音］')) {
+                            return { text: txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim(), type: 'voice' };
+                        }
+                        return { text: txt, type: 'text' };
+                    });
+                } else {
+                    let txt = cleanText.trim();
+                    if (txt.startsWith('[语音]') || txt.startsWith('［语音］')) {
+                        replyType = 'voice';
+                        txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').trim();
+                    }
+                    if (txt) messagesToSend.push({ text: txt, type: replyType });
                 }
-                if (txt) messagesToSend.push({ text: txt, type: replyType });
             }
 
             if (container.contains(loadingRow)) container.removeChild(loadingRow); 
@@ -5618,6 +5680,7 @@
             }
 
             await saveChatHistory(char.id, history);
+            checkAutoMemorySummary(); // 触发自动记忆总结检查
 
             if (document.visibilityState === 'hidden') {
                 playRingtone();
@@ -6122,6 +6185,7 @@
     let currentSplitMsgId = null;
     async function msgActionSplit() {
         currentSplitMsgId = currentMsgId;
+        if (!currentSplitMsgId) { alert('未找到消息'); return; }
         const history = await getChatHistory(currentChatCharId);
         const msg = history.find(m => m.id === currentSplitMsgId);
         if (!msg || msg.type !== 'text') return;
@@ -6711,7 +6775,11 @@
         const xyAvatarImg = await getImageFromDB('xunyan_avatar'); if (xyAvatarImg) document.getElementById('xy-avatar').style.backgroundImage = `url(${xyAvatarImg})`;
         const badgeSvg = `<svg style="width:16px;height:16px;fill:#007aff;margin-left:4px;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
         document.getElementById('verify-badge').innerHTML = badgeSvg;
-        renderContactList(); renderXunyanMessages(); renderBlogPage();
+        
+        renderContactList(); 
+        renderXunyanMessages(); 
+        renderXunyanProfile(); 
+        renderBlogPage();
 
         const mgrWidgetImg = await getImageFromDB('manager_widget_img');
         if (mgrWidgetImg) {
