@@ -200,14 +200,14 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (简约黑白风) */
+    /* 🌟 重新设计的便利贴美化代码区 (极简黑白) */
     .beautify-sticky-note {
         background-color: #ffffff;
         border: 1px solid #e5e5ea;
         border-radius: 12px;
         padding: 20px;
         margin: 30px 20px 100px 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         position: relative;
         display: flex;
         flex-direction: column;
@@ -234,7 +234,6 @@
         resize: vertical;
         outline: none;
         line-height: 1.5;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
     .beautify-controls {
         display: flex;
@@ -262,7 +261,7 @@
     }
     .beautify-btn:active { opacity: 0.8; }
     .beautify-btn.primary { background-color: #000000; color: #ffffff; }
-    .beautify-btn.danger { background-color: #ffffff; color: #000000; border: 1px solid #000000; }
+    .beautify-btn.danger { background-color: #ffffff; color: #000000; border: 1px solid #e5e5ea; }
     .beautify-btn.default { background-color: #f2f2f7; color: #000000; }
     .beautify-select {
         flex-grow: 1;
@@ -1662,7 +1661,7 @@
         </div>
     </div>
 
-    <!-- 🌟 极其清透的便利贴美化代码区 (简约黑白风) -->
+    <!-- 🌟 极其清透的便利贴美化代码区 (极简黑白) -->
     <div class="beautify-sticky-note">
         <div class="beautify-header">
             <span>聊天界面美化代码 (CSS)</span>
@@ -1691,8 +1690,9 @@
         <div class="book-main-text" id="book-main-text" contenteditable="false">我不是个好丈夫，不是个好父亲，也不是个好儿子，那又怎样呢。我是一个女孩子。</div>
     </div>
     <div class="book-actions">
-        <button class="book-btn" onclick="document.getElementById('book-file-upload').click()"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg> 上传文件 (docx/json)</button>
-        <button class="book-btn" onclick="closeScreen('book-app-screen')" style="margin-left: auto; background-color: transparent;">关闭</button>
+        <button class="book-btn" onclick="document.getElementById('book-file-upload').click()"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg> 批量上传</button>
+        <button class="book-btn" onclick="createBlankBook()" style="margin-left: 10px; background-color: #f0f0f0; color: #333; border: 1px solid #e5e5ea;"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#333;"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 新建空白</button>
+        <button class="book-btn" onclick="closeScreen('book-app-screen')" style="margin-left: auto; background-color: transparent; color: #8e8e93;">关闭</button>
     </div>
     <div class="book-shelf-title">我的书架 (世界书)</div>
     <div class="book-shelf" id="book-shelf-container"></div>
@@ -2429,7 +2429,7 @@
 <input type="file" id="offline-bg-upload" accept="image/*">
 <input type="file" id="offline-style-upload" accept=".txt,.json,.docx">
 <input type="file" id="offline-worldbook-upload" accept=".txt,.json,.docx">
-<input type="file" id="book-file-upload" accept=".docx,.json">
+<input type="file" id="book-file-upload" accept=".docx,.json" multiple>
 <input type="file" id="ringtone-upload" accept="audio/mpeg,audio/mp3">
 <input type="file" id="settings-avatar-upload" accept="image/*">
 <input type="file" id="global-font-upload" accept=".ttf,.otf,.woff,.woff2">
@@ -4017,25 +4017,71 @@
             container.appendChild(div);
         });
     }
+    
     document.getElementById('book-file-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0]; if(!file) return;
-        const fileName = file.name; const title = fileName.replace(/\.[^/.]+$/, ""); const ext = fileName.split('.').pop().toLowerCase();
-        if(ext === 'docx') {
-            const reader = new FileReader();
-            reader.onload = function(event) { mammoth.extractRawText({arrayBuffer: event.target.result}).then(function(result){ saveNewBook(title, result.value); }).catch(function(err){ alert("解析失败：" + err.message); }); };
-            reader.readAsArrayBuffer(file);
-        } else if (ext === 'json') {
-            const reader = new FileReader();
-            reader.onload = function(event) { let content = event.target.result; try { content = JSON.stringify(JSON.parse(content), null, 2); } catch(e) {} saveNewBook(title, content); };
-            reader.readAsText(file);
-        } else { alert("仅支持 .docx 和 .json 文件"); }
-        this.value = '';
+        const files = e.target.files;
+        if(!files || files.length === 0) return;
+        
+        let processedCount = 0;
+        let successCount = 0;
+        const totalFiles = files.length;
+        const inputElement = this;
+        
+        const checkDone = () => {
+            processedCount++;
+            if(processedCount === totalFiles) {
+                alert(`处理完成！成功导入 ${successCount} 个世界书。`);
+                inputElement.value = '';
+            }
+        };
+
+        Array.from(files).forEach(file => {
+            const fileName = file.name; 
+            const title = fileName.replace(/\.[^/.]+$/, ""); 
+            const ext = fileName.split('.').pop().toLowerCase();
+            
+            if(ext === 'docx') {
+                const reader = new FileReader();
+                reader.onload = function(event) { 
+                    mammoth.extractRawText({arrayBuffer: event.target.result}).then(function(result){ 
+                        saveNewBook(title, result.value, false); 
+                        successCount++; checkDone();
+                    }).catch(function(err){ 
+                        alert(`解析文件 ${fileName} 失败：` + err.message); checkDone();
+                    }); 
+                };
+                reader.readAsArrayBuffer(file);
+            } else if (ext === 'json') {
+                const reader = new FileReader();
+                reader.onload = function(event) { 
+                    let content = event.target.result; 
+                    try { content = JSON.stringify(JSON.parse(content), null, 2); } catch(e) {} 
+                    saveNewBook(title, content, false); 
+                    successCount++; checkDone();
+                };
+                reader.readAsText(file);
+            } else {
+                alert(`文件 ${fileName} 格式不支持，仅支持 .docx 和 .json`);
+                checkDone();
+            }
+        });
     });
-    function saveNewBook(title, content) {
-        bookWorldBooks.push({ id: 'book_' + Date.now(), title, content, bindType: 'local', boundCharId: null, insertPos: 'before' });
+
+    function saveNewBook(title, content, showAlert = false) {
+        bookWorldBooks.push({ id: 'book_' + Date.now() + '_' + Math.floor(Math.random()*1000), title, content, bindType: 'local', boundCharId: null, insertPos: 'before' });
         localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
-        renderBookShelf(); alert("上传成功，已加入书架！");
+        renderBookShelf(); 
+        if(showAlert) alert("上传成功，已加入书架！");
     }
+
+    function createBlankBook() {
+        const newBookId = 'book_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+        bookWorldBooks.push({ id: newBookId, title: '未命名世界书', content: '', bindType: 'local', boundCharId: null, insertPos: 'before' });
+        localStorage.setItem('book_world_books', JSON.stringify(bookWorldBooks));
+        renderBookShelf();
+        openBookEditScreen(newBookId);
+    }
+
     function openBookEditScreen(id) {
         currentEditingBookId = id; const book = bookWorldBooks.find(b => b.id === id); if(!book) return;
         document.getElementById('book-edit-title').value = book.title; document.getElementById('book-edit-content').value = book.content;
