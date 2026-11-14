@@ -200,45 +200,116 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (极简黑白) */
+    /* 🌟 重新设计的便利贴美化代码区 (完美复刻图2验证码风格) */
     .beautify-sticky-note {
-        background-color: #ffffff;
-        border: 1px solid #e5e5ea;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 30px 20px 100px 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        background-color: #f9f9f9;
+        border: 1px solid #d3d3d3;
+        border-radius: 8px;
+        padding: 0;
+        margin: 40px 20px 100px 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         position: relative;
         display: flex;
         flex-direction: column;
-        gap: 12px;
     }
+    
+    /* 模拟图2顶部 I'm not a robot 区域 */
     .beautify-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-weight: 600;
         font-size: 15px;
-        color: #000;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+        padding: 15px 15px 10px 15px;
+        background: #f9f9f9;
+        border-radius: 8px 8px 0 0;
     }
+    .beautify-header span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    /* 模拟那个打勾的方框 */
+    .beautify-header span:first-child::before {
+        content: '';
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #b0b0b0;
+        border-radius: 3px;
+        background: #fff;
+    }
+    
+    /* 模拟图2下方的白色卡片区域及小尖角 */
+    .beautify-inner {
+        background: #ffffff;
+        border: 1px solid #d3d3d3;
+        border-radius: 6px;
+        margin: 10px;
+        padding: 15px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .beautify-inner::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 20px;
+        width: 14px;
+        height: 14px;
+        background: #ffffff;
+        border-top: 1px solid #d3d3d3;
+        border-left: 1px solid #d3d3d3;
+        transform: rotate(45deg);
+    }
+
+    /* 模拟图2的图案展示区 */
+    .beautify-decor-area {
+        border: 1px solid #b0b0b0;
+        border-radius: 4px;
+        padding: 15px;
+        text-align: center;
+        font-family: Georgia, serif;
+        font-size: 20px;
+        color: #000;
+        background: #fff;
+        margin-bottom: 5px;
+        letter-spacing: 1px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90px;
+        position: relative;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .beautify-decor-area span.word { font-size: 26px; font-weight: bold; }
+    .beautify-decor-area span.small { font-size: 18px; }
+    .beautify-decor-area svg.note { width: 16px; height: 16px; fill: #000; }
+
     .beautify-textarea {
         width: 100%;
-        height: 160px;
-        border: 1px solid #e5e5ea;
-        border-radius: 8px;
-        padding: 12px;
+        height: 120px;
+        border: 1px solid #b0b0b0;
+        border-radius: 4px;
+        padding: 10px;
         font-family: monospace;
         font-size: 13px;
-        background: #f9f9f9;
-        color: #000;
+        background: #ffffff;
+        color: #333;
         resize: vertical;
         outline: none;
         line-height: 1.5;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
     .beautify-controls {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
     }
     .beautify-preset-row {
         display: flex;
@@ -251,31 +322,48 @@
     .beautify-btn {
         flex: 1;
         padding: 10px 0;
-        border-radius: 8px;
+        border-radius: 3px;
         border: none;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.2s;
         text-align: center;
+        transition: background 0.2s;
     }
-    .beautify-btn:active { opacity: 0.8; }
-    .beautify-btn.primary { background-color: #000000; color: #ffffff; }
-    .beautify-btn.danger { background-color: #ffffff; color: #000000; border: 1px solid #e5e5ea; }
-    .beautify-btn.default { background-color: #f2f2f7; color: #000000; }
+    .beautify-btn.primary { 
+        background-color: #7a7a7a; 
+        color: #ffffff; 
+        border: 1px solid #7a7a7a;
+    }
+    .beautify-btn.primary:active { background-color: #666; }
+    
+    .beautify-btn.danger { 
+        background-color: #ffffff; 
+        color: #333; 
+        border: 1px solid #b0b0b0; 
+    }
+    .beautify-btn.danger:active { background-color: #f0f0f0; }
+    
+    .beautify-btn.default { 
+        background-color: #ffffff; 
+        color: #333; 
+        border: 1px solid #b0b0b0; 
+    }
+    .beautify-btn.default:active { background-color: #f0f0f0; }
+    
     .beautify-select {
         flex-grow: 1;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #e5e5ea;
+        padding: 8px;
+        border-radius: 3px;
+        border: 1px solid #b0b0b0;
         background-color: #ffffff;
         font-size: 14px;
         outline: none;
-        color: #000;
+        color: #333;
         appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
         background-repeat: no-repeat;
-        background-position: right 12px top 50%;
+        background-position: right 10px top 50%;
         background-size: 10px auto;
     }
 
@@ -1661,23 +1749,31 @@
         </div>
     </div>
 
-    <!-- 🌟 极其清透的便利贴美化代码区 (极简黑白) -->
+    <!-- 🌟 重新设计的便利贴美化代码区 (完美复刻图2验证码风格) -->
     <div class="beautify-sticky-note">
         <div class="beautify-header">
             <span>聊天界面美化代码 (CSS)</span>
-            <span style="font-size: 13px; color: #000; cursor: pointer;" onclick="resetBeautifyCode()">恢复默认</span>
+            <span style="font-size: 13px; color: #333; cursor: pointer; text-decoration: underline;" onclick="resetBeautifyCode()">恢复默认</span>
         </div>
-        <textarea id="beautify-code-input" class="beautify-textarea" placeholder="在此输入自定义CSS代码..."></textarea>
-        <div class="beautify-controls">
-            <div class="beautify-preset-row">
-                <select id="beautify-preset-select" class="beautify-select">
-                    <option value="">-- 选择预设 --</option>
-                </select>
-                <button class="beautify-btn primary" onclick="applySelectedBeautifyPreset()" style="flex: 0 0 70px;">应用</button>
-                <button class="beautify-btn danger" onclick="deleteBeautifyPreset()" style="flex: 0 0 70px;">删除</button>
+        <div class="beautify-inner">
+            <!-- 为了更像图2，加一个装饰区显示当前状态或者随便什么文字 -->
+            <div class="beautify-decor-area">
+                <span class="word">CSS</span> <span class="small">is my</span> 
+                <svg class="note" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> 
+                <span class="word">Art</span>
             </div>
-            <div class="beautify-btn-group">
-                <button class="beautify-btn default" onclick="saveBeautifyPreset()">保存为新预设</button>
+            <textarea id="beautify-code-input" class="beautify-textarea" placeholder="在此输入自定义CSS代码..."></textarea>
+            <div class="beautify-controls">
+                <div class="beautify-preset-row">
+                    <select id="beautify-preset-select" class="beautify-select">
+                        <option value="">-- 选择预设 --</option>
+                    </select>
+                    <button class="beautify-btn primary" onclick="applySelectedBeautifyPreset()" style="flex: 0 0 70px;">应用</button>
+                    <button class="beautify-btn danger" onclick="deleteBeautifyPreset()" style="flex: 0 0 70px;">删除</button>
+                </div>
+                <div class="beautify-btn-group">
+                    <button class="beautify-btn default" onclick="saveBeautifyPreset()">保存为新预设</button>
+                </div>
             </div>
         </div>
     </div>
