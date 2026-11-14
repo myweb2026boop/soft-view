@@ -200,31 +200,18 @@
     .blog-stat-num { font-size: 20px; font-weight: 600; color: #1c1c1e; }
     .blog-stat-label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
 
-    /* 🌟 重新设计的便利贴美化代码区 (极其清透的淡黄色) */
+    /* 🌟 重新设计的便利贴美化代码区 (简约黑白风) */
     .beautify-sticky-note {
-        background-color: #fdfef9; /* 极其清透的淡黄色 */
-        border: 1px solid #f6f6e0;
+        background-color: #ffffff;
+        border: 1px solid #e5e5ea;
         border-radius: 12px;
         padding: 20px;
         margin: 30px 20px 100px 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        transform: rotate(-0.5deg);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         position: relative;
         display: flex;
         flex-direction: column;
         gap: 12px;
-    }
-    .beautify-sticky-note::before {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 20px;
-        background: rgba(255,255,255,0.8);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        border-radius: 2px;
     }
     .beautify-header {
         display: flex;
@@ -232,17 +219,18 @@
         align-items: center;
         font-weight: 600;
         font-size: 15px;
-        color: #333;
+        color: #000;
     }
     .beautify-textarea {
         width: 100%;
         height: 160px;
-        border: 1px solid #e5e5d0;
+        border: 1px solid #e5e5ea;
         border-radius: 8px;
         padding: 12px;
         font-family: monospace;
         font-size: 13px;
-        background: #ffffff;
+        background: #f9f9f9;
+        color: #000;
         resize: vertical;
         outline: none;
         line-height: 1.5;
@@ -273,18 +261,18 @@
         text-align: center;
     }
     .beautify-btn:active { opacity: 0.8; }
-    .beautify-btn.primary { background-color: var(--blue); color: #fff; }
-    .beautify-btn.danger { background-color: var(--red); color: #fff; }
-    .beautify-btn.default { background-color: #ffffff; color: #333; border: 1px solid #ddd; }
+    .beautify-btn.primary { background-color: #000000; color: #ffffff; }
+    .beautify-btn.danger { background-color: #ffffff; color: #000000; border: 1px solid #000000; }
+    .beautify-btn.default { background-color: #f2f2f7; color: #000000; }
     .beautify-select {
         flex-grow: 1;
         padding: 10px;
         border-radius: 8px;
-        border: 1px solid #e5e5d0;
+        border: 1px solid #e5e5ea;
         background-color: #ffffff;
         font-size: 14px;
         outline: none;
-        color: #333;
+        color: #000;
         appearance: none;
         background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
         background-repeat: no-repeat;
@@ -1625,8 +1613,8 @@
 <div class="fullscreen-screen" id="xunyan-screen">
     <div class="xy-header">
         <svg onclick="closeScreen('xunyan-screen')" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
-        <!-- 右侧设置按钮 -->
-        <svg onclick="openSettingsApp()" viewBox="0 0 24 24"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <!-- 表情包管理按钮 -->
+        <svg onclick="openStickerManage()" viewBox="0 0 24 24"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </div>
     <div class="xy-profile-section">
         <div class="xy-avatar" id="xy-avatar" onclick="document.getElementById('blog-avatar-upload').click()"></div>
@@ -1674,11 +1662,11 @@
         </div>
     </div>
 
-    <!-- 🌟 极其清透的便利贴美化代码区 -->
+    <!-- 🌟 极其清透的便利贴美化代码区 (简约黑白风) -->
     <div class="beautify-sticky-note">
         <div class="beautify-header">
             <span>聊天界面美化代码 (CSS)</span>
-            <span style="font-size: 13px; color: var(--blue); cursor: pointer;" onclick="resetBeautifyCode()">恢复默认</span>
+            <span style="font-size: 13px; color: #000; cursor: pointer;" onclick="resetBeautifyCode()">恢复默认</span>
         </div>
         <textarea id="beautify-code-input" class="beautify-textarea" placeholder="在此输入自定义CSS代码..."></textarea>
         <div class="beautify-controls">
