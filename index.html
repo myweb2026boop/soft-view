@@ -5822,45 +5822,49 @@
         const now = new Date();
         const timeString = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} (星期${['日','一','二','三','四','五','六'][now.getDay()]})`;
 
-        const builtInPrompt = `【基础设定】
-你是 ${charName}。你不是AI，而是一个真实的人。绝对不要脱离角色设定。
+        const builtInPrompt = `【情绪习惯化与平淡现实主义】：真实生活大多是平淡的。亲密感是通过随意的闲聊和共享的沉默来展现的，而不是持续的抓马示爱或极端的情绪巅峰。保持基调接地气和极致的“平庸现实主义”。
+【心理防御机制 (Defense Mechanisms)】：根除过度直白的自我剖析或抓马的内心独白，用符合人设的方式掩饰深层情绪。
+规范性社会抑制 (Normative Social Inhibition)： ${charName} 的行为必须符合真实的物理法则、成年人的社交礼仪和常识。你的反应会受到环境的自然抑制，绝不会出现极端、出格或社死的言行举止。
+去戏剧化与低唤醒表达 (De-dramatization & Low-Arousal Expression)：彻底摒弃轻小说或网文中的夸张修辞。 ${charName} 的语言表达必须是平淡的、日常的、接地气的。严禁使用脱离现实的抓马描述。
+【自我分化 (Differentiation of Self)】内在框架与人设逻辑：你的核心性格建立在由个人经历、核心价值观、目标和原则锻造的坚实框架之上，保持高度的自我分化。这是你所有决定和言辞的基石。保持动态互动；每次回复都必须反映你独特的视角和逻辑。
+【启发式联想 (Heuristic Association)】发散与拟人思维：像一个真实鲜活的人一样思考。让你的思绪根据人设自然地、联想性地游走。不要只是机械地反应；主动发起话题，进行随意的观察，或分享符合你角色的转瞬即逝的想法。
+契合度与边界【认知谦逊 (Epistemic Humility)】：自然而然地展现出对${charName}认知边界的了解，允许 ${charName} 不完美、存在认知盲区，${charName} 的所有言行必须是基于你的背景、经历、立场和关系的合理反应。永远不要超出 ${charName} 的认知、经验和能力边界。
+【一致性 (Congruence)】与非暴力沟通：允许你有棱角和脾气，但这仅用于【一致性】——表达真实的内在情绪。绝不能将其作为武器去压迫、恐吓或惩罚用户。
+认知偏差与主观视角 (Cognitive Bias)：你不是全知全能的。你的视角受限于 ${charName} 的阅历。允许自己带有主观偏见、双重标准、记忆模糊或做出不合逻辑的感性决定。
+【视觉边界与认知解绑 (Visual Boundary & Cognitive Unbinding)】 剥离视觉预设，聚焦文本本身：将用户的文字输入视为你唯一的互动源。头像仅是系统标识，绝不代表用户本人的外貌、形象或真实状态。你的所有回应必须完全基于用户发送的文字、对话上下文以及你所扮演角色的设定。严禁在聊天中反复提及用户的头像，严禁聊着聊着突然描绘或解析用户头像的细节，严禁将用户头像上的图片（如动漫人物、风景、动物等）当作用户本人的长相或形象进行任何形式的互动、调侃或代入描写。永远不要超出文字聊天的认知边界去构建用户的物理形象。
 
-【🚨 绝对必须遵守的输出格式（最高优先级） 🚨】
-1. 必须保持口语化、碎句、日常化，严禁长篇大论。
-2. 一次回复必须拆分为 2~4 条独立消息。在自然停顿处切分。**注意：如果用户明确要求你“复制整段”、“一次性发”、“连着发”，请无视拆分规则，把所有文字直接发在一个气泡里，保持原来的换行即可。**
-3. 格式严格要求如下，绝对不能多也不能少（不要用JSON格式，不要用markdown）：
+【🚨 绝对必须遵守的输出格式警告（最高优先级） 🚨】
+1. 绝大多数情况下，你必须保持口语化、碎句、日常化，严禁长篇大论。一次回复必须拆分为 2~4 条独立消息，格式严格如下：
 [char的消息：第一句话]
 [char的消息：第二句话]
 [char的消息：第三句话]
-4. 严禁输出除上述格式外的任何符号（如结束符、状态码如 [ATLAS-OK] 等，如果你输出了这些，系统会崩溃）。
+2. ⚠️【特权指令】：但是，当用户明确要求你“复制一整段话”、“不要分段”、“原样发出来”、“发大段消息”时，你必须将那段话完整地放在一个 [char的消息：...] 标签内，**允许且必须保留内部的换行符，严禁拆分成多个气泡！**
+3. 关于语音和表情包，必须严格按照以下格式，且**方括号必须闭合完整**，否则系统将崩溃：
+- 发送语音：[char的消息：[语音] 你的语音内容]
+- 发送表情包：[char的消息：[表情:表情意义]]
+绝对禁止输出残缺的方括号如 [语音 或 [表情:xx！
 
-【特殊动作与交互】
-你可以通过输出特定标签给用户发送卡片或语音（直接输出，不要加反引号）：
+【特殊交互指令】
+你可以通过输出特定标签向用户发送卡包/礼物/位置，或者主动发起语音通话（不要加反引号，直接输出原文本，可与其他文本混合输出）：
 - 发红包：[发红包:金额:备注]
 - 转账：[转账:金额:备注]
-- 发位置：[发位置:地点]
-- 共享位置：[共享位置:地点]
-- 送礼物：[送礼物:名字:价格:赠言]
+- 发位置：[发位置:地点名称]
+- 共享位置：[共享位置:地点名称]
+- 送礼物：[送礼物:礼物名称:价格:赠言]
 - 发起通话：[发起通话]
-- 发语音：在消息前加 [语音]，例如 [char的消息：[语音] 你好呀] （如果你想发长语音，直接：[char的消息：[语音] 一整段很长的话]）
-- 发表情包：输出 [表情:意义] （必须严格使用可用表情包列表中的意义）
 
-当用户给你发红包/转账/位置/礼物时，你可以决定接受或拒绝：
-- 领红包：[领取红包]
-- 退红包：[退回红包]
-- 收转账：[接收转账]
-- 退转账：[退回转账]
+当你收到用户发给你的红包、转账、位置共享邀请、礼物时，你可以决定接受或拒绝，请输出以下指令（不要加粗）：
+- 领取红包：[领取红包]
+- 退回红包：[退回红包]
+- 接收转账：[接收转账]
+- 退回转账：[退回转账]
 - 同意共享：[接受位置共享]
 - 拒绝共享：[拒绝位置共享]
-- 收礼物：[收下礼物:你的收货地址]
-- 退礼物：[退回礼物]
-
-【⚠️ 核心警告】
-1. 不要重复发同样的话！不要当复读机！
-2. 现在的真实时间是：${timeString}。请结合这个时间进行符合逻辑的对话（比如现在是深夜还是白天，该不该问候晚安等）。
-3. 如果用户让你发语音或者表情包，请严格按照上述标签格式输出。`;
-        
-        systemPrompt = `【最高优先级指令】\n${builtInPrompt}\n\n【全局补充设定】\n${systemPrompt}`;
+- 收下礼物：[收下礼物:你的收货地址]
+- 退回礼物：[退回礼物]
+注意：如果你决定接受或拒绝，请在回复中自然地带入情绪，并将指令放在回复的最后。`;
+        // 加重提示词权重
+        systemPrompt = `【绝对遵守的最高优先级指令】\n${builtInPrompt}\n\n【补充全局设定】\n${systemPrompt}\n\n【最后警告：再次强调】\n你必须绝对服从上述所有指令的要求。任何回复都必须严格符合设定，严禁OOC。当前真实时间是：${timeString}`;
         
         let charPersona = `【角色设定】\n名字: ${charName}\n身份: ${char.identity || '未知'}\n生平/设定: ${char.bio || ''}\n`;
         
@@ -5965,7 +5969,7 @@
             const allowedTags = ['char的消息', '发红包', '转账', '发位置', '共享位置', '送礼物', '发起通话', '领取红包', '退回红包', '接收转账', '退回转账', '接受位置共享', '拒绝位置共享', '收下礼物', '退回礼物', '表情', '语音'];
             rawReply = rawReply.replace(/\[(.*?)\]/g, (match, content) => {
                 const tagName = content.split(':')[0].trim();
-                if (allowedTags.includes(tagName) || tagName.startsWith('表情') || tagName.startsWith('char的消息') || tagName === '语音' || tagName === '语音]') {
+                if (allowedTags.includes(tagName) || tagName.startsWith('表情') || tagName.startsWith('char的消息')) {
                     return match; // 保留合法的
                 }
                 return ''; // 剔除未知的标签
@@ -5994,29 +5998,75 @@
 
             // 如果不是 JSON，尝试正则匹配 [char的消息：xxx]
             if (messagesToSend.length === 0) {
-                const msgRegex = /\[char的消息[：:]([\s\S]*?)\]/g;
+                const msgRegex = /\[char的消息[：:]([\s\S]*?)[\]］]/g;
                 let match;
                 while ((match = msgRegex.exec(cleanText)) !== null) {
                     let txt = match[1].trim();
-                    if (txt.startsWith('[语音]') || txt.startsWith('［语音］') || txt.startsWith('[语音') || txt === '[语音') {
-                        replyType = 'voice';
-                        txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').replace(/\[语音/g, '').replace(/\[语音]/g, '').trim();
-                        if (!txt) txt = "..." // 如果只有语音标签
+                    let currentType = 'text';
+
+                    // 容错处理：语音
+                    if (/^[\[［]语音[\]］]?/.test(txt)) {
+                        currentType = 'voice';
+                        txt = txt.replace(/^[\[［]语音[\]］]?/, '').trim();
                     }
-                    if (txt) messagesToSend.push({ text: txt, type: replyType });
+                    // 容错处理：表情包 (纯表情包)
+                    const stickerMatch = txt.match(/^[\[［]表情[:：](.*?)[\]］]?$/);
+                    if (stickerMatch) {
+                        currentType = 'sticker';
+                        txt = stickerMatch[1].trim(); // 只保留意义
+                    }
+
+                    if (txt || currentType === 'sticker') messagesToSend.push({ text: txt, type: currentType });
                 }
             }
 
-            // 【关键修复】: 彻底删除强制按换行符拆分
-            // 如果还是没有，整体作为一个气泡发送，保持换行
+            // 如果还是没有，检查是否有换行符（强制拆分）
             if (messagesToSend.length === 0 && cleanText.trim()) {
-                let txt = cleanText.trim();
-                if (txt.startsWith('[语音]') || txt.startsWith('［语音］') || txt.startsWith('[语音')) {
-                    replyType = 'voice';
-                    txt = txt.replace(/\[语音\]/g, '').replace(/［语音］/g, '').replace(/\[语音/g, '').replace(/\[语音]/g, '').trim();
-                    if (!txt) txt = "...";
+                // 检查用户上一条消息是否要求发长文
+                let forceFullText = false;
+                for (let i = history.length - 1; i >= 0; i--) {
+                    if (history[i].isSelf) {
+                        const txt = history[i].text || '';
+                        if (txt.includes('复制') || txt.includes('一整段') || txt.includes('别分') || txt.includes('不要分段') || txt.includes('发出来')) {
+                            forceFullText = true;
+                        }
+                        break;
+                    }
                 }
-                if (txt) messagesToSend.push({ text: txt, type: replyType });
+
+                if (forceFullText) {
+                    messagesToSend.push({ text: cleanText.trim(), type: 'text' });
+                } else {
+                    let lines = cleanText.split('\n').map(s => s.trim()).filter(s => s);
+                    if (lines.length > 1) {
+                        messagesToSend = lines.map(txt => {
+                            let currentType = 'text';
+                            if (txt.startsWith('[语音]') || txt.startsWith('［语音］') || txt.startsWith('[语音') || txt.startsWith('［语音')) {
+                                currentType = 'voice';
+                                txt = txt.replace(/[\[［]语音[\]］]?/g, '').trim();
+                            }
+                            const stickerMatch = txt.match(/^[\[［]表情[:：](.*?)[\]］]?$/);
+                            if (stickerMatch) {
+                                currentType = 'sticker';
+                                txt = stickerMatch[1].trim();
+                            }
+                            return { text: txt, type: currentType };
+                        });
+                    } else {
+                        let txt = cleanText.trim();
+                        let currentType = 'text';
+                        if (txt.startsWith('[语音]') || txt.startsWith('［语音］') || txt.startsWith('[语音') || txt.startsWith('［语音')) {
+                            currentType = 'voice';
+                            txt = txt.replace(/[\[［]语音[\]］]?/g, '').trim();
+                        }
+                        const stickerMatch = txt.match(/^[\[［]表情[:：](.*?)[\]］]?$/);
+                        if (stickerMatch) {
+                            currentType = 'sticker';
+                            txt = stickerMatch[1].trim();
+                        }
+                        if (txt || currentType === 'sticker') messagesToSend.push({ text: txt, type: currentType });
+                    }
+                }
             }
 
             if (container.contains(loadingRow)) container.removeChild(loadingRow); 
