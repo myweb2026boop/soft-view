@@ -2492,6 +2492,9 @@
     </div>
 </div>
 
+<!-- 全局隐藏的 Audio 播放器，用于给 iOS 控制中心提供媒体元数据 -->
+<audio id="global-audio-player" style="display: none;"></audio>
+
 <!-- 文件上传隐藏输入框 -->
 <input type="file" id="file-upload" accept="image/*">
 <input type="file" id="import-file" accept=".json,application/json">
@@ -2715,6 +2718,14 @@
                 }
                 favicon.href = base64Data;
                 
+                // 如果此时正好在播放音乐，也顺手更新一下控制中心的默认封面
+                if (currentPlayingSongId) {
+                    const song = musicList.find(s => s.id === currentPlayingSongId);
+                    if (song && !(await getImageFromDB(`music_cover_${song.id}`))) {
+                        updateMediaSession(song.id); 
+                    }
+                }
+
                 alert('图片已更新！如果你将此网页“添加到主屏幕”，手机桌面上的App图标将变成这张图片。');
             };
             reader.readAsDataURL(file);
@@ -3462,6 +3473,7 @@
             await renderMusicAppData();
             if (currentPlayingSongId === songId) {
                 document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
+                updateMediaSession(songId); // 更新封面时同步更新控制中心
             }
         };
         reader.readAsDataURL(file);
@@ -3474,6 +3486,7 @@
         if(song) { song.title = newTitle; localStorage.setItem('music_list', JSON.stringify(musicList)); }
         if (currentPlayingSongId === songId) {
             document.getElementById('playing-title').innerText = newTitle;
+            updateMediaSession(songId);
         }
         renderMusicAppData();
     }
@@ -3484,6 +3497,7 @@
         if(song) { song.artist = newArtist; localStorage.setItem('music_list', JSON.stringify(musicList)); }
         if (currentPlayingSongId === songId) {
             document.getElementById('playing-artist').innerText = newArtist;
+            updateMediaSession(songId);
         }
         renderMusicAppData();
     }
@@ -3580,6 +3594,64 @@
         return lyrics;
     }
 
+    // 辅助：Base64 转 Blob URL (用于 MediaSession 封面)
+    function base64ToBlobUrl(base64) {
+        try {
+            const arr = base64.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+            return URL.createObjectURL(new Blob([u8arr], { type: mime }));
+        } catch (e) {
+            return base64;
+        }
+    }
+
+    // 核心新增：更新控制中心媒体信息
+    async function updateMediaSession(songId) {
+        if (!('mediaSession' in navigator)) return;
+        
+        const song = musicList.find(s => s.id === songId);
+        if (!song) return;
+        
+        let cover = await getImageFromDB(`music_cover_${songId}`);
+        if (!cover) cover = await getImageFromDB('manager_widget_img'); // 没有歌曲封面默认用底部组件那张
+        
+        let coverUrl = '';
+        if (cover) coverUrl = base64ToBlobUrl(cover);
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.title || '未命名歌曲',
+            artist: song.artist || '未知歌手',
+            album: '梨汁机',
+            artwork: coverUrl ? [
+                { src: coverUrl, sizes: '96x96', type: 'image/jpeg' },
+                { src: coverUrl, sizes: '128x128', type: 'image/jpeg' },
+                { src: coverUrl, sizes: '192x192', type: 'image/jpeg' },
+                { src: coverUrl, sizes: '256x256', type: 'image/jpeg' },
+                { src: coverUrl, sizes: '384x384', type: 'image/jpeg' },
+                { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
+            ] : []
+        });
+
+        // 绑定控制中心的操作
+        navigator.mediaSession.setActionHandler('play', () => {
+            if (currentAudio) { currentAudio.play(); document.getElementById('music-play-icon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; }
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            if (currentAudio) { currentAudio.pause(); document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; }
+        });
+        
+        navigator.mediaSession.setActionHandler('seekbackward', () => {
+            if (currentAudio) currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
+        });
+        navigator.mediaSession.setActionHandler('seekforward', () => {
+            if (currentAudio) currentAudio.currentTime = Math.min(currentAudio.currentTime + 10, currentAudio.duration);
+        });
+    }
+
     async function openPlayingScreen(songId) {
         const isSameSong = currentPlayingSongId === songId;
         currentPlayingSongId = songId;
@@ -3593,14 +3665,20 @@
         document.getElementById('playing-cover').style.backgroundImage = cover ? `url(${cover})` : 'none';
         document.getElementById('playing-cover').innerText = cover ? '' : '点击上传封面';
         
+        const player = document.getElementById('global-audio-player');
+        
         if (!isSameSong) {
             const audioBlob = await getImageFromDB(`music_audio_${songId}`);
-            if(currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio.src); }
+            if(currentAudio) { currentAudio.pause(); }
             if(audioBlob) {
-                currentAudio = new Audio(URL.createObjectURL(audioBlob));
+                if(player.src) URL.revokeObjectURL(player.src);
+                player.src = URL.createObjectURL(audioBlob);
+                currentAudio = player;
+                
                 currentAudio.addEventListener('timeupdate', updateMusicProgress);
                 currentAudio.addEventListener('ended', () => { 
                     document.getElementById('music-play-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; 
+                    if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
                 });
             } else {
                 currentAudio = null;
@@ -3620,6 +3698,9 @@
                 }
             }
         }
+        
+        // 更新控制中心
+        updateMediaSession(songId);
         
         document.getElementById('music-playing-screen').classList.add('active');
     }
@@ -3649,6 +3730,7 @@
             document.getElementById('playing-cover').style.backgroundImage = `url(${event.target.result})`;
             document.getElementById('playing-cover').innerText = '';
             renderMusicAppData();
+            updateMediaSession(currentPlayingSongId);
         };
         reader.readAsDataURL(file);
         this.value = '';
@@ -3658,14 +3740,14 @@
         val = val.trim() || '未命名歌曲';
         document.getElementById('playing-title').innerText = val;
         const song = musicList.find(s => s.id === currentPlayingSongId);
-        if(song) { song.title = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); }
+        if(song) { song.title = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); updateMediaSession(currentPlayingSongId); }
     }
 
     function savePlayingSongArtist(val) {
         val = val.trim() || '未知歌手';
         document.getElementById('playing-artist').innerText = val;
         const song = musicList.find(s => s.id === currentPlayingSongId);
-        if(song) { song.artist = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); }
+        if(song) { song.artist = val; localStorage.setItem('music_list', JSON.stringify(musicList)); renderMusicAppData(); updateMediaSession(currentPlayingSongId); }
     }
 
     document.getElementById('music-play-btn').addEventListener('click', () => {
@@ -3674,9 +3756,11 @@
         if(currentAudio.paused) {
             currentAudio.play();
             icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            if('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
         } else {
             currentAudio.pause();
             icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            if('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
         }
     });
 
