@@ -308,13 +308,15 @@
     .cl-remark { font-size: 16px; font-weight: 600; color: #1c1c1e; margin-bottom: 4px; }
     .cl-sub { font-size: 13px; color: #8e8e93; display: flex; align-items: center; gap: 4px; }
 
-    /* 底部导航 (修复胶囊过大问题) */
+    /* 底部导航 (修复全屏下胶囊过大悬空问题) */
     .cl-bottom-nav { 
-        position: absolute; bottom: 20px; left: 15px; right: 15px; 
+        position: absolute; 
+        bottom: calc(15px + env(safe-area-inset-bottom)); 
+        left: 15px; 
+        right: 15px; 
         background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); 
         border-radius: 30px; display: flex; justify-content: space-around; align-items: center; 
         padding: 8px 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-        padding-bottom: calc(8px + env(safe-area-inset-bottom)); 
     }
     .cl-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: #8e8e93; cursor: pointer; }
     .cl-nav-item.active { color: var(--blue); }
