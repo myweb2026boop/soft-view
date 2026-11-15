@@ -2688,6 +2688,7 @@
         });
     });
 
+    // 核心修改：上传图片同步修改网页在系统桌面的图标
     document.getElementById('mgr-widget-upload').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -2696,6 +2697,25 @@
                 const base64Data = event.target.result;
                 await saveImageToDB('manager_widget_img', base64Data);
                 document.getElementById('mgr-widget-img').style.backgroundImage = `url(${base64Data})`;
+                
+                // 动态修改 apple-touch-icon (添加到主屏幕的图标)
+                let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+                if (!appleIcon) {
+                    appleIcon = document.createElement('link');
+                    appleIcon.rel = 'apple-touch-icon';
+                    document.head.appendChild(appleIcon);
+                }
+                appleIcon.href = base64Data;
+
+                let favicon = document.querySelector('link[rel="shortcut icon"]');
+                if (!favicon) {
+                    favicon = document.createElement('link');
+                    favicon.rel = 'shortcut icon';
+                    document.head.appendChild(favicon);
+                }
+                favicon.href = base64Data;
+                
+                alert('图片已更新！如果你将此网页“添加到主屏幕”，手机桌面上的App图标将变成这张图片。');
             };
             reader.readAsDataURL(file);
         }
@@ -7054,6 +7074,23 @@
         if (mgrWidgetImg) {
             const el = document.getElementById('mgr-widget-img');
             if(el) el.style.backgroundImage = `url(${mgrWidgetImg})`;
+            
+            // 初始化时同步网页的 apple-touch-icon
+            let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (!appleIcon) {
+                appleIcon = document.createElement('link');
+                appleIcon.rel = 'apple-touch-icon';
+                document.head.appendChild(appleIcon);
+            }
+            appleIcon.href = mgrWidgetImg;
+            
+            let favicon = document.querySelector('link[rel="shortcut icon"]');
+            if (!favicon) {
+                favicon = document.createElement('link');
+                favicon.rel = 'shortcut icon';
+                document.head.appendChild(favicon);
+            }
+            favicon.href = mgrWidgetImg;
         }
     }
 
